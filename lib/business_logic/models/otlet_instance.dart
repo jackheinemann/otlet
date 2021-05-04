@@ -100,6 +100,7 @@ class OtletInstance extends ChangeNotifier {
   void addNewBook(Book book) {
     books.add(book);
     print('added book ${book.title}');
+    books.sort((a, b) => a.title.compareTo(b.title));
     notifyListeners();
   }
 
