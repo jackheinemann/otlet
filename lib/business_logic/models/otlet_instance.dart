@@ -98,8 +98,23 @@ class OtletInstance extends ChangeNotifier {
   void addNewTool(Tool tool) {
     tools.add(tool);
     for (int i = 0; i < books.length; i++) {
-      // add copies of the tool to every book
+      // TODO add copies of the tool to every book
     }
+    saveInstance();
+    notifyListeners();
+  }
+
+  void deleteTool(Tool tool) {
+    int index;
+    for (int i = 0; i < tools.length; i++) {
+      if (tool.compareToolId(tools[i])) {
+        index = i;
+        break;
+      }
+    }
+    if (index == null) return;
+    tools.removeAt(index);
+    // TODO remove all instances from all books
     saveInstance();
     notifyListeners();
   }

@@ -135,9 +135,20 @@ class Tool {
     return generalized;
   }
 
+  bool includesTime() {
+    return toolType == Tool.timeTool || toolType == Tool.dateTimeTool;
+  }
+
+  bool isDateTime() {
+    return (toolType == Tool.dateTimeTool) ||
+        (toolType == Tool.dateTool || toolType == Tool.timeTool);
+  }
+
   bool isInitialized() {
     return toolType != null && isBookTool != null;
   }
+
+  bool isMarkedForDeletion() => name == null;
 
   bool isNumeric() {
     return (toolType == integerTool || toolType == doubleTool);
@@ -148,17 +159,6 @@ class Tool {
         (toolType == Tool.dateTool || toolType == Tool.timeTool)) return true;
     return false;
   }
-
-  bool includesTime() {
-    return toolType == Tool.timeTool || toolType == Tool.dateTimeTool;
-  }
-
-  bool isDateTime() {
-    return (toolType == Tool.dateTimeTool) ||
-        (toolType == Tool.dateTool || toolType == Tool.timeTool);
-  }
-
-  bool isEmpty() => name == null;
 
   void setToolType(String toolType) {
     if (toolType == Tool.booleanTool)

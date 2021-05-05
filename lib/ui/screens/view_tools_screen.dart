@@ -67,9 +67,11 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                           Tool tool = instance.tools[i];
                           return ToolCard(
                             tool,
-                            updateActiveForAll: (active) {
+                            updateTool: (modifiedTool) {
                               setState(() {
-                                instance.modifyTool(tool);
+                                modifiedTool.isMarkedForDeletion()
+                                    ? instance.deleteTool(modifiedTool)
+                                    : instance.modifyTool(modifiedTool);
                               });
                             },
                           );
