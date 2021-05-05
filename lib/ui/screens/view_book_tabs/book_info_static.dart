@@ -3,18 +3,35 @@ import 'package:otlet/ui/widgets/books/genre_chip.dart';
 import 'package:provider/provider.dart';
 
 import '../../../business_logic/models/book.dart';
-import '../../../business_logic/models/book.dart';
+import '../../../business_logic/utils/constants.dart';
 import '../../../business_logic/utils/constants.dart';
 
 class BookInfoStatic extends StatelessWidget {
   final Book book;
+  final Function(bool) updateActive;
 
-  BookInfoStatic(this.book);
+  BookInfoStatic(this.book, {@required this.updateActive});
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        SizedBox(
+          height: 10,
+        ),
+        ListTile(
+          title: Text('Active Book',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              )),
+          trailing: Switch(
+              activeColor: accentColor,
+              value: book.isActive,
+              onChanged: (value) {
+                updateActive(value);
+              }),
+        ),
         SizedBox(
           height: 20,
         ),

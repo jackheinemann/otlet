@@ -5,7 +5,6 @@ import 'package:otlet/ui/screens/view_book_tabs/book_info_edit.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_info_static.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_sessions_tab.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
-import 'package:provider/provider.dart';
 
 import '../../business_logic/models/book.dart';
 import '../../business_logic/utils/constants.dart';
@@ -171,7 +170,15 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    BookInfoStatic(book),
+                    BookInfoStatic(
+                      book,
+                      updateActive: (active) {
+                        setState(() {
+                          book.isActive = active;
+                          book.hasBeenEdited = true;
+                        });
+                      },
+                    ),
                     Center(child: Text('No tools yet')),
                     BookSessionsTab(book)
                   ]

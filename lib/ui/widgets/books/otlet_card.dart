@@ -17,12 +17,17 @@ class OtletCard extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () async {
-        Book temp = await Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ViewBookScreen(book)));
-
+        if (book.compareIds(instance.activeBook()))
+          book.isActive = true;
+        else
+          book.isActive = false;
+        print(book.isActive);
+        Book temp = await Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ViewBookScreen(Book.fromBook(book))));
         if (temp == null) return;
         if (temp.compareToBook(book)) return;
-
         instance.modifyBook(temp);
         instance.saveInstance();
       },

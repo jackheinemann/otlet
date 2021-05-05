@@ -22,6 +22,7 @@ class Book {
   bool trackProgress = false;
 
   bool hasBeenEdited = false; // just for local 'show save button' stuff
+  bool isActive;
 
   List<ReadingSession> sessions = [];
 
@@ -58,6 +59,7 @@ class Book {
     trackProgress = book.trackProgress;
     print('finished book copy');
     sessions = List<ReadingSession>.from(book.sessions ?? []);
+    isActive = book.isActive;
     // tools = book.tools.map((e) => Tool.fromTool(e)).toList();
   }
 
@@ -116,6 +118,7 @@ class Book {
   }
 
   bool compareIds(Book book) {
+    if (book == null) return false;
     return book.id == id;
   }
 
@@ -135,6 +138,8 @@ class Book {
     if (book.finished != finished) return false;
     if (book.isbn != isbn) return false;
     if (book.sessions != sessions) return false;
+    if (book.isActive != isActive) return false;
+    print('${book.isActive} == $isActive');
     return true;
   }
 

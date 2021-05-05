@@ -7,7 +7,6 @@ import 'package:otlet/business_logic/services/session_stream.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'book.dart';
-import 'book.dart';
 
 class OtletInstance extends ChangeNotifier {
   String userFirstName;
@@ -90,7 +89,6 @@ class OtletInstance extends ChangeNotifier {
   void addNewBook(Book book) {
     books.add(book);
     print('added book ${book.title}');
-    books.sort((a, b) => a.title.compareTo(b.title));
     notifyListeners();
   }
 
@@ -98,6 +96,15 @@ class OtletInstance extends ChangeNotifier {
     print('modifying book ${book.title}');
     for (int i = 0; i < books.length; i++) {
       if (book.compareIds(books[i])) {
+        if (!book.isActive) {
+          if (activeBook().compareIds(book)) {
+            print('hello');
+            // means this book was deactivated
+            activeBookIndex = -1;
+          }
+        } else
+          activeBookIndex = i;
+        book.isActive = null;
         books[i] = book;
         break;
       }
