@@ -18,6 +18,10 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
   Widget build(BuildContext context) {
     return Consumer<OtletInstance>(
       builder: (context, instance, _) {
+        List<Tool> bookTargetTools =
+            instance.tools.where((element) => element.isBookTool).toList();
+        List<Tool> sessionTargetTools =
+            instance.tools.where((element) => !element.isBookTool).toList();
         return instance.tools.length == 0
             ? Center(
                 child: Column(
@@ -46,7 +50,7 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Tool',
+                        Text('Book Tools',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w600)),
                         Text('Active for All',
@@ -62,9 +66,45 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                        itemCount: instance.tools.length,
+                        itemCount: bookTargetTools.length,
                         itemBuilder: (context, i) {
-                          Tool tool = instance.tools[i];
+                          Tool tool = bookTargetTools[i];
+                          return ToolCard(
+                            tool,
+                            updateTool: (modifiedTool) {
+                              setState(() {
+                                modifiedTool.isMarkedForDeletion()
+                                    ? instance.deleteTool(modifiedTool)
+                                    : instance.modifyTool(modifiedTool);
+                              });
+                            },
+                          );
+                        }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Session Tools',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600)),
+                        Text('Active for All',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600))
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                    width: MediaQuery.of(context).size.width,
+                    color: primaryColor,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: sessionTargetTools.length,
+                        itemBuilder: (context, i) {
+                          Tool tool = sessionTargetTools[i];
                           return ToolCard(
                             tool,
                             updateTool: (modifiedTool) {
