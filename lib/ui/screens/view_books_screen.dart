@@ -17,7 +17,7 @@ class ViewBooksScreen extends StatelessWidget {
                     itemCount: books.length,
                     itemBuilder: (context, i) {
                       Book book = books[i];
-                      return OtletCard(book);
+                      return OtletCard(book, instance);
                     })
                 : Center(
                     child: Text('No Books Here',

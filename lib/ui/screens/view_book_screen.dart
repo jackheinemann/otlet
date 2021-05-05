@@ -39,136 +39,145 @@ class _ViewBookScreenState extends State<ViewBookScreen>
   @override
   Widget build(BuildContext context) {
     double bookImageWidth = MediaQuery.of(context).size.width * .35;
-    return Builder(builder: (context) {
-      Column bookviewHeader = Column(children: [
-        Row(
-          children: [
-            book.coverUrl != null
-                ? CachedNetworkImage(
-                    imageUrl: book.coverUrl,
-                    width: bookImageWidth,
-                  )
-                : Container(
-                    color: Colors.grey,
-                    width: bookImageWidth,
-                    height: bookImageWidth * 1.4,
-                    child: Center(
-                        child: Text(book.relevantFirstChar(),
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold))),
-                  ),
-            Expanded(
-              child: Container(
-                height: bookImageWidth * 1.4,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(book.title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold)),
-                    if (book.author != null)
-                      Text(book.author,
-                          style: TextStyle(
-                              fontSize: 19, fontWeight: FontWeight.w400)),
-                    if (book.published != null)
-                      Text(book.displayPublicationYear(),
-                          style: TextStyle(
-                              fontSize: 19, fontWeight: FontWeight.w400)),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        if (book.trackProgress && book.readingProgress() != null)
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.pop(context, book);
+        return;
+      },
+      child: Builder(builder: (context) {
+        Column bookviewHeader = Column(children: [
           Row(
             children: [
-              Spacer(),
-              Container(
-                width: MediaQuery.of(context).size.width * .75,
-                child: LinearProgressIndicator(
-                  value: book.readingProgress(),
+              book.coverUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: book.coverUrl,
+                      width: bookImageWidth,
+                    )
+                  : Container(
+                      color: Colors.grey,
+                      width: bookImageWidth,
+                      height: bookImageWidth * 1.4,
+                      child: Center(
+                          child: Text(book.relevantFirstChar(),
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold))),
+                    ),
+              Expanded(
+                child: Container(
+                  height: bookImageWidth * 1.4,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(book.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold)),
+                      if (book.author != null)
+                        Text(book.author,
+                            style: TextStyle(
+                                fontSize: 19, fontWeight: FontWeight.w400)),
+                      if (book.published != null)
+                        Text(book.displayPublicationYear(),
+                            style: TextStyle(
+                                fontSize: 19, fontWeight: FontWeight.w400)),
+                    ],
+                  ),
                 ),
               ),
-              Spacer(),
-              Text(book.readingPercent(),
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-              Spacer()
             ],
           ),
-        if (book.trackProgress && book.readingProgress() != null)
           SizedBox(
             height: 20,
           ),
-        Divider(),
-      ]);
-      // START SCAFFOLD
-
-      return Scaffold(
-        appBar: AppBar(
-          title: Icon(Icons.menu_book),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () async {
-                  Book temp = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BookInfoEdit(book)));
-                  if (temp == null) return;
-                  setState(() {
-                    book = temp;
-                  });
-                })
-          ],
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: bookviewHeader,
+          if (book.trackProgress && book.readingProgress() != null)
+            Row(
+              children: [
+                Spacer(),
+                Container(
+                  width: MediaQuery.of(context).size.width * .75,
+                  child: LinearProgressIndicator(
+                    value: book.readingProgress(),
+                  ),
+                ),
+                Spacer(),
+                Text(book.readingPercent(),
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+                Spacer()
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Container(
-                height: 30,
-                child: TabBar(
+          if (book.trackProgress && book.readingProgress() != null)
+            SizedBox(
+              height: 20,
+            ),
+          Divider(),
+        ]);
+        // START SCAFFOLD
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Icon(Icons.menu_book),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    Book temp = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                BookInfoEdit(Book.fromBook(book))));
+                    if (temp == null) return;
+                    setState(() {
+                      book = temp;
+                    });
+                  })
+            ],
+          ),
+          body: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: bookviewHeader,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Container(
+                  height: 30,
+                  child: TabBar(
+                    controller: tabController,
+                    tabs: ['Info', 'Tools', 'Sessions']
+                        .map((e) => Text(e,
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black)))
+                        .toList(),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: TabBarView(
                   controller: tabController,
-                  tabs: ['Info', 'Tools', 'Sessions']
-                      .map((e) => Text(e,
-                          style: TextStyle(fontSize: 16, color: Colors.black)))
+                  children: [
+                    BookInfoStatic(book),
+                    Center(child: Text('No tools yet')),
+                    Center(child: Text('No sessions yet'))
+                  ]
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: e,
+                          ))
                       .toList(),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: tabController,
-                children: [
-                  BookInfoStatic(book),
-                  Center(child: Text('No tools yet')),
-                  Center(child: Text('No sessions yet'))
-                ]
-                    .map((e) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: e,
-                        ))
-                    .toList(),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      }),
+    );
   }
 }

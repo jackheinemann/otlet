@@ -4,10 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/ui/screens/view_book_screen.dart';
 
+import '../../../business_logic/models/otlet_instance.dart';
+
 class OtletCard extends StatelessWidget {
   final Book book;
+  final OtletInstance instance;
 
-  OtletCard(this.book);
+  OtletCard(this.book, this.instance);
   @override
   Widget build(BuildContext context) {
     double bookImageWidth = MediaQuery.of(context).size.width * .25;
@@ -18,6 +21,10 @@ class OtletCard extends StatelessWidget {
             MaterialPageRoute(builder: (context) => ViewBookScreen(book)));
 
         if (temp == null) return;
+        if (temp.compareToBook(book)) return;
+
+        instance.modifyBook(temp);
+        instance.saveInstance();
       },
       child: Card(
         elevation: 5,

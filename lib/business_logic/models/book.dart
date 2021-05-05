@@ -115,6 +115,28 @@ class Book {
     }
   }
 
+  bool compareIds(Book book) {
+    return book.id == id;
+  }
+
+  bool compareToBook(Book book) {
+    if (book.id != id) return false;
+    if (book.title != title) return false;
+    if (book.author != author) return false;
+    if (book.genres != genres) return false;
+    if (book.trackProgress != trackProgress) return false;
+    if (book.coverUrl != coverUrl) return false;
+    if (book.pageCount != pageCount) return false;
+    if (book.currentPage != currentPage) return false;
+    if (book.wordCount != wordCount) return false;
+    if (book.rating != rating) return false;
+    if (book.published != published) return false;
+    if (book.started != started) return false;
+    if (book.finished != finished) return false;
+    if (book.isbn != isbn) return false;
+    return true;
+  }
+
   String displayPublicationYear() => DateFormat('y').format(published);
 
   List<String> parseGenres(List<String> subjects) {

@@ -7,6 +7,7 @@ import 'package:otlet/business_logic/services/session_stream.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'book.dart';
+import 'book.dart';
 
 class OtletInstance extends ChangeNotifier {
   String userFirstName;
@@ -81,6 +82,38 @@ class OtletInstance extends ChangeNotifier {
     // }
   }
 
+  Book activeBook() {
+    if (activeBookIndex < 0 || activeBookIndex >= books.length) return null;
+    return books[activeBookIndex];
+  }
+
+  void addNewBook(Book book) {
+    books.add(book);
+    print('added book ${book.title}');
+    books.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
+  }
+
+  void modifyBook(Book book) {
+    print('modifying book ${book.title}');
+    for (int i = 0; i < books.length; i++) {
+      if (book.compareIds(books[i])) {
+        books[i] = book;
+        break;
+      }
+    }
+    notifyListeners();
+  }
+
+  bool hasActiveBook() {
+    if (activeBookIndex < 0 || activeBookIndex >= books.length) return false;
+    return true;
+  }
+
+  void saveInstance() {
+    preferences.setString('otlet_instance', jsonEncode(toJson()));
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'userFirstName': userFirstName,
@@ -95,27 +128,6 @@ class OtletInstance extends ChangeNotifier {
       // if (tools != null)
       //   'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
     };
-  }
-
-  void addNewBook(Book book) {
-    books.add(book);
-    print('added book ${book.title}');
-    books.sort((a, b) => a.title.compareTo(b.title));
-    notifyListeners();
-  }
-
-  void saveInstance() {
-    preferences.setString('otlet_instance', jsonEncode(toJson()));
-  }
-
-  bool hasActiveBook() {
-    if (activeBookIndex < 0 || activeBookIndex >= books.length) return false;
-    return true;
-  }
-
-  Book activeBook() {
-    if (activeBookIndex < 0 || activeBookIndex >= books.length) return null;
-    return books[activeBookIndex];
   }
 
   // SESSION CODE
