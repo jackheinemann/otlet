@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/business_logic/utils/functions.dart';
 import 'package:otlet/ui/widgets/books/otlet_card.dart';
 import 'package:provider/provider.dart';
+
+import '../../business_logic/models/book.dart';
+import '../../business_logic/utils/constants.dart';
 
 class ViewBooksScreen extends StatelessWidget {
   @override
@@ -21,9 +25,23 @@ class ViewBooksScreen extends StatelessWidget {
                       return OtletCard(book, instance);
                     })
                 : Center(
-                    child: Text('No Books Here',
-                        style: TextStyle(
-                            fontSize: 19, fontWeight: FontWeight.w400)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('No Tools Here', style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                            style:
+                                ElevatedButton.styleFrom(primary: primaryColor),
+                            onPressed: () async {
+                              Book temp = await createNewBook(context);
+                              if (temp == null) return;
+                              instance.addNewBook(temp);
+                            },
+                            child: Text('Create New Tool',
+                                style: TextStyle(fontSize: 17))),
+                      ],
+                    ),
                   )),
       );
     });

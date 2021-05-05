@@ -83,7 +83,8 @@ class ActiveBookCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                        Text('${book.sessions?.length ?? 0} sessions logged',
+                        Text(
+                            '${book.sessions?.length ?? 0} session${(book.sessions?.length ?? 0) == 1 ? '' : 's'} logged',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w400)),

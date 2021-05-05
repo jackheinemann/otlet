@@ -43,12 +43,8 @@ class _TabManagerState extends State<TabManager> {
                   icon: Icon(Icons.add),
                   onPressed: () async {
                     if (_currentIndex == 1) {
-                      Book temp = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddBookScreen()));
+                      Book temp = await createNewBook(context);
                       if (temp == null) return;
-
                       // got a new book!
                       setState(() {
                         instance.addNewBook(temp);
