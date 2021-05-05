@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_info_edit.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_info_static.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_sessions_tab.dart';
+import 'package:otlet/ui/screens/view_book_tabs/book_tools_tab.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
 import '../../business_logic/models/book.dart';
@@ -179,7 +180,12 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                         });
                       },
                     ),
-                    Center(child: Text('No tools yet')),
+                    BookToolsTab(book, updateBook: (updatedBook) {
+                      setState(() {
+                        book = updatedBook;
+                        book.hasBeenEdited = true;
+                      });
+                    }),
                     BookSessionsTab(book)
                   ]
                       .map((e) => Padding(

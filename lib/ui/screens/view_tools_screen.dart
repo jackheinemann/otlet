@@ -78,6 +78,11 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                                     : instance.modifyTool(modifiedTool);
                               });
                             },
+                            updateActivity: (modifiedTool) {
+                              setState(() {
+                                instance.setGlobalActivity(modifiedTool);
+                              });
+                            },
                           );
                         }),
                   ),
@@ -112,6 +117,11 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                                 modifiedTool.isMarkedForDeletion()
                                     ? instance.deleteTool(modifiedTool)
                                     : instance.modifyTool(modifiedTool);
+                              });
+                            },
+                            updateActivity: (modifiedTool) {
+                              setState(() {
+                                instance.setGlobalActivity(modifiedTool);
                               });
                             },
                           );

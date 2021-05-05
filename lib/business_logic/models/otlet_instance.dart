@@ -98,7 +98,7 @@ class OtletInstance extends ChangeNotifier {
   void addNewTool(Tool tool) {
     tools.add(tool);
     for (int i = 0; i < books.length; i++) {
-      // TODO add copies of the tool to every book
+      books[i].tools.add(Tool.fromTool(tool));
     }
     saveInstance();
     notifyListeners();
@@ -114,7 +114,9 @@ class OtletInstance extends ChangeNotifier {
     }
     if (index == null) return;
     tools.removeAt(index);
-    // TODO remove all instances from all books
+    for (int i = 0; i < books.length; i++) {
+      books[i].tools.removeWhere((element) => element.compareToolId(tool));
+    }
     saveInstance();
     notifyListeners();
   }
@@ -147,6 +149,9 @@ class OtletInstance extends ChangeNotifier {
         break;
       }
     }
+    for (int i = 0; i < books.length; i++) {
+      books[i].injectModifiedMasterTool(tool);
+    }
     saveInstance();
     notifyListeners();
   }
@@ -158,6 +163,25 @@ class OtletInstance extends ChangeNotifier {
 
   void saveInstance() {
     preferences.setString('otlet_instance', jsonEncode(toJson()));
+  }
+
+  void setGlobalActivity(Tool masterTool) {
+    for (int i = 0; i < tools.length; i++) {
+      // have to also make sure the master tool updates
+      tools[i] = masterTool;
+    }
+    for (int i = 0; i < books.length; i++) {
+      for (int j = 0; j < books[i].tools.length; j++) {
+        Tool bookTool = books[i].tools[j];
+        if (masterTool.compareToolId(bookTool)) {
+          // found the corresponding tool, set its activity
+          books[i].tools[j].isActive = masterTool.setActiveForAll;
+          break;
+        }
+      }
+    }
+    saveInstance();
+    notifyListeners();
   }
 
   Map<String, dynamic> toJson() {

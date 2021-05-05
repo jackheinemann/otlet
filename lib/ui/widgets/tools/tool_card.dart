@@ -7,8 +7,10 @@ import '../../../business_logic/utils/constants.dart';
 class ToolCard extends StatelessWidget {
   final Tool tool;
   final Function(Tool) updateTool;
+  final Function(Tool) updateActivity;
 
-  ToolCard(this.tool, {@required this.updateTool});
+  ToolCard(this.tool,
+      {@required this.updateTool, @required this.updateActivity});
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -24,7 +26,7 @@ class ToolCard extends StatelessWidget {
         value: tool.setActiveForAll,
         onChanged: (value) {
           tool.setActiveForAll = value;
-          updateTool(tool);
+          updateActivity(tool);
         },
       ),
     );

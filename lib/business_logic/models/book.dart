@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,6 +26,7 @@ class Book {
   bool isActive;
 
   List<ReadingSession> sessions = [];
+  List<Tool> tools = [];
 
   Book({
     this.title,
@@ -60,7 +62,7 @@ class Book {
     print('finished book copy');
     sessions = List<ReadingSession>.from(book.sessions ?? []);
     isActive = book.isActive;
-    // tools = book.tools.map((e) => Tool.fromTool(e)).toList();
+    tools = book.tools.map((e) => Tool.fromTool(e)).toList();
   }
 
   Book.fromJson(Map<String, dynamic> json) {
@@ -83,12 +85,12 @@ class Book {
       sessions = sessionJsons.map((e) => ReadingSession.fromJson(e)).toList();
     }
     trackProgress = json['trackProgress'] ?? false;
-    // if (json['tools'] != null) {
-    //   List<dynamic> toolsJson = List<dynamic>.from(jsonDecode(json['tools']));
-    //   for (Map<String, dynamic> json in toolsJson) {
-    //     tools.add(Tool.fromJson(json));
-    //   }
-    // }
+    if (json['tools'] != null) {
+      List<dynamic> toolsJson = List<dynamic>.from(jsonDecode(json['tools']));
+      for (Map<String, dynamic> json in toolsJson) {
+        tools.add(Tool.fromJson(json));
+      }
+    }
   }
 
   Book.fromOpenLibrary(Map<String, dynamic> json) {
@@ -145,6 +147,31 @@ class Book {
 
   String displayPublicationYear() => DateFormat('y').format(published);
 
+  void injectModifiedMasterTool(Tool masterTool) {
+    Tool newTool = Tool.fromTool(masterTool); // make a copy of the master tool
+    int indexOfTool;
+    for (int i = 0; i < tools.length; i++) {
+      Tool tool = tools[i];
+      if (masterTool.compareToolId(tool)) {
+        // means we've found the old version of master tool
+        if (masterTool.toolType == tool.toolType &&
+            masterTool.fixedOptions.map((e) => e.toString()) ==
+                tool.fixedOptions.map((e) => e.toString())) {
+          // toolType and fixedOptions have not changed, so attach old value
+          newTool.value = tool.value;
+        }
+        newTool.isActive = tool.isActive;
+        indexOfTool = i;
+        break;
+      }
+    }
+    if (indexOfTool == null) {
+      print('couldnt find tool ${masterTool.name}');
+      return;
+    }
+    tools[indexOfTool] = newTool;
+  }
+
   List<String> parseGenres(List<String> subjects) {
     List<String> parsedGenres = [];
     for (String subject in subjects) {
@@ -198,8 +225,8 @@ class Book {
       'trackProgress': trackProgress,
       if (sessions != null)
         'sessions': jsonEncode(sessions.map((e) => e.toJson()).toList()),
-      // if (tools != null)
-      //   'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
+      if (tools != null)
+        'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
     };
   }
 }

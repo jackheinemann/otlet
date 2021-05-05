@@ -14,7 +14,7 @@ class Tool {
 
   bool isBookTool;
 
-  bool isActive;
+  bool isActive = false;
   bool setActiveForAll = false;
 
   static String booleanTool = 'True/False';
