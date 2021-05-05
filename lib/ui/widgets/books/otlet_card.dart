@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
+import 'package:otlet/ui/screens/view_book_screen.dart';
 
 class OtletCard extends StatelessWidget {
   final Book book;
@@ -13,12 +14,10 @@ class OtletCard extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () async {
-        // Book temp = await Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => ViewBookScreen(book, bookshedInstance)));
+        Book temp = await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ViewBookScreen(book)));
 
-        // updateInstance(bookshedInstance);
+        if (temp == null) return;
       },
       child: Card(
         elevation: 5,

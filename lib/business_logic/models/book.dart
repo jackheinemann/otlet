@@ -21,6 +21,8 @@ class Book {
   int currentPage = 0;
   bool trackProgress = false;
 
+  bool hasBeenEdited = false; // just for local 'show save button' stuff
+
   List<ReadingSession> sessions = [];
 
   Book({
@@ -113,6 +115,44 @@ class Book {
     }
   }
 
+  String displayPublicationYear() => DateFormat('y').format(published);
+
+  List<String> parseGenres(List<String> subjects) {
+    List<String> parsedGenres = [];
+    for (String subject in subjects) {
+      for (String genre in litGenres) {
+        if (subject.trim().toLowerCase() == genre.trim().toLowerCase() &&
+            !parsedGenres.contains(genre)) {
+          parsedGenres.add(genre);
+          break;
+        }
+      }
+    }
+    return parsedGenres;
+  }
+
+  String readingPercent() {
+    return '${(readingProgress() * 100).round()}%';
+  }
+
+  double readingProgress() {
+    if (currentPage == null || pageCount == null) return null;
+
+    double progress = currentPage.toDouble() / pageCount.toDouble();
+
+    if (progress > 1) return 1;
+
+    return progress;
+  }
+
+  String relevantFirstChar() {
+    String titleString = title.toLowerCase();
+    titleString = titleString.replaceAll('the', '');
+    titleString = titleString.replaceAll('a ', '');
+    titleString = titleString.trim();
+    return titleString[0].toUpperCase();
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -133,37 +173,5 @@ class Book {
       // if (tools != null)
       //   'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
     };
-  }
-
-  List<String> parseGenres(List<String> subjects) {
-    List<String> parsedGenres = [];
-    for (String subject in subjects) {
-      for (String genre in litGenres) {
-        if (subject.trim().toLowerCase() == genre.trim().toLowerCase() &&
-            !parsedGenres.contains(genre)) {
-          parsedGenres.add(genre);
-          break;
-        }
-      }
-    }
-    return parsedGenres;
-  }
-
-  String relevantFirstChar() {
-    String titleString = title.toLowerCase();
-    titleString = titleString.replaceAll('the', '');
-    titleString = titleString.replaceAll('a ', '');
-    titleString = titleString.trim();
-    return titleString[0].toUpperCase();
-  }
-
-  double readingProgress() {
-    if (currentPage == null || pageCount == null) return null;
-
-    double progress = currentPage.toDouble() / pageCount.toDouble();
-
-    if (progress > 1) return 1;
-
-    return progress;
   }
 }
