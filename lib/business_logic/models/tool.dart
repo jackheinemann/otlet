@@ -15,6 +15,7 @@ class Tool {
   bool isBookTool;
 
   bool isActive;
+  bool setActiveForAll = false;
 
   static String booleanTool = 'True/False';
   static String integerTool = 'Integer';
@@ -53,6 +54,7 @@ class Tool {
     if (useFixedOptions) fixedOptions = List<dynamic>.from(tool.fixedOptions);
     created = tool.created;
     isActive = tool.isActive;
+    setActiveForAll = tool.setActiveForAll;
   }
 
   Tool.fromJson(Map<String, dynamic> json) {
@@ -95,6 +97,7 @@ class Tool {
     print('made it through created');
     isActive = json['isActive'];
     print('made it through isActive');
+    setActiveForAll = json['setActiveForAll'];
   }
 
   void assignValueFromString(String stringVal) {
@@ -105,6 +108,11 @@ class Tool {
     } else if (toolType == Tool.textTool) {
       value = stringVal;
     }
+  }
+
+  bool compareToolId(Tool tool) {
+    if (tool == null) return false;
+    return tool.id == id;
   }
 
   bool compareToTool(Tool tool) {
@@ -179,7 +187,8 @@ class Tool {
         'fixedOptions':
             jsonEncode(fixedOptions.map((e) => e.toString()).toList()),
       if (created != null) 'created': created.toString(),
-      'isActive': isActive
+      'isActive': isActive,
+      'setActiveForAll': setActiveForAll
     };
   }
 }

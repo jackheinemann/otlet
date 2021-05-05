@@ -73,6 +73,7 @@ class OtletInstance extends ChangeNotifier {
     }
     print('got through session history');
     if (json.containsKey('tools')) {
+      print(json['tools']);
       List<Tool> toolsBuilder = [];
 
       for (Map<String, dynamic> toolJson
@@ -99,6 +100,7 @@ class OtletInstance extends ChangeNotifier {
     for (int i = 0; i < books.length; i++) {
       // add copies of the tool to every book
     }
+    saveInstance();
     notifyListeners();
   }
 
@@ -119,6 +121,18 @@ class OtletInstance extends ChangeNotifier {
         break;
       }
     }
+
+    notifyListeners();
+  }
+
+  void modifyTool(Tool tool) {
+    for (int i = 0; i < tools.length; i++) {
+      if (tool.compareToolId(tools[i])) {
+        tools[i] = tool;
+        break;
+      }
+    }
+    saveInstance();
     notifyListeners();
   }
 

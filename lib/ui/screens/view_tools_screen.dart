@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/functions.dart';
+import 'package:otlet/ui/widgets/tools/tool_card.dart';
 import 'package:provider/provider.dart';
 
 import '../../business_logic/models/otlet_instance.dart';
+import '../../business_logic/utils/constants.dart';
 import '../../business_logic/utils/constants.dart';
 
 class ViewToolsScreen extends StatefulWidget {
@@ -37,14 +39,44 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                   ],
                 ),
               )
-            : ListView.builder(
-                itemCount: instance.tools.length,
-                itemBuilder: (context, i) {
-                  Tool tool = instance.tools[i];
-                  return ListTile(
-                    title: Text(tool.name),
-                  );
-                });
+            : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Tool',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600)),
+                        Text('Active for All',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600))
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                    width: MediaQuery.of(context).size.width,
+                    color: primaryColor,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: instance.tools.length,
+                        itemBuilder: (context, i) {
+                          Tool tool = instance.tools[i];
+                          return ToolCard(
+                            tool,
+                            updateActiveForAll: (active) {
+                              setState(() {
+                                instance.modifyTool(tool);
+                              });
+                            },
+                          );
+                        }),
+                  ),
+                ],
+              );
       },
     );
   }

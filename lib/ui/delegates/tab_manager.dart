@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/functions.dart';
-import 'package:otlet/ui/screens/add_book_screen.dart';
 import 'package:otlet/ui/screens/home_screen.dart';
 import 'package:otlet/ui/screens/view_books_screen.dart';
 import 'package:otlet/ui/screens/view_tools_screen.dart';
@@ -20,7 +18,7 @@ class TabManager extends StatefulWidget {
 
 class _TabManagerState extends State<TabManager> {
   OtletInstance instance;
-  int _currentIndex = 0;
+  int _currentIndex = 2;
 
   @override
   void initState() {

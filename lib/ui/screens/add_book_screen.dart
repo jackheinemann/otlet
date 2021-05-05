@@ -1,9 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/services/open_library_service.dart';
+
+import '../../business_logic/utils/constants.dart';
 
 class AddBookScreen extends StatefulWidget {
   @override
@@ -138,6 +139,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 ),
                 SizedBox(height: 40),
                 ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: primaryColor),
                     onPressed: () {
                       if (!_formKey.currentState.validate()) return;
                       book.title = titleController.text.trim();

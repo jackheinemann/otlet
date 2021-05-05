@@ -28,7 +28,7 @@ class ViewBooksScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('No Tools Here', style: TextStyle(fontSize: 18)),
+                        Text('No Books Here', style: TextStyle(fontSize: 18)),
                         SizedBox(height: 10),
                         ElevatedButton(
                             style:
@@ -37,8 +37,9 @@ class ViewBooksScreen extends StatelessWidget {
                               Book temp = await createNewBook(context);
                               if (temp == null) return;
                               instance.addNewBook(temp);
+                              instance.saveInstance();
                             },
-                            child: Text('Create New Tool',
+                            child: Text('Add New Book',
                                 style: TextStyle(fontSize: 17))),
                       ],
                     ),
