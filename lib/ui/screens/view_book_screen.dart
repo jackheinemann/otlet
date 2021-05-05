@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_info_edit.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_info_static.dart';
+import 'package:otlet/ui/screens/view_book_tabs/book_sessions_tab.dart';
+import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../../business_logic/models/book.dart';
@@ -40,9 +42,14 @@ class _ViewBookScreenState extends State<ViewBookScreen>
   Widget build(BuildContext context) {
     double bookImageWidth = MediaQuery.of(context).size.width * .35;
     return WillPopScope(
-      onWillPop: () {
-        Navigator.pop(context, book);
-        return;
+      onWillPop: () async {
+        if (book.hasBeenEdited) {
+          bool shouldPop = await showConfirmDialog(
+              'Discard changes to ${book.title}?', context);
+          if (!shouldPop) return Future.value(false);
+        }
+        Navigator.pop(context);
+        return Future.value(true);
       },
       child: Builder(builder: (context) {
         Column bookviewHeader = Column(children: [
@@ -130,6 +137,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                             builder: (context) =>
                                 BookInfoEdit(Book.fromBook(book))));
                     if (temp == null) return;
+                    temp.hasBeenEdited = true;
                     setState(() {
                       book = temp;
                     });
@@ -165,7 +173,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                   children: [
                     BookInfoStatic(book),
                     Center(child: Text('No tools yet')),
-                    Center(child: Text('No sessions yet'))
+                    BookSessionsTab(book)
                   ]
                       .map((e) => Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -174,6 +182,22 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                       .toList(),
                 ),
               ),
+              if (book.hasBeenEdited)
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: primaryColor),
+                    onPressed: () {
+                      book.hasBeenEdited = false;
+                      Navigator.pop(context, book);
+                    },
+                    child: Container(
+                        width: MediaQuery.of(context).size.width * .65,
+                        child: Center(
+                            child: Text('Save Edits',
+                                style: TextStyle(fontSize: 17))))),
+              if (book.hasBeenEdited)
+                SizedBox(
+                  height: 20,
+                )
             ],
           ),
         );

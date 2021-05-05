@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otlet/ui/widgets/books/genre_chip.dart';
 import 'package:provider/provider.dart';
 
 import '../../../business_logic/models/book.dart';
@@ -55,6 +56,27 @@ class BookInfoStatic extends StatelessWidget {
                 )),
           ],
         ),
+        SizedBox(
+          height: 20,
+        ),
+        Text('Genres',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            )),
+        SizedBox(
+          height: 10,
+        ),
+        book.genres.isEmpty
+            ? Text(
+                'No Genres Assigned',
+                style: TextStyle(fontSize: 18),
+              )
+            : Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 10,
+                children: book.genres.map((e) => GenreChip(e)).toList(),
+              )
       ],
     );
   }

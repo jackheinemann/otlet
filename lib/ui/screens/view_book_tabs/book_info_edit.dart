@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../business_logic/models/book.dart';
 import '../../../business_logic/utils/constants.dart';
+import '../../../business_logic/utils/constants.dart';
 
 class BookInfoEdit extends StatefulWidget {
   final Book book;
@@ -55,12 +56,15 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                 if (!_formKey.currentState.validate()) return;
                 book.title = titleController.text.trim();
                 book.author = authorController.text.trim();
-                book.genres = genreController.text
-                    .split(', ')
-                    .map((e) => e.trim())
-                    .toList();
+                genreController.text.isEmpty
+                    ? book.genres = []
+                    : book.genres = genreController.text
+                        .split(', ')
+                        .map((e) => e.trim())
+                        .toList();
                 book.published =
                     DateFormat('y').parse(publishedController.text);
+                book.pageCount = int.tryParse(pageCountController.text);
                 Navigator.pop(context, book);
               })
         ],
@@ -194,6 +198,41 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                           border: OutlineInputBorder()),
                     ),
                   ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                      width: MediaQuery.of(context).size.width * .44,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: primaryColor),
+                        onPressed: () {
+                          setState(() {
+                            book.started = null;
+                            startedController.clear();
+                          });
+                        },
+                        child: Center(child: Text('Clear Date')),
+                      )),
+                  Container(
+                      width: MediaQuery.of(context).size.width * .44,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: primaryColor),
+                        onPressed: () {
+                          setState(() {
+                            book.finished = null;
+                            finishedController.clear();
+                          });
+                        },
+                        child: Center(child: Text('Clear Date')),
+                      )),
                 ],
               ),
             ),

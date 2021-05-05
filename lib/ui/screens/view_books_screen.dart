@@ -8,7 +8,8 @@ class ViewBooksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<OtletInstance>(builder: (context, instance, _) {
-      List<Book> books = instance.books;
+      List<Book> books = List<Book>.from(instance.books);
+      books.sort((a, b) => a.title.compareTo(b.title));
       return Scaffold(
         body: Padding(
             padding: const EdgeInsets.all(8.0),

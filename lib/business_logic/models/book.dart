@@ -134,6 +134,7 @@ class Book {
     if (book.started != started) return false;
     if (book.finished != finished) return false;
     if (book.isbn != isbn) return false;
+    if (book.sessions != sessions) return false;
     return true;
   }
 

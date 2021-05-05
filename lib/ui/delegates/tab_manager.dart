@@ -27,7 +27,7 @@ class _TabManagerState extends State<TabManager> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<OtletInstance>(
+    return ListenableProvider<OtletInstance>(
       create: (context) => instance,
       child: Scaffold(
         appBar: AppBar(
