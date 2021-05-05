@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/services/session_stream.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +22,7 @@ class OtletInstance extends ChangeNotifier {
   StreamSubscription<int> timerSubscription;
 
   List<ReadingSession> sessionHistory = [];
+  List<Tool> tools = [];
 
   OtletInstance.empty();
 
@@ -35,9 +37,9 @@ class OtletInstance extends ChangeNotifier {
       sessionHistory = instance.sessionHistory
           .map((e) => ReadingSession.fromSession(e))
           .toList();
-    // if (instance.tools != null) {
-    //   tools = instance.tools.map((e) => Tool.fromTool(e)).toList();
-    // }
+    if (instance.tools != null) {
+      tools = instance.tools.map((e) => Tool.fromTool(e)).toList();
+    }
   }
 
   OtletInstance.fromJson(Map<String, dynamic> json) {
@@ -70,15 +72,15 @@ class OtletInstance extends ChangeNotifier {
       sessionHistory.addAll(sessionHistoryBuilder);
     }
     print('got through session history');
-    // if (json.containsKey('tools')) {
-    //   List<Tool> toolsBuilder = [];
+    if (json.containsKey('tools')) {
+      List<Tool> toolsBuilder = [];
 
-    //   for (Map<String, dynamic> toolJson
-    //       in List<Map<String, dynamic>>.from(jsonDecode(json['tools']))) {
-    //     toolsBuilder.add(Tool.fromJson(toolJson));
-    //   }
-    //   tools.addAll(toolsBuilder);
-    // }
+      for (Map<String, dynamic> toolJson
+          in List<Map<String, dynamic>>.from(jsonDecode(json['tools']))) {
+        toolsBuilder.add(Tool.fromJson(toolJson));
+      }
+      tools.addAll(toolsBuilder);
+    }
   }
 
   Book activeBook() {
@@ -89,6 +91,14 @@ class OtletInstance extends ChangeNotifier {
   void addNewBook(Book book) {
     books.add(book);
     print('added book ${book.title}');
+    notifyListeners();
+  }
+
+  void addNewTool(Tool tool) {
+    tools.add(tool);
+    for (int i = 0; i < books.length; i++) {
+      // add copies of the tool to every book
+    }
     notifyListeners();
   }
 
@@ -132,8 +142,8 @@ class OtletInstance extends ChangeNotifier {
       if (sessionHistory != null)
         'sessionHistory':
             jsonEncode(sessionHistory.map((e) => e.toJson()).toList()),
-      // if (tools != null)
-      //   'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
+      if (tools != null)
+        'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
     };
   }
 
