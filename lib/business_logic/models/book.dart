@@ -30,6 +30,7 @@ class Book {
 
   List<ReadingSession> sessions = [];
   List<Tool> tools = [];
+  List<Tool> otletTools = [];
 
   Book({
     this.title,
@@ -47,7 +48,6 @@ class Book {
   }
 
   Book.fromBook(Book book) {
-    print('starting book copy');
     id = book.id;
     isbn = book.isbn;
     title = book.title;
@@ -62,10 +62,10 @@ class Book {
     wordCount = book.wordCount;
     currentPage = book.currentPage;
     trackProgress = book.trackProgress;
-    print('finished book copy');
     sessions = List<ReadingSession>.from(book.sessions ?? []);
     isActive = book.isActive;
     tools = book.tools.map((e) => Tool.fromTool(e)).toList();
+    otletTools = book.otletTools.map((e) => Tool.fromTool(e)).toList();
   }
 
   Book.fromJson(Map<String, dynamic> json) {
@@ -92,6 +92,13 @@ class Book {
       List<dynamic> toolsJson = List<dynamic>.from(jsonDecode(json['tools']));
       for (Map<String, dynamic> json in toolsJson) {
         tools.add(Tool.fromJson(json));
+      }
+    }
+    if (json['otletTools'] != null) {
+      List<dynamic> otletToolsJson =
+          List<dynamic>.from(jsonDecode(json['otletTools']));
+      for (Map<String, dynamic> json in otletToolsJson) {
+        otletTools.add(Tool.fromJson(json));
       }
     }
   }
@@ -248,7 +255,9 @@ class Book {
       if (sessions != null)
         'sessions': jsonEncode(sessions.map((e) => e.toJson()).toList()),
       if (tools != null)
-        'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
+        'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
+      if (otletTools != null)
+        'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList())
     };
   }
 }

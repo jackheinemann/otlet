@@ -39,7 +39,18 @@ class Tool {
   bool useFixedOptions = false;
   List<dynamic> fixedOptions = [];
 
-  Tool({String customId}) {
+  Tool(
+      {String customId,
+      this.name,
+      this.toolType,
+      this.created,
+      this.isBookTool,
+      this.isActive,
+      this.setActiveForAll,
+      this.valueType,
+      this.value,
+      this.useFixedOptions,
+      this.fixedOptions}) {
     id = customId ?? Uuid().v1();
   }
 

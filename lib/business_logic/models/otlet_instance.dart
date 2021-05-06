@@ -24,6 +24,14 @@ class OtletInstance extends ChangeNotifier {
 
   List<ReadingSession> sessionHistory = [];
   List<Tool> tools = [];
+  List<Tool> otletTools = [
+    Tool(
+        name: 'Track Progress',
+        toolType: Tool.doubleTool,
+        useFixedOptions: false,
+        setActiveForAll: false,
+        isBookTool: true)
+  ];
 
   OtletInstance.empty();
 
@@ -40,6 +48,9 @@ class OtletInstance extends ChangeNotifier {
           .toList();
     if (instance.tools != null) {
       tools = instance.tools.map((e) => Tool.fromTool(e)).toList();
+    }
+    if (instance.otletTools != null) {
+      otletTools = instance.otletTools.map((e) => Tool.fromTool(e)).toList();
     }
   }
 
@@ -74,7 +85,6 @@ class OtletInstance extends ChangeNotifier {
     }
     print('got through session history');
     if (json.containsKey('tools')) {
-      print(json['tools']);
       List<Tool> toolsBuilder = [];
 
       for (Map<String, dynamic> toolJson
@@ -82,6 +92,15 @@ class OtletInstance extends ChangeNotifier {
         toolsBuilder.add(Tool.fromJson(toolJson));
       }
       tools.addAll(toolsBuilder);
+    }
+    if (json.containsKey('otletTools')) {
+      List<Tool> otletToolsBuilder = [];
+
+      for (Map<String, dynamic> otletToolJson
+          in List<Map<String, dynamic>>.from(jsonDecode(json['otletTools']))) {
+        otletToolsBuilder.add(Tool.fromJson(otletToolJson));
+      }
+      otletTools = otletToolsBuilder;
     }
   }
 
@@ -182,7 +201,26 @@ class OtletInstance extends ChangeNotifier {
     preferences.setString('otlet_instance', jsonEncode(toJson()));
   }
 
-  void setGlobalActivity(Tool masterTool) {
+  void setGlobalOtletToolActivity(Tool masterTool) {
+    for (int i = 0; i < otletTools.length; i++) {
+      // have to also make sure the master tool updates
+      otletTools[i] = masterTool;
+    }
+    for (int i = 0; i < books.length; i++) {
+      for (int j = 0; j < books[i].otletTools.length; j++) {
+        Tool bookTool = books[i].otletTools[j];
+        if (masterTool.compareToolId(bookTool)) {
+          // found the corresponding tool, set its activity
+          books[i].otletTools[j].isActive = masterTool.setActiveForAll;
+          break;
+        }
+      }
+    }
+    saveInstance();
+    notifyListeners();
+  }
+
+  void setGlobalToolActivity(Tool masterTool) {
     for (int i = 0; i < tools.length; i++) {
       // have to also make sure the master tool updates
       tools[i] = masterTool;
@@ -213,7 +251,9 @@ class OtletInstance extends ChangeNotifier {
         'sessionHistory':
             jsonEncode(sessionHistory.map((e) => e.toJson()).toList()),
       if (tools != null)
-        'tools': jsonEncode(tools.map((e) => e.toJson()).toList())
+        'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
+      if (otletTools != null)
+        'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList())
     };
   }
 
