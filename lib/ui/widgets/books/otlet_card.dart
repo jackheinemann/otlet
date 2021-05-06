@@ -21,17 +21,19 @@ class OtletCard extends StatelessWidget {
           book.isActive = true;
         else
           book.isActive = false;
-        print(book.isActive);
+
         Book temp = await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ViewBookScreen(Book.fromBook(book))));
+
         if (temp == null) return;
         if (temp.isEmpty()) {
           // book with temp.id is marked for deletion
           instance.deleteBook(temp);
           return;
         }
+
         if (temp.compareToBook(book)) return;
         instance.modifyBook(temp);
         instance.saveInstance();

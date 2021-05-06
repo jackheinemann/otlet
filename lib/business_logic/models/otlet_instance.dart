@@ -57,23 +57,18 @@ class OtletInstance extends ChangeNotifier {
   OtletInstance.fromJson(Map<String, dynamic> json) {
     userFirstName = json['userFirstName'];
     userLastName = json['userLastName'];
-    print('got through names');
     if (json.containsKey('books')) {
       List<Book> booksBuilder = [];
       for (Map<String, dynamic> bookJson
           in List<Map<String, dynamic>>.from(jsonDecode(json['books']))) {
         booksBuilder.add(Book.fromJson(bookJson));
       }
-      print(booksBuilder);
       books.addAll(booksBuilder);
     }
-    print('got through active booksx');
     activeBookIndex = json['activeBookIndex'];
-    print('got through active book index');
     if (json.containsKey('activeSession'))
       activeSession =
           ReadingSession.fromJson(jsonDecode(json['activeSession']));
-    print('got through active session');
     if (json.containsKey('sessionHistory')) {
       List<ReadingSession> sessionHistoryBuilder = [];
 
@@ -83,7 +78,6 @@ class OtletInstance extends ChangeNotifier {
       }
       sessionHistory.addAll(sessionHistoryBuilder);
     }
-    print('got through session history');
     if (json.containsKey('tools')) {
       List<Tool> toolsBuilder = [];
 
@@ -110,8 +104,18 @@ class OtletInstance extends ChangeNotifier {
   }
 
   void addNewBook(Book book) {
+    book.tools = tools.map((e) {
+      Tool tool = Tool.fromTool(e);
+      if (e.setActiveForAll) tool.isActive = true;
+      return tool;
+    }).toList();
+    book.otletTools = otletTools.map((e) {
+      Tool tool = Tool.fromTool(e);
+      if (e.setActiveForAll) tool.isActive = true;
+      return tool;
+    }).toList();
     books.add(book);
-    print('added book ${book.title}');
+
     notifyListeners();
   }
 
@@ -158,12 +162,10 @@ class OtletInstance extends ChangeNotifier {
   }
 
   void modifyBook(Book book) {
-    print('modifying book ${book.title}');
     for (int i = 0; i < books.length; i++) {
       if (book.compareIds(books[i])) {
-        if (!book.isActive) {
+        if (!book.isActive && hasActiveBook()) {
           if (activeBook().compareIds(book)) {
-            print('hello');
             // means this book was deactivated
             activeBookIndex = -1;
           }
@@ -204,7 +206,10 @@ class OtletInstance extends ChangeNotifier {
   void setGlobalOtletToolActivity(Tool masterTool) {
     for (int i = 0; i < otletTools.length; i++) {
       // have to also make sure the master tool updates
-      otletTools[i] = masterTool;
+      if (otletTools[i].compareToolId(masterTool)) {
+        otletTools[i] = masterTool;
+        break;
+      }
     }
     for (int i = 0; i < books.length; i++) {
       for (int j = 0; j < books[i].otletTools.length; j++) {
@@ -223,7 +228,10 @@ class OtletInstance extends ChangeNotifier {
   void setGlobalToolActivity(Tool masterTool) {
     for (int i = 0; i < tools.length; i++) {
       // have to also make sure the master tool updates
-      tools[i] = masterTool;
+      if (tools[i].compareToolId(masterTool)) {
+        tools[i] = masterTool;
+        break;
+      }
     }
     for (int i = 0; i < books.length; i++) {
       for (int j = 0; j < books[i].tools.length; j++) {

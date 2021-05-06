@@ -49,7 +49,7 @@ class _CreateCustomToolScreenState extends State<CreateCustomToolScreen> {
           toolValueController.text = tool.value.toString();
       }
     } else {
-      tool = Tool();
+      tool = Tool.empty();
     }
   }
 
@@ -142,7 +142,8 @@ class _CreateCustomToolScreenState extends State<CreateCustomToolScreen> {
                           setState(() {
                             tool.toolType = toolType;
                             tool.value = null;
-                            tool.fixedOptions.clear();
+                            if (tool.fixedOptions != null)
+                              tool.fixedOptions.clear();
                             fixedOptionsController.clear();
                             toolValueController.clear();
                           });

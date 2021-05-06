@@ -8,11 +8,11 @@ class LocalStorageManager {
     OtletInstance otletInstance;
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String instanceString = preferences.getString('otlet_instance');
+
     if (instanceString == null) {
       otletInstance = OtletInstance.empty();
     } else {
       otletInstance = OtletInstance.fromJson(jsonDecode(instanceString));
-      print(otletInstance.books);
     }
 
     otletInstance.preferences = preferences;

@@ -162,6 +162,12 @@ class Book {
           (sourceSession.started != foreignSession.started ||
               sourceSession.ended != foreignSession.ended)) return false;
     }
+    for (int i = 0; i < book.tools.length; i++) {
+      Tool sourceTool = tools[i];
+      Tool foreignTool = book.tools[i];
+      if (sourceTool.value != foreignTool.value) return false;
+      if (sourceTool.isActive != foreignTool.isActive) return false;
+    }
     if (book.isActive != isActive) return false;
     return true;
   }
@@ -176,8 +182,8 @@ class Book {
       if (masterTool.compareToolId(tool)) {
         // means we've found the old version of master tool
         if (masterTool.toolType == tool.toolType &&
-            masterTool.fixedOptions.map((e) => e.toString()) ==
-                tool.fixedOptions.map((e) => e.toString())) {
+            masterTool.fixedOptions.toString() ==
+                tool.fixedOptions.toString()) {
           // toolType and fixedOptions have not changed, so attach old value
           newTool.value = tool.value;
         }

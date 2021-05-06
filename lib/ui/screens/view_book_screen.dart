@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_info_edit.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_info_static.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_sessions_tab.dart';
 import 'package:otlet/ui/screens/view_book_tabs/book_tools_tab.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
-import '../../business_logic/models/book.dart';
 import '../../business_logic/models/book.dart';
 import '../../business_logic/utils/constants.dart';
 
@@ -27,6 +27,8 @@ class _ViewBookScreenState extends State<ViewBookScreen>
   TextEditingController finishedController = TextEditingController();
 
   TabController tabController;
+
+  Tool editingTool;
 
   @override
   void initState() {
@@ -152,10 +154,11 @@ class _ViewBookScreenState extends State<ViewBookScreen>
           ),
           body: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: bookviewHeader,
-              ),
+              if (editingTool == null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: bookviewHeader,
+                ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Container(
@@ -186,12 +189,21 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                         });
                       },
                     ),
-                    BookToolsTab(book, updateBook: (updatedBook) {
-                      setState(() {
-                        book = updatedBook;
-                        book.hasBeenEdited = true;
-                      });
-                    }),
+                    BookToolsTab(
+                      book,
+                      updateBook: (updatedBook) {
+                        setState(() {
+                          book = updatedBook;
+                          book.hasBeenEdited = true;
+                        });
+                      },
+                      toolIsEditing: (tool, editing) {
+                        setState(() {
+                          editingTool = editing ? tool : null;
+                          if (editing == false) book.hasBeenEdited = true;
+                        });
+                      },
+                    ),
                     BookSessionsTab(book)
                   ]
                       .map((e) => Padding(

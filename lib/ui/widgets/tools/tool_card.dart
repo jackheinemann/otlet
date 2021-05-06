@@ -19,9 +19,10 @@ class ToolCard extends StatelessWidget {
         if (temp == null) return;
         updateTool(temp);
       },
+      leading: tool.isBookTool ? Icon(Icons.menu_book) : Icon(Icons.history),
       title: Text(tool.name, style: TextStyle(fontSize: 18)),
       subtitle: Text(tool.toolType),
-      trailing: Checkbox(
+      trailing: Switch(
         activeColor: accentColor,
         value: tool.setActiveForAll,
         onChanged: (value) {

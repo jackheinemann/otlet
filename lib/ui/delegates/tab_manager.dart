@@ -18,7 +18,7 @@ class TabManager extends StatefulWidget {
 
 class _TabManagerState extends State<TabManager> {
   OtletInstance instance;
-  int _currentIndex = 2;
+  int _currentIndex = 0;
 
   @override
   void initState() {

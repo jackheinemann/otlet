@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otlet/ui/widgets/alerts/error_dialog.dart';
 import 'package:uuid/uuid.dart';
 
 class Tool {
@@ -54,6 +55,10 @@ class Tool {
     id = customId ?? Uuid().v1();
   }
 
+  Tool.empty() {
+    id = Uuid().v1();
+  }
+
   Tool.fromTool(Tool tool) {
     id = tool.id;
     name = tool.name;
@@ -71,13 +76,9 @@ class Tool {
   Tool.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    print('making a tool from $name');
     toolType = json['toolType'];
     isBookTool = json['isBookTool'];
-    print('made it through isBookTool');
     if (json['value'] != null && json['value'] != 'null') {
-      print('not null: ${json['value']}');
-      print('${json['value']}');
       if (isDateTime()) {
         try {
           value = DateTime.parse(json['value']);
@@ -95,19 +96,17 @@ class Tool {
             }
           }
         }
-      }
+      } else
+        value = json['value'];
       // value = isDateTime() ? DateTime.parse(json['value']) : json['value'];
       // print(value);
       if (toolType == Tool.timeTool) value = TimeOfDay.fromDateTime(value);
     }
-    print('made it through value');
     useFixedOptions = json['useFixedOptions'];
     if (useFixedOptions && json['fixedOptions'] != null)
       fixedOptions = List<dynamic>.from(jsonDecode(json['fixedOptions']));
     if (json['created'] != null) created = DateTime.parse(json['created']);
-    print('made it through created');
     isActive = json['isActive'];
-    print('made it through isActive');
     setActiveForAll = json['setActiveForAll'];
   }
 
@@ -144,6 +143,58 @@ class Tool {
     Tool generalized = Tool.fromTool(this);
     generalized.value = null;
     return generalized;
+  }
+
+  Widget generateValueInput(BuildContext context,
+      {@required Function(dynamic) onValueChange,
+      @required Function(bool) editingChanges}) {
+    TextFormField textFormField;
+    TextEditingController valueController = TextEditingController();
+
+    if (isSpecialGrade()) {
+      // gonna need some special stuff
+      textFormField = TextFormField(
+        controller: valueController,
+        decoration:
+            InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
+        readOnly: true,
+        onTap: () {},
+      );
+    } else {
+      if (value != null) valueController.text = value.toString();
+      // either decimal, integer, or text
+      textFormField = TextFormField(
+        keyboardType: toolType == Tool.textTool
+            ? TextInputType.text
+            : TextInputType.numberWithOptions(signed: true),
+        controller: valueController,
+        decoration:
+            InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
+        onTap: () => editingChanges(true),
+        onEditingComplete: () {
+          FocusScope.of(context).unfocus();
+          editingChanges(false);
+          String input = valueController.text.trim();
+          if (toolType == Tool.textTool)
+            onValueChange(input);
+          else if (toolType == Tool.doubleTool) {
+            double val = double.tryParse(input);
+            if (val == null)
+              showErrorDialog(context, '$input is not a valid decimal value.');
+            else
+              onValueChange(val);
+          } else {
+            int val = int.tryParse(input);
+            if (val == null)
+              showErrorDialog(context, '$input is not a valid integer value.');
+            else
+              onValueChange(val);
+          }
+        },
+      );
+    }
+
+    return ListTile(title: textFormField);
   }
 
   bool includesTime() {
