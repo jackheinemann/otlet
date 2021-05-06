@@ -110,20 +110,14 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 SizedBox(height: 15),
                 TextFormField(
                   controller: publishedController,
-                  readOnly: true,
-                  onTap: () async {
-                    DateTime published = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(0),
-                        lastDate: DateTime.now().add(Duration(days: 7)));
-
-                    if (published != null) {
-                      setState(() {
-                        book.published = published;
-                        publishedController.text =
-                            DateFormat('y').format(published);
-                      });
+                  keyboardType: TextInputType.numberWithOptions(signed: true),
+                  validator: (value) {
+                    if (value.trim().isEmpty) return null;
+                    try {
+                      DateFormat('y').parse(value.trim());
+                      return null;
+                    } catch (e) {
+                      return 'Enter a valid year';
                     }
                   },
                   decoration: InputDecoration(
@@ -150,6 +144,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           .toList();
                       book.pageCount =
                           int.tryParse(pageCountController.text.trim());
+                      book.published = DateFormat('y')
+                          .parse(publishedController.text.trim());
 
                       Navigator.pop(context, book);
                     },
