@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/ui/widgets/alerts/error_dialog.dart';
+import 'package:otlet/ui/widgets/alerts/simple_selector.dart';
 import 'package:uuid/uuid.dart';
 
 class Tool {
@@ -80,27 +81,28 @@ class Tool {
     isBookTool = json['isBookTool'];
     if (json['value'] != null && json['value'] != 'null') {
       if (isDateTime()) {
-        try {
-          value = DateTime.parse(json['value']);
-        } catch (e) {
-          print('Error parsing date: $e. Trying new style');
+        if (toolType == Tool.timeTool) {
+          value = TimeOfDay.fromDateTime(
+              DateFormat('h:mm aa').parse(json['value']));
+        } else
           try {
-            value = DateFormat('MMMM d, y m:ss aa').parse(json['value']);
+            value = DateTime.parse(json['value']);
           } catch (e) {
-            print('Error on second date parse: $e. Trying once more');
+            print('Error parsing date: $e. Trying new style');
             try {
-              value = DateFormat('MMMM d, y').parse(json['value']);
+              value = DateFormat('MMMM d, y m:ss aa').parse(json['value']);
             } catch (e) {
-              print('giving up on date, assigning DateTime.now()');
-              value = DateTime.now();
+              print('Error on second date parse: $e. Trying once more');
+              try {
+                value = DateFormat('MMMM d, y').parse(json['value']);
+              } catch (e) {
+                print('giving up on date, assigning DateTime.now()');
+                value = DateTime.now();
+              }
             }
           }
-        }
       } else
         value = json['value'];
-      // value = isDateTime() ? DateTime.parse(json['value']) : json['value'];
-      // print(value);
-      if (toolType == Tool.timeTool) value = TimeOfDay.fromDateTime(value);
     }
     useFixedOptions = json['useFixedOptions'];
     if (useFixedOptions && json['fixedOptions'] != null)
@@ -153,12 +155,62 @@ class Tool {
 
     if (isSpecialGrade()) {
       // gonna need some special stuff
+      if (value != null) {
+        print('setting up value $value to be displayed');
+        // first set up the special formatting
+        if (isDateTime()) {
+          if (isOnlyDate()) {
+            valueController.text =
+                DateFormat('MMMM d, y${includesTime() ? ' h:mm aa' : ''}')
+                    .format(value);
+          } else {
+            TimeOfDay timeOfDay = value as TimeOfDay;
+            valueController.text = DateFormat('h:mm aa')
+                .format(DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute));
+          }
+        } else {
+          valueController.text = value.toString();
+        }
+      }
       textFormField = TextFormField(
         controller: valueController,
         decoration:
             InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
         readOnly: true,
-        onTap: () {},
+        onTap: () async {
+          if (isDateTime()) {
+            if (isOnlyDate()) {
+              DateTime dateTime = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(Duration(days: 365) * 50),
+                  lastDate: DateTime.now().add(Duration(days: 365) * 50));
+              if (dateTime == null) return;
+              if (toolType == Tool.dateTimeTool) {
+                TimeOfDay timeOfDay = await showTimePicker(
+                    context: context, initialTime: TimeOfDay.now());
+                if (timeOfDay == null) return;
+                dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
+                    timeOfDay.hour, timeOfDay.minute);
+              }
+              DateTime val = dateTime;
+              onValueChange(val);
+            } else {
+              // is just TimeOfDay
+              TimeOfDay timeOfDay = await showTimePicker(
+                  context: context, initialTime: TimeOfDay.now());
+              if (timeOfDay == null) return;
+              onValueChange(timeOfDay);
+            }
+          } else {
+            bool val = await showSimpleSelectorDialog(
+                        context, 'Select a value', [true, false]) ==
+                    'true'
+                ? true
+                : false;
+            onValueChange(val);
+          }
+        },
       );
     } else {
       if (value != null) valueController.text = value.toString();
@@ -196,6 +248,9 @@ class Tool {
 
     return ListTile(title: textFormField);
   }
+
+  bool isOnlyDate() =>
+      toolType == Tool.dateTimeTool || toolType == Tool.dateTool;
 
   bool includesTime() {
     return toolType == Tool.timeTool || toolType == Tool.dateTimeTool;
@@ -243,7 +298,13 @@ class Tool {
       'name': name,
       'toolType': toolType,
       'isBookTool': isBookTool,
-      'value': isDateTime() ? value.toString() : value,
+      if (value != null)
+        'value': isDateTime()
+            ? (toolType == Tool.timeTool
+                ? DateFormat('h:mm aa')
+                    .format(DateTime(1, 1, 1, value.hour, value.minute))
+                : value.toString())
+            : value,
       'useFixedOptions': useFixedOptions,
       if (useFixedOptions)
         'fixedOptions':
