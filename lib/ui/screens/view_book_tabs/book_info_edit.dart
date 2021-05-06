@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
+import '../../../business_logic/models/book.dart';
+import '../../../business_logic/models/book.dart';
 import '../../../business_logic/models/book.dart';
 import '../../../business_logic/utils/constants.dart';
 import '../../../business_logic/utils/constants.dart';
@@ -51,21 +54,14 @@ class _BookInfoEditState extends State<BookInfoEdit> {
         centerTitle: true,
         actions: [
           IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () {
-                if (!_formKey.currentState.validate()) return;
-                book.title = titleController.text.trim();
-                book.author = authorController.text.trim();
-                genreController.text.isEmpty
-                    ? book.genres = []
-                    : book.genres = genreController.text
-                        .split(', ')
-                        .map((e) => e.trim())
-                        .toList();
-                book.published =
-                    DateFormat('y').parse(publishedController.text);
-                book.pageCount = int.tryParse(pageCountController.text);
-                Navigator.pop(context, book);
+              icon: Icon(Icons.delete),
+              onPressed: () async {
+                bool shouldDelete =
+                    await showConfirmDialog('Delete ${book.title}?', context);
+                if (!shouldDelete) return;
+                Book coffinBook = Book();
+                coffinBook.id = book.id;
+                Navigator.pop(context, coffinBook);
               })
         ],
       ),
@@ -93,6 +89,12 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                         if (value.trim().isEmpty) return 'Title required';
                         return null;
                       },
+                      onEditingComplete: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() {
+                          book.title = titleController.text.trim();
+                        });
+                      },
                     ),
                     SizedBox(height: 15),
                     TextFormField(
@@ -100,11 +102,27 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                       controller: authorController,
                       decoration: InputDecoration(
                           labelText: 'Author', border: OutlineInputBorder()),
+                      onEditingComplete: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() {
+                          book.author = authorController.text.trim();
+                        });
+                      },
                     ),
                     SizedBox(height: 15),
                     TextFormField(
                       textCapitalization: TextCapitalization.words,
                       controller: genreController,
+                      onEditingComplete: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() {
+                          book.genres = genreController.text
+                              .trim()
+                              .split(',')
+                              .map((e) => e.trim())
+                              .toList();
+                        });
+                      },
                       decoration: InputDecoration(
                           labelText: 'Genres',
                           hintText: 'Separate with commas',
@@ -124,6 +142,13 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                           return 'Enter a valid year';
                         }
                       },
+                      onEditingComplete: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() {
+                          book.published = DateFormat('y')
+                              .parse(publishedController.text.trim());
+                        });
+                      },
                       decoration: InputDecoration(
                           labelText: 'Publication Year',
                           border: OutlineInputBorder()),
@@ -133,6 +158,13 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                       controller: pageCountController,
                       keyboardType:
                           TextInputType.numberWithOptions(signed: true),
+                      onEditingComplete: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() {
+                          book.pageCount =
+                              int.tryParse(pageCountController.text);
+                        });
+                      },
                       decoration: InputDecoration(
                           labelText: 'Page Count',
                           border: OutlineInputBorder()),
@@ -236,6 +268,18 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                 ],
               ),
             ),
+            // SizedBox(
+            //   height: 20,
+            // ),
+            // Container(
+            //     width: MediaQuery.of(context).size.width * .44,
+            //     child: ElevatedButton(
+            //       style: ElevatedButton.styleFrom(primary: accentColor),
+            //       onPressed: () {
+
+            //       },
+            //       child: Center(child: Text('')),
+            //     )),
           ],
         ),
       ),

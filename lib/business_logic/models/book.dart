@@ -6,6 +6,9 @@ import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:uuid/uuid.dart';
 
+import 'reading_session.dart';
+import 'reading_session.dart';
+
 class Book {
   String id;
   String isbn;
@@ -103,6 +106,7 @@ class Book {
       List<dynamic> subjects = json['subjects'];
       genres = parseGenres(
           List<String>.from(subjects.map((e) => e['name']).toList()));
+      genres.removeWhere((element) => element.isEmpty);
     }
     if (json['publish_date'] != null) {
       String publishedString = json['publish_date'];
@@ -128,7 +132,10 @@ class Book {
     if (book.id != id) return false;
     if (book.title != title) return false;
     if (book.author != author) return false;
-    if (book.genres != genres) return false;
+    if (book.genres.length != genres.length) return false;
+    for (int i = 0; i < book.genres.length; i++) {
+      if (genres[i] != book.genres[i]) return false;
+    }
     if (book.trackProgress != trackProgress) return false;
     if (book.coverUrl != coverUrl) return false;
     if (book.pageCount != pageCount) return false;
@@ -139,9 +146,16 @@ class Book {
     if (book.started != started) return false;
     if (book.finished != finished) return false;
     if (book.isbn != isbn) return false;
-    if (book.sessions != sessions) return false;
+    if (book.sessions.length != sessions.length) return false;
+    for (int i = 0; i < book.sessions.length; i++) {
+      ReadingSession sourceSession = sessions[i];
+      ReadingSession foreignSession = book.sessions[i];
+      if ((sourceSession.id != foreignSession.id ||
+              sourceSession.timePassed != foreignSession.timePassed) ||
+          (sourceSession.started != foreignSession.started ||
+              sourceSession.ended != foreignSession.ended)) return false;
+    }
     if (book.isActive != isActive) return false;
-    print('${book.isActive} == $isActive');
     return true;
   }
 
@@ -170,6 +184,14 @@ class Book {
       return;
     }
     tools[indexOfTool] = newTool;
+  }
+
+  bool isEmpty() {
+    if (title != null) return false;
+    if (author != null) return false;
+    if (published != null) return false;
+    if (genres != null) return false;
+    return true;
   }
 
   List<String> parseGenres(List<String> subjects) {

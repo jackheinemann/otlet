@@ -8,6 +8,7 @@ import 'package:otlet/ui/screens/view_book_tabs/book_tools_tab.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
 import '../../business_logic/models/book.dart';
+import '../../business_logic/models/book.dart';
 import '../../business_logic/utils/constants.dart';
 
 class ViewBookScreen extends StatefulWidget {
@@ -131,16 +132,20 @@ class _ViewBookScreenState extends State<ViewBookScreen>
               IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () async {
-                    Book temp = await Navigator.push(
+                    Book temp = Book.fromBook(book);
+                    Book returnedBook = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                BookInfoEdit(Book.fromBook(book))));
-                    if (temp == null) return;
-                    temp.hasBeenEdited = true;
-                    setState(() {
-                      book = temp;
-                    });
+                            builder: (context) => BookInfoEdit(book)));
+                    if (returnedBook.isEmpty()) {
+                      Navigator.pop(context, returnedBook);
+                      return;
+                    }
+                    if (!temp.compareToBook(book)) {
+                      setState(() {
+                        book.hasBeenEdited = true;
+                      });
+                    }
                   })
             ],
           ),

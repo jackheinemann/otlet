@@ -27,6 +27,11 @@ class OtletCard extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => ViewBookScreen(Book.fromBook(book))));
         if (temp == null) return;
+        if (temp.isEmpty()) {
+          // TODO set up delete functionality
+          print('is empty');
+          return;
+        }
         if (temp.compareToBook(book)) return;
         instance.modifyBook(temp);
         instance.saveInstance();
