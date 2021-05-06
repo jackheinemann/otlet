@@ -14,10 +14,6 @@ class BookInfoStatic extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        OutlinedButton(
-            onPressed: () {},
-            child: Text('Edit Info',
-                style: TextStyle(fontSize: 16, color: primaryColor))),
         SizedBox(
           height: 10,
         ),

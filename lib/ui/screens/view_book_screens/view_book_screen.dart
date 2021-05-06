@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:otlet/business_logic/models/tool.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_info_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_tools_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/book_info_edit.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_info_static.dart';
@@ -9,7 +9,6 @@ import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_sessions_
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_tools_static_tab.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
-import '../../../business_logic/models/book.dart';
 import '../../../business_logic/models/book.dart';
 import '../../../business_logic/utils/constants.dart';
 
@@ -124,6 +123,14 @@ class _ViewBookScreenState extends State<ViewBookScreen>
             SizedBox(
               height: 20,
             ),
+          OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  isEditing = true;
+                });
+              },
+              child: Text('Edit',
+                  style: TextStyle(fontSize: 16, color: primaryColor))),
           Divider(),
         ]);
         // START SCAFFOLD
@@ -133,25 +140,25 @@ class _ViewBookScreenState extends State<ViewBookScreen>
             title: Icon(Icons.menu_book),
             centerTitle: true,
             actions: [
-              IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () async {
-                    Book temp = Book.fromBook(book);
-                    Book returnedBook = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BookInfoEdit(book)));
+              // IconButton(
+              //     icon: Icon(Icons.edit),
+              //     onPressed: () async {
+              //       Book temp = Book.fromBook(book);
+              //       Book returnedBook = await Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //               builder: (context) => BookInfoEdit(book)));
 
-                    if (returnedBook != null) if (returnedBook.isEmpty()) {
-                      Navigator.pop(context, returnedBook);
-                      return;
-                    }
-                    if (!temp.compareToBook(book)) {
-                      setState(() {
-                        book.hasBeenEdited = true;
-                      });
-                    }
-                  })
+              //       if (returnedBook != null) if (returnedBook.isEmpty()) {
+              //         Navigator.pop(context, returnedBook);
+              //         return;
+              //       }
+              //       if (!temp.compareToBook(book)) {
+              //         setState(() {
+              //           book.hasBeenEdited = true;
+              //         });
+              //       }
+              //     })
             ],
           ),
           body: Column(
@@ -182,15 +189,22 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    BookInfoStatic(
-                      book,
-                      updateActive: (active) {
-                        setState(() {
-                          book.isActive = active;
-                          book.hasBeenEdited = true;
-                        });
-                      },
-                    ),
+                    isEditing
+                        ? EditBookInfoTab(book, stopEditing: () {
+                            setState(() {
+                              isEditing = false;
+                              book.hasBeenEdited = true;
+                            });
+                          })
+                        : BookInfoStatic(
+                            book,
+                            updateActive: (active) {
+                              setState(() {
+                                book.isActive = active;
+                                book.hasBeenEdited = true;
+                              });
+                            },
+                          ),
                     // BookToolsTab(
                     //   book,
                     //   updateBook: (updatedBook) {
