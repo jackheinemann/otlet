@@ -8,6 +8,7 @@ import 'package:otlet/business_logic/services/session_stream.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'book.dart';
+import 'book.dart';
 
 class OtletInstance extends ChangeNotifier {
   String userFirstName;
@@ -100,6 +101,22 @@ class OtletInstance extends ChangeNotifier {
     for (int i = 0; i < books.length; i++) {
       books[i].tools.add(Tool.fromTool(tool));
     }
+    saveInstance();
+    notifyListeners();
+  }
+
+  void deleteBook(Book book) {
+    int index;
+    for (int i = 0; i < books.length; i++) {
+      if (book.compareIds(books[i])) {
+        index = i;
+        break;
+      }
+    }
+    if (index == null) return;
+    if (activeBookIndex == index) activeBookIndex = -1;
+    if (activeBookIndex > index) activeBookIndex -= 1;
+    books.removeAt(index);
     saveInstance();
     notifyListeners();
   }

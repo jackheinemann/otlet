@@ -28,8 +28,8 @@ class OtletCard extends StatelessWidget {
                 builder: (context) => ViewBookScreen(Book.fromBook(book))));
         if (temp == null) return;
         if (temp.isEmpty()) {
-          // TODO set up delete functionality
-          print('is empty');
+          // book with temp.id is marked for deletion
+          instance.deleteBook(temp);
           return;
         }
         if (temp.compareToBook(book)) return;

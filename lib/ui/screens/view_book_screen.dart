@@ -137,7 +137,8 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                         context,
                         MaterialPageRoute(
                             builder: (context) => BookInfoEdit(book)));
-                    if (returnedBook.isEmpty()) {
+
+                    if (returnedBook != null) if (returnedBook.isEmpty()) {
                       Navigator.pop(context, returnedBook);
                       return;
                     }
