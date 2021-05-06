@@ -3,13 +3,26 @@ import 'package:otlet/business_logic/models/tool.dart';
 
 import '../../../business_logic/utils/constants.dart';
 
-class BookToolCard extends StatelessWidget {
+class BookToolCard extends StatefulWidget {
   final Tool tool;
+  final ListTile valueEditor;
   final Function(Tool) updateBookTool;
-  final Function(bool) toolIsEditing;
 
-  BookToolCard(this.tool,
-      {@required this.updateBookTool, @required this.toolIsEditing});
+  BookToolCard(this.tool, this.valueEditor, {@required this.updateBookTool});
+  @override
+  _BookToolCardState createState() => _BookToolCardState();
+}
+
+class _BookToolCardState extends State<BookToolCard> {
+  Tool tool;
+  ListTile valueEditor;
+
+  initState() {
+    super.initState();
+    tool = widget.tool;
+    valueEditor = widget.valueEditor;
+  }
+
   @override
   Widget build(BuildContext context) {
     ListTile toolTile = ListTile(
@@ -19,23 +32,27 @@ class BookToolCard extends StatelessWidget {
         activeColor: accentColor,
         value: tool.isActive,
         onChanged: (value) {
-          tool.isActive = value;
-          updateBookTool(tool);
+          setState(() {
+            tool.isActive = value;
+          });
+          // widget.updateBookTool(tool);
         },
       ),
     );
     return tool.isActive
         ? Column(
-            children: [
-              toolTile,
-              tool.generateValueInput(context,
-                  onValueChange: (value) {
-                    tool.value = value;
-                    updateBookTool(tool);
-                  },
-                  editingChanges: (isEditing) => toolIsEditing(isEditing))
-            ],
+            children: [toolTile, valueEditor],
           )
         : toolTile;
   }
 }
+
+// class BookToolCard extends StatelessWidget {
+//   final Tool tool;
+//   final ListTile valueEditor;
+//   final Function(Tool) updateBookTool;
+
+//   BookToolCard(this.tool, this.valueEditor, {@required this.updateBookTool});
+//   @override
+//   Widget build(BuildContext context) {}
+// }

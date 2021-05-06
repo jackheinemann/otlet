@@ -2,14 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/tool.dart';
-import 'package:otlet/ui/screens/view_book_tabs/book_info_edit.dart';
-import 'package:otlet/ui/screens/view_book_tabs/book_info_static.dart';
-import 'package:otlet/ui/screens/view_book_tabs/book_sessions_tab.dart';
-import 'package:otlet/ui/screens/view_book_tabs/book_tools_tab.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_tools_tab.dart';
+import 'package:otlet/ui/screens/view_book_screens/book_info_edit.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_info_static.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_sessions_tab.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_tools_static_tab.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
-import '../../business_logic/models/book.dart';
-import '../../business_logic/utils/constants.dart';
+import '../../../business_logic/models/book.dart';
+import '../../../business_logic/models/book.dart';
+import '../../../business_logic/utils/constants.dart';
 
 class ViewBookScreen extends StatefulWidget {
   final Book book;
@@ -28,7 +30,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
 
   TabController tabController;
 
-  Tool editingTool;
+  bool isEditing = false;
 
   @override
   void initState() {
@@ -46,7 +48,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
     double bookImageWidth = MediaQuery.of(context).size.width * .35;
     return WillPopScope(
       onWillPop: () async {
-        if (book.hasBeenEdited) {
+        if (book.hasBeenEdited || isEditing) {
           bool shouldPop = await showConfirmDialog(
               'Discard changes to ${book.title}?', context);
           if (!shouldPop) return Future.value(false);
@@ -154,7 +156,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
           ),
           body: Column(
             children: [
-              if (editingTool == null)
+              if (!isEditing)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: bookviewHeader,
@@ -189,21 +191,33 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                         });
                       },
                     ),
-                    BookToolsTab(
-                      book,
-                      updateBook: (updatedBook) {
-                        setState(() {
-                          book = updatedBook;
-                          book.hasBeenEdited = true;
-                        });
-                      },
-                      toolIsEditing: (tool, editing) {
-                        setState(() {
-                          editingTool = editing ? tool : null;
-                          if (editing == false) book.hasBeenEdited = true;
-                        });
-                      },
-                    ),
+                    // BookToolsTab(
+                    //   book,
+                    //   updateBook: (updatedBook) {
+                    //     setState(() {
+                    //       book = updatedBook;
+                    //       book.hasBeenEdited = true;
+                    //     });
+                    //   },
+                    //   toolIsEditing: (tool, editing) {
+                    //     setState(() {
+                    //       editingTool = editing ? tool : null;
+                    //       if (editing == false) book.hasBeenEdited = true;
+                    //     });
+                    //   },
+                    // ),
+                    isEditing
+                        ? EditBookToolsTab(book, stopEditing: () {
+                            setState(() {
+                              isEditing = false;
+                              book.hasBeenEdited = true;
+                            });
+                          })
+                        : BookToolsStaticTab(book, editTools: () {
+                            setState(() {
+                              isEditing = true;
+                            });
+                          }),
                     BookSessionsTab(book)
                   ]
                       .map((e) => Padding(
@@ -213,7 +227,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                       .toList(),
                 ),
               ),
-              if (book.hasBeenEdited)
+              if (book.hasBeenEdited && !isEditing)
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: primaryColor),
                     onPressed: () {
@@ -223,7 +237,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                     child: Container(
                         width: MediaQuery.of(context).size.width * .65,
                         child: Center(
-                            child: Text('Save Edits',
+                            child: Text('Save Book',
                                 style: TextStyle(fontSize: 17))))),
               if (book.hasBeenEdited)
                 SizedBox(

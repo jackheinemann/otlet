@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
-import 'package:otlet/ui/screens/view_book_screen.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_screen.dart';
 
 import '../../../business_logic/models/otlet_instance.dart';
 

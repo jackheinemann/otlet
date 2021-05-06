@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/ui/widgets/books/genre_chip.dart';
-import 'package:provider/provider.dart';
 
-import '../../../business_logic/models/book.dart';
-import '../../../business_logic/utils/constants.dart';
-import '../../../business_logic/utils/constants.dart';
+import '../../../../business_logic/models/book.dart';
+import '../../../../business_logic/utils/constants.dart';
 
 class BookInfoStatic extends StatelessWidget {
   final Book book;
@@ -16,6 +14,10 @@ class BookInfoStatic extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        OutlinedButton(
+            onPressed: () {},
+            child: Text('Edit Info',
+                style: TextStyle(fontSize: 16, color: primaryColor))),
         SizedBox(
           height: 10,
         ),

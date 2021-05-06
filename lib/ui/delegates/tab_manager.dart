@@ -5,7 +5,7 @@ import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/functions.dart';
 import 'package:otlet/ui/screens/home_screen.dart';
 import 'package:otlet/ui/screens/view_books_screen.dart';
-import 'package:otlet/ui/screens/view_tools_screen.dart';
+import 'package:otlet/ui/screens/view_tools_screens/view_tools_screen.dart';
 import 'package:provider/provider.dart';
 
 class TabManager extends StatefulWidget {

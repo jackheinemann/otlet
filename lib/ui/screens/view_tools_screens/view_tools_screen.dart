@@ -4,8 +4,8 @@ import 'package:otlet/ui/widgets/tools/otlet_tool_card.dart';
 import 'package:otlet/ui/widgets/tools/tool_card.dart';
 import 'package:provider/provider.dart';
 
-import '../../business_logic/models/otlet_instance.dart';
-import '../../business_logic/utils/constants.dart';
+import '../../../business_logic/models/otlet_instance.dart';
+import '../../../business_logic/utils/constants.dart';
 
 class ViewToolsScreen extends StatefulWidget {
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../business_logic/models/book.dart';
-import '../../widgets/sessions/session_record.dart';
+import '../../../../business_logic/models/book.dart';
+import '../../../widgets/sessions/session_record.dart';
 
 class BookSessionsTab extends StatelessWidget {
   final Book book;
