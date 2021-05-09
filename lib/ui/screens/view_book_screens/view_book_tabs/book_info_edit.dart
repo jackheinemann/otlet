@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
-import '../../../business_logic/models/book.dart';
-import '../../../business_logic/models/book.dart';
-import '../../../business_logic/models/book.dart';
-import '../../../business_logic/utils/constants.dart';
-import '../../../business_logic/utils/constants.dart';
+import '../../../../business_logic/models/book.dart';
+import '../../../../business_logic/utils/constants.dart';
 
 class BookInfoEdit extends StatefulWidget {
   final Book book;
