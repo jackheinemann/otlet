@@ -25,12 +25,12 @@ class OtletInstance extends ChangeNotifier {
   List<ReadingSession> sessionHistory = [];
   List<Tool> tools = [];
   List<Tool> otletTools = [
-    Tool(
-        name: 'Track Progress',
-        toolType: Tool.doubleTool,
-        useFixedOptions: false,
-        setActiveForAll: false,
-        isBookTool: true)
+    // Tool(
+    //     name: 'Track Progress',
+    //     toolType: Tool.doubleTool,
+    //     useFixedOptions: false,
+    //     setActiveForAll: false,
+    //     isBookTool: true)
   ];
 
   OtletInstance.empty();
