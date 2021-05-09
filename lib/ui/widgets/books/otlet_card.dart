@@ -29,6 +29,7 @@ class OtletCard extends StatelessWidget {
 
         if (temp == null) return;
         if (temp.isEmpty()) {
+          print('empty!');
           // book with temp.id is marked for deletion
           instance.deleteBook(temp);
           return;

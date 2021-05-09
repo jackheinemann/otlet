@@ -139,25 +139,15 @@ class _ViewBookScreenState extends State<ViewBookScreen>
             title: Icon(Icons.menu_book),
             centerTitle: true,
             actions: [
-              // IconButton(
-              //     icon: Icon(Icons.edit),
-              //     onPressed: () async {
-              //       Book temp = Book.fromBook(book);
-              //       Book returnedBook = await Navigator.push(
-              //           context,
-              //           MaterialPageRoute(
-              //               builder: (context) => BookInfoEdit(book)));
-
-              //       if (returnedBook != null) if (returnedBook.isEmpty()) {
-              //         Navigator.pop(context, returnedBook);
-              //         return;
-              //       }
-              //       if (!temp.compareToBook(book)) {
-              //         setState(() {
-              //           book.hasBeenEdited = true;
-              //         });
-              //       }
-              //     })
+              IconButton(
+                  icon: Icon(Icons.delete_forever),
+                  onPressed: () async {
+                    bool shouldDelete = await showConfirmDialog(
+                        'Are you sure you want to delete ${book.title}?',
+                        context);
+                    if (!shouldDelete) return;
+                    Navigator.pop(context, Book.toDelete(book));
+                  })
             ],
           ),
           body: Column(

@@ -46,6 +46,10 @@ class Book {
     id = Uuid().v1();
   }
 
+  Book.toDelete(Book book) {
+    id = book.id;
+  }
+
   Book.fromBook(Book book) {
     id = book.id;
     isbn = book.isbn;
@@ -202,7 +206,7 @@ class Book {
     if (title != null) return false;
     if (author != null) return false;
     if (published != null) return false;
-    if (genres != null) return false;
+    if (genres.isNotEmpty) return false;
     return true;
   }
 
