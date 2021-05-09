@@ -272,10 +272,21 @@ class OtletInstance extends ChangeNotifier {
   void startSession() {
     activeSession = ReadingSession.basic();
     activeSession.isReading = false;
+    activeSession.importSessionTools(activeBook());
 
     if (activeSession.started == null) activeSession.started = DateTime.now();
     _stream = sessionStream();
 
+    notifyListeners();
+  }
+
+  void updateSessionTool(Tool tool) {
+    for (int i = 0; i < activeSession.tools.length; i++) {
+      if (tool.compareToolId(activeSession.tools[i])) {
+        activeSession.tools[i] = tool;
+        break;
+      }
+    }
     notifyListeners();
   }
 
@@ -297,8 +308,12 @@ class OtletInstance extends ChangeNotifier {
   void endSession() {
     Duration timePassed = activeSession.timePassed;
 
-    timerSubscription.cancel();
-    _stream = null;
+    try {
+      timerSubscription.cancel();
+      _stream = null;
+    } catch (e) {
+      print('Error stopping session stream: $e');
+    }
 
     if (timePassed.inSeconds >= 1) {
       activeSession.ended = DateTime.now();

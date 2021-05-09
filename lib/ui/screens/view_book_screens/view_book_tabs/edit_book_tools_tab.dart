@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:otlet/ui/widgets/tools/book_tool_card.dart';
 
 import '../../../../business_logic/models/book.dart';
-import '../../../../business_logic/utils/constants.dart';
 
 class EditBookToolsTab extends StatefulWidget {
   final Book book;

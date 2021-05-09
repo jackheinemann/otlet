@@ -221,6 +221,12 @@ class Book {
     return parsedGenres;
   }
 
+  void promptSessionTools() {
+    List<Tool> activeSessionTools = tools
+        .where((element) => !element.isBookTool && element.isActive)
+        .toList();
+  }
+
   String readingPercent() {
     return '${(readingProgress() * 100).round()}%';
   }

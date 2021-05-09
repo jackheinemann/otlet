@@ -176,17 +176,17 @@ class Tool {
 
   Widget generateValueInput(
       BuildContext context, TextEditingController valueController,
-      {@required Function(dynamic) onValueChange}) {
+      {@required Function(dynamic) onValueChange, String labelText}) {
     TextFormField textFormField;
-    print('getting ready to display the value $value');
     if (value != null) valueController.text = displayValue();
+    if (labelText == null) labelText = 'Value';
 
     if (useFixedOptions) {
       // just show a simple selector
       textFormField = TextFormField(
         controller: valueController,
         decoration:
-            InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
+            InputDecoration(labelText: labelText, border: OutlineInputBorder()),
         readOnly: true,
         onTap: () async {
           String stringValue = await showSimpleSelectorDialog(
@@ -200,8 +200,8 @@ class Tool {
         // gonna need some special stuff
         textFormField = TextFormField(
           controller: valueController,
-          decoration:
-              InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
+          decoration: InputDecoration(
+              labelText: labelText, border: OutlineInputBorder()),
           readOnly: true,
           onTap: () async {
             if (isDateTime()) {
@@ -245,8 +245,8 @@ class Tool {
               ? TextInputType.text
               : TextInputType.numberWithOptions(signed: true),
           controller: valueController,
-          decoration:
-              InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
+          decoration: InputDecoration(
+              labelText: labelText, border: OutlineInputBorder()),
           onEditingComplete: () {
             FocusScope.of(context).unfocus();
             String input = valueController.text.trim();
@@ -271,7 +271,6 @@ class Tool {
         );
       }
     }
-    print('returning with value ${valueController.text}');
     return ListTile(title: textFormField);
   }
 

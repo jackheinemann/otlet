@@ -38,19 +38,17 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
               width: MediaQuery.of(context).size.width,
               color: primaryColor,
             ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: instance.otletTools.length,
-                  itemBuilder: (context, i) {
-                    Tool otletTool = instance.otletTools[i];
-                    return OtletToolCard(otletTool,
-                        updateActivity: (masterTool) {
-                      setState(() {
-                        instance.setGlobalOtletToolActivity(masterTool);
-                      });
-                    });
-                  }),
+            Column(
+              children: instance.otletTools
+                  .map((e) => OtletToolCard(e, updateActivity: (masterTool) {
+                        setState(() {
+                          instance.setGlobalOtletToolActivity(masterTool);
+                        });
+                      }))
+                  .toList(),
             ),
+            // Expanded(
+
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Row(

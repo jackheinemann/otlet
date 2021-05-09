@@ -43,7 +43,9 @@ class SessionTrackerCard extends StatelessWidget {
                           instance.saveInstance();
                         },
                         child: CircleAvatar(
-                          child: Icon(Icons.save),
+                          child: Icon(session.timePassed.inSeconds >= 1
+                              ? Icons.save
+                              : Icons.close),
                         ),
                       ),
                       SizedBox(

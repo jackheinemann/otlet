@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:otlet/business_logic/models/tool.dart';
 import 'package:uuid/uuid.dart';
+
+import 'book.dart';
 
 class ReadingSession {
   String id;
@@ -6,6 +11,8 @@ class ReadingSession {
   DateTime ended;
   bool isReading = false;
   Duration timePassed;
+
+  List<Tool> tools = [];
 
   ReadingSession({
     this.started,
@@ -22,6 +29,7 @@ class ReadingSession {
     ended = session.ended;
     isReading = session.isReading;
     timePassed = session.timePassed;
+    tools = session.tools.map((e) => Tool.fromTool(e)).toList();
   }
 
   ReadingSession.basic() {
@@ -35,6 +43,19 @@ class ReadingSession {
     ended = DateTime.parse(json['ended']);
     isReading = json['isReading'];
     timePassed = Duration(seconds: json['timePassed']);
+    if (json['tools'] != null) {
+      List<dynamic> toolsJson = List<dynamic>.from(jsonDecode(json['tools']));
+      for (Map<String, dynamic> json in toolsJson) {
+        tools.add(Tool.fromJson(json));
+      }
+    }
+  }
+
+  void importSessionTools(Book book) {
+    tools = book.tools
+        .where((element) => !element.isBookTool && element.isActive)
+        .map((e) => Tool.fromTool(e))
+        .toList();
   }
 
   void updateTimePassed() {
@@ -67,6 +88,8 @@ class ReadingSession {
       'ended': ended.toString(),
       'isReading': isReading,
       'timePassed': timePassed.inSeconds,
+      if (tools != null)
+        'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
     };
   }
 }

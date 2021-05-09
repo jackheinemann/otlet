@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:otlet/ui/screens/home_screen/edit_session_tools.dart';
 import 'package:otlet/ui/widgets/books/active_book_card.dart';
-import 'package:otlet/ui/widgets/sessions/session_record.dart';
 import 'package:otlet/ui/widgets/sessions/session_tracker_card.dart';
 import 'package:provider/provider.dart';
 
@@ -32,16 +32,7 @@ class HomeScreen extends StatelessWidget {
                             )),
                       ),
                     ),
-              if (instance.hasActiveBook())
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: instance.activeBook().sessions.length,
-                      itemBuilder: (context, i) {
-                        ReadingSession session =
-                            instance.activeBook().sessions.toList()[i];
-                        return SessionRecordCard(session);
-                      }),
-                ),
+              instance.hasActiveSession() ? EditSessionTools() : Spacer(),
               if (instance.hasActiveBook()) SessionTrackerCard(instance)
             ],
           ),
