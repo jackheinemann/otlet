@@ -34,7 +34,6 @@ class _BookToolCardState extends State<BookToolCard> {
           setState(() {
             tool.isActive = isActive;
           });
-          // widget.updateBookTool(tool);
         },
       ),
     );
@@ -45,13 +44,3 @@ class _BookToolCardState extends State<BookToolCard> {
         : toolTile;
   }
 }
-
-// class BookToolCard extends StatelessWidget {
-//   final Tool tool;
-//   final ListTile valueEditor;
-//   final Function(Tool) updateBookTool;
-
-//   BookToolCard(this.tool, this.valueEditor, {@required this.updateBookTool});
-//   @override
-//   Widget build(BuildContext context) {}
-// }

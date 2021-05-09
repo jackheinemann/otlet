@@ -119,6 +119,14 @@ class Tool {
       value = double.tryParse(stringVal);
     } else if (toolType == Tool.textTool) {
       value = stringVal;
+    } else if (toolType == Tool.dateTimeTool) {
+      value = DateFormat('MMMM d, y h:mm aa').parse(stringVal);
+    } else if (toolType == Tool.dateTool) {
+      value = DateFormat('MMMM d').parse(stringVal);
+    } else {
+      // toolType == Tool.timeTool
+      DateTime timeOfDayDT = DateFormat('h:mm aa').parse(value);
+      value = TimeOfDay.fromDateTime(timeOfDayDT);
     }
   }
 
@@ -173,76 +181,95 @@ class Tool {
     print('getting ready to display the value $value');
     if (value != null) valueController.text = displayValue();
 
-    if (isSpecialGrade()) {
-      // gonna need some special stuff
+    if (useFixedOptions) {
+      // just show a simple selector
       textFormField = TextFormField(
         controller: valueController,
         decoration:
             InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
         readOnly: true,
         onTap: () async {
-          if (isDateTime()) {
-            if (isOnlyDate()) {
-              DateTime dateTime = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now().subtract(Duration(days: 365) * 50),
-                  lastDate: DateTime.now().add(Duration(days: 365) * 50));
-              if (dateTime == null) return;
-              if (toolType == Tool.dateTimeTool) {
-                TimeOfDay timeOfDay = await showTimePicker(
-                    context: context, initialTime: TimeOfDay.now());
-                if (timeOfDay == null) return;
-                dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
-                    timeOfDay.hour, timeOfDay.minute);
-              }
-              onValueChange(dateTime);
-            } else {
-              // is just TimeOfDay
-              TimeOfDay timeOfDay = await showTimePicker(
-                  context: context, initialTime: TimeOfDay.now());
-              if (timeOfDay == null) return;
-              onValueChange(timeOfDay);
-            }
-          } else {
-            bool val = await showSimpleSelectorDialog(
-                        context, 'Select a value', [true, false]) ==
-                    'true'
-                ? true
-                : false;
-            onValueChange(val);
-          }
+          String stringValue = await showSimpleSelectorDialog(
+              context, 'Select a value for $name', fixedOptions);
+          assignValueFromString(stringValue);
+          onValueChange(value);
         },
       );
     } else {
-      // either decimal, integer, or text
-      textFormField = TextFormField(
-        keyboardType: toolType == Tool.textTool
-            ? TextInputType.text
-            : TextInputType.numberWithOptions(signed: true),
-        controller: valueController,
-        decoration:
-            InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
-        onEditingComplete: () {
-          FocusScope.of(context).unfocus();
-          String input = valueController.text.trim();
-          if (toolType == Tool.textTool)
-            onValueChange(input);
-          else if (toolType == Tool.doubleTool) {
-            double val = double.tryParse(input);
-            if (val == null)
-              showErrorDialog(context, '$input is not a valid decimal value.');
-            else
+      if (isSpecialGrade()) {
+        // gonna need some special stuff
+        textFormField = TextFormField(
+          controller: valueController,
+          decoration:
+              InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
+          readOnly: true,
+          onTap: () async {
+            if (isDateTime()) {
+              if (isOnlyDate()) {
+                DateTime dateTime = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate:
+                        DateTime.now().subtract(Duration(days: 365) * 50),
+                    lastDate: DateTime.now().add(Duration(days: 365) * 50));
+                if (dateTime == null) return;
+                if (toolType == Tool.dateTimeTool) {
+                  TimeOfDay timeOfDay = await showTimePicker(
+                      context: context, initialTime: TimeOfDay.now());
+                  if (timeOfDay == null) return;
+                  dateTime = DateTime(dateTime.year, dateTime.month,
+                      dateTime.day, timeOfDay.hour, timeOfDay.minute);
+                }
+                onValueChange(dateTime);
+              } else {
+                // is just TimeOfDay
+                TimeOfDay timeOfDay = await showTimePicker(
+                    context: context, initialTime: TimeOfDay.now());
+                if (timeOfDay == null) return;
+                onValueChange(timeOfDay);
+              }
+            } else {
+              bool val = await showSimpleSelectorDialog(
+                          context, 'Select a value', [true, false]) ==
+                      'true'
+                  ? true
+                  : false;
               onValueChange(val);
-          } else {
-            int val = int.tryParse(input);
-            if (val == null)
-              showErrorDialog(context, '$input is not a valid integer value.');
-            else
-              onValueChange(val);
-          }
-        },
-      );
+            }
+          },
+        );
+      } else {
+        // either decimal, integer, or text
+        textFormField = TextFormField(
+          keyboardType: toolType == Tool.textTool
+              ? TextInputType.text
+              : TextInputType.numberWithOptions(signed: true),
+          controller: valueController,
+          decoration:
+              InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
+          onEditingComplete: () {
+            FocusScope.of(context).unfocus();
+            String input = valueController.text.trim();
+            if (toolType == Tool.textTool)
+              onValueChange(input);
+            else if (toolType == Tool.doubleTool) {
+              double val = double.tryParse(input);
+              if (val == null)
+                showErrorDialog(
+                    context, '$input is not a valid decimal value.');
+              else
+                onValueChange(val);
+            } else {
+              int val = int.tryParse(input);
+              if (val == null)
+                showErrorDialog(
+                    context, '$input is not a valid integer value.');
+              else
+                onValueChange(val);
+            }
+          },
+        );
+      }
     }
     print('returning with value ${valueController.text}');
     return ListTile(title: textFormField);
