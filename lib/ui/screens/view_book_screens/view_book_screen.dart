@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_info_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_tools_tab.dart';
-import 'package:otlet/ui/screens/view_book_screens/book_info_edit.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_info_static.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_sessions_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_tools_static_tab.dart';
@@ -201,6 +200,12 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                             updateActive: (active) {
                               setState(() {
                                 book.isActive = active;
+                                book.hasBeenEdited = true;
+                              });
+                            },
+                            updateTrackProgress: (trackProgress) {
+                              setState(() {
+                                book.trackProgress = trackProgress;
                                 book.hasBeenEdited = true;
                               });
                             },

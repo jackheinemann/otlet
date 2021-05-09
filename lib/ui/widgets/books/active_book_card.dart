@@ -72,7 +72,7 @@ class ActiveBookCard extends StatelessWidget {
                               children: [
                                 Spacer(),
                                 Container(
-                                  width: MediaQuery.of(context).size.width * .5,
+                                  width: MediaQuery.of(context).size.width * .4,
                                   child: LinearProgressIndicator(
                                     value: book.readingProgress(),
                                   ),

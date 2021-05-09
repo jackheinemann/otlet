@@ -7,7 +7,6 @@ import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:uuid/uuid.dart';
 
 import 'reading_session.dart';
-import 'reading_session.dart';
 
 class Book {
   String id;
@@ -228,7 +227,10 @@ class Book {
   }
 
   String readingPercent() {
-    return '${(readingProgress() * 100).round()}%';
+    int percent = (readingProgress() * 100).round();
+    if (currentPage < pageCount && percent == 1) percent = 99;
+    if (currentPage > 0 && percent == 0) percent = 1;
+    return '$percent%';
   }
 
   double readingProgress() {

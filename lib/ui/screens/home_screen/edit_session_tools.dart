@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/tool.dart';
-import 'package:otlet/ui/widgets/tools/session_tool_card.dart';
 import 'package:provider/provider.dart';
 
 import '../../../business_logic/models/otlet_instance.dart';

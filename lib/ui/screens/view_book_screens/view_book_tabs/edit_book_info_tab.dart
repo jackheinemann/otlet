@@ -18,6 +18,7 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
   final TextEditingController genreController = TextEditingController();
   final TextEditingController publishedController = TextEditingController();
   final TextEditingController pageCountController = TextEditingController();
+  final TextEditingController currentPageController = TextEditingController();
   final TextEditingController startedController = TextEditingController();
   final TextEditingController finishedController = TextEditingController();
 
@@ -40,6 +41,8 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
       publishedController.text = DateFormat('y').format(book.published);
     if (book.pageCount != null)
       pageCountController.text = book.pageCount.toString();
+    if (book.currentPage != null)
+      currentPageController.text = book.currentPage.toString();
   }
 
   @override
@@ -126,6 +129,21 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
                     },
                     decoration: InputDecoration(
                         labelText: 'Publication Year',
+                        border: OutlineInputBorder()),
+                  ),
+                  SizedBox(height: 15),
+                  TextFormField(
+                    controller: currentPageController,
+                    keyboardType: TextInputType.numberWithOptions(signed: true),
+                    onEditingComplete: () {
+                      FocusScope.of(context).unfocus();
+                      setState(() {
+                        book.currentPage =
+                            int.tryParse(currentPageController.text);
+                      });
+                    },
+                    decoration: InputDecoration(
+                        labelText: 'Current Page',
                         border: OutlineInputBorder()),
                   ),
                   SizedBox(height: 15),
