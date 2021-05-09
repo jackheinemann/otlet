@@ -6,6 +6,7 @@ import 'package:otlet/ui/widgets/alerts/error_dialog.dart';
 import 'package:otlet/ui/widgets/alerts/simple_selector.dart';
 
 import '../../../business_logic/utils/constants.dart';
+import 'create_fixed_options_screen.dart';
 
 class CreateCustomToolScreen extends StatefulWidget {
   final bool isEdit;
@@ -180,23 +181,23 @@ class _CreateCustomToolScreenState extends State<CreateCustomToolScreen> {
                                 const EdgeInsets.symmetric(horizontal: 7.0),
                             child: TextFormField(
                               onTap: () async {
-                                // List<dynamic> fixedOptions =
-                                //     await Navigator.push(
-                                //         context,
-                                //         MaterialPageRoute(
-                                //             builder: (context) =>
-                                //                 CreateFixedOptionsScreen(
-                                //                     tool)));
-                                // if (fixedOptions == null) return;
-                                // setState(() {
-                                //   tool.fixedOptions =
-                                //       List<dynamic>.from(fixedOptions);
-                                //   fixedOptionsController.text = tool
-                                //       .fixedOptions
-                                //       .map((e) => e.toString())
-                                //       .toList()
-                                //       .join(', ');
-                                // });
+                                List<dynamic> fixedOptions =
+                                    await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CreateFixedOptionsScreen(
+                                                    tool)));
+                                if (fixedOptions == null) return;
+                                setState(() {
+                                  tool.fixedOptions =
+                                      List<dynamic>.from(fixedOptions);
+                                  fixedOptionsController.text = tool
+                                      .fixedOptions
+                                      .map((e) => e.toString())
+                                      .toList()
+                                      .join(', ');
+                                });
                               },
                               textCapitalization: TextCapitalization.words,
                               readOnly: true,

@@ -14,7 +14,9 @@ class BookToolsStaticTab extends StatelessWidget {
         book.tools.where((element) => element.isActive).toList();
     return activeTools.isEmpty
         ? Center(
-            child: Text('No Active Tools', style: TextStyle(fontSize: 18)),
+            child: Text(
+                book.tools.isEmpty ? 'No Tools Created' : 'No Active Tools',
+                style: TextStyle(fontSize: 18)),
           )
         : Column(children: activeTools.map((e) => StaticToolCard(e)).toList());
   }
