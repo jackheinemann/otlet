@@ -123,6 +123,7 @@ class OtletInstance extends ChangeNotifier {
     tools.add(tool);
     for (int i = 0; i < books.length; i++) {
       books[i].tools.add(Tool.fromTool(tool));
+      books[i].tools.sort((a, b) => a.name.compareTo(b.name));
     }
     saveInstance();
     notifyListeners();

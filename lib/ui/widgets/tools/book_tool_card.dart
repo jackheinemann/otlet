@@ -27,6 +27,7 @@ class _BookToolCardState extends State<BookToolCard> {
     ListTile toolTile = ListTile(
       title: Text(tool.name, style: TextStyle(fontSize: 18)),
       subtitle: Text(tool.toolType),
+      leading: Icon(tool.isBookTool ? Icons.menu_book : Icons.history),
       trailing: Switch(
         activeColor: accentColor,
         value: tool.isActive,
@@ -37,7 +38,7 @@ class _BookToolCardState extends State<BookToolCard> {
         },
       ),
     );
-    return tool.isActive
+    return tool.isActive && tool.isBookTool
         ? Column(
             children: [toolTile, valueEditor],
           )

@@ -57,6 +57,7 @@ class _TabManagerState extends State<TabManager> {
                       if (tool == null) return;
                       setState(() {
                         instance.addNewTool(tool);
+                        instance.tools.sort((a, b) => a.name.compareTo(b.name));
                       });
                     }
                   })
