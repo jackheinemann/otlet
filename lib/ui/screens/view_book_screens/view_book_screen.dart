@@ -250,6 +250,16 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                       .toList(),
                 ),
               ),
+              if (isEditing)
+                OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        isEditing = false;
+                        book.hasBeenEdited = true;
+                      });
+                    },
+                    child: Text('Stop Editing',
+                        style: TextStyle(fontSize: 16, color: primaryColor))),
               if (book.hasBeenEdited && !isEditing)
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: primaryColor),
@@ -262,7 +272,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                         child: Center(
                             child: Text('Save Book',
                                 style: TextStyle(fontSize: 17))))),
-              if (book.hasBeenEdited)
+              if (book.hasBeenEdited || isEditing)
                 SizedBox(
                   height: 20,
                 )

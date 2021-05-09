@@ -27,28 +27,18 @@ class _EditBookToolsTabState extends State<EditBookToolsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        OutlinedButton(
-            onPressed: () => widget.stopEditing(),
-            child: Text('Stop Editing',
-                style: TextStyle(fontSize: 16, color: primaryColor))),
-        Expanded(
-          child: ListView.builder(
-              itemCount: book.tools.length,
-              itemBuilder: (context, i) {
-                ListTile valueEditor = book.tools[i].generateValueInput(
-                    context, valueControllers[i], onValueChange: (value) {
-                  setState(() {
-                    book.tools[i].value = value;
-                    valueControllers[i].text = book.tools[i].displayValue();
-                  });
-                  widget.onValueChange(book);
-                });
-                return BookToolCard(book.tools[i], valueEditor);
-              }),
-        ),
-      ],
-    );
+    return ListView.builder(
+        itemCount: book.tools.length,
+        itemBuilder: (context, i) {
+          ListTile valueEditor = book.tools[i].generateValueInput(
+              context, valueControllers[i], onValueChange: (value) {
+            setState(() {
+              book.tools[i].value = value;
+              valueControllers[i].text = book.tools[i].displayValue();
+            });
+            widget.onValueChange(book);
+          });
+          return BookToolCard(book.tools[i], valueEditor);
+        });
   }
 }
