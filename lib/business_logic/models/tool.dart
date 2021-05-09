@@ -141,37 +141,40 @@ class Tool {
     return true;
   }
 
+  String displayValue() {
+    if (value == null) return '';
+    if (isSpecialGrade()) {
+      if (isDateTime()) {
+        if (isOnlyDate()) {
+          return DateFormat('MMMM d, y${includesTime() ? ' h:mm aa' : ''}')
+              .format(value);
+        } else {
+          TimeOfDay timeOfDay = value as TimeOfDay;
+          return DateFormat('h:mm aa')
+              .format(DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute));
+        }
+      } else {
+        return value.toString();
+      }
+    } else
+      return value.toString();
+  }
+
   Tool generalize() {
     Tool generalized = Tool.fromTool(this);
     generalized.value = null;
     return generalized;
   }
 
-  Widget generateValueInput(BuildContext context,
-      {@required Function(dynamic) onValueChange,
-      @required Function(bool) editingChanges}) {
+  Widget generateValueInput(
+      BuildContext context, TextEditingController valueController,
+      {@required Function(dynamic) onValueChange}) {
     TextFormField textFormField;
-    TextEditingController valueController = TextEditingController();
+    print('getting ready to display the value $value');
+    if (value != null) valueController.text = displayValue();
 
     if (isSpecialGrade()) {
       // gonna need some special stuff
-      if (value != null) {
-        print('setting up value $value to be displayed');
-        // first set up the special formatting
-        if (isDateTime()) {
-          if (isOnlyDate()) {
-            valueController.text =
-                DateFormat('MMMM d, y${includesTime() ? ' h:mm aa' : ''}')
-                    .format(value);
-          } else {
-            TimeOfDay timeOfDay = value as TimeOfDay;
-            valueController.text = DateFormat('h:mm aa')
-                .format(DateTime(1, 1, 1, timeOfDay.hour, timeOfDay.minute));
-          }
-        } else {
-          valueController.text = value.toString();
-        }
-      }
       textFormField = TextFormField(
         controller: valueController,
         decoration:
@@ -193,8 +196,7 @@ class Tool {
                 dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
                     timeOfDay.hour, timeOfDay.minute);
               }
-              DateTime val = dateTime;
-              onValueChange(val);
+              onValueChange(dateTime);
             } else {
               // is just TimeOfDay
               TimeOfDay timeOfDay = await showTimePicker(
@@ -213,7 +215,6 @@ class Tool {
         },
       );
     } else {
-      if (value != null) valueController.text = value.toString();
       // either decimal, integer, or text
       textFormField = TextFormField(
         keyboardType: toolType == Tool.textTool
@@ -222,10 +223,8 @@ class Tool {
         controller: valueController,
         decoration:
             InputDecoration(labelText: 'Value', border: OutlineInputBorder()),
-        onTap: () => editingChanges(true),
         onEditingComplete: () {
           FocusScope.of(context).unfocus();
-          editingChanges(false);
           String input = valueController.text.trim();
           if (toolType == Tool.textTool)
             onValueChange(input);
@@ -245,7 +244,7 @@ class Tool {
         },
       );
     }
-
+    print('returning with value ${valueController.text}');
     return ListTile(title: textFormField);
   }
 

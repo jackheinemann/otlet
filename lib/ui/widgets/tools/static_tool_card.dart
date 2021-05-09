@@ -11,7 +11,7 @@ class StaticToolCard extends StatelessWidget {
       title: Text(tool.name, style: TextStyle(fontSize: 18)),
       subtitle: Text(tool.toolType),
       trailing: (tool.value != null)
-          ? Text(tool.value.toString(), style: TextStyle(fontSize: 17))
+          ? Text(tool.displayValue(), style: TextStyle(fontSize: 17))
           : null,
     );
   }

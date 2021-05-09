@@ -221,12 +221,21 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                     //   },
                     // ),
                     isEditing
-                        ? EditBookToolsTab(book, stopEditing: () {
-                            setState(() {
-                              isEditing = false;
-                              book.hasBeenEdited = true;
-                            });
-                          })
+                        ? EditBookToolsTab(
+                            book,
+                            stopEditing: () {
+                              setState(() {
+                                isEditing = false;
+                                book.hasBeenEdited = true;
+                              });
+                            },
+                            onValueChange: (editedBook) {
+                              setState(() {
+                                book.hasBeenEdited = true;
+                                book = editedBook;
+                              });
+                            },
+                          )
                         : BookToolsStaticTab(book, editTools: () {
                             setState(() {
                               isEditing = true;

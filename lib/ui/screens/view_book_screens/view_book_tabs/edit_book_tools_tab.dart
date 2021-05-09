@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/ui/widgets/tools/book_tool_card.dart';
 
 import '../../../../business_logic/models/book.dart';
@@ -8,18 +7,22 @@ import '../../../../business_logic/utils/constants.dart';
 class EditBookToolsTab extends StatefulWidget {
   final Book book;
   final VoidCallback stopEditing;
+  final Function(Book) onValueChange;
 
-  EditBookToolsTab(this.book, {@required this.stopEditing});
+  EditBookToolsTab(this.book,
+      {@required this.stopEditing, @required this.onValueChange});
   @override
   _EditBookToolsTabState createState() => _EditBookToolsTabState();
 }
 
 class _EditBookToolsTabState extends State<EditBookToolsTab> {
   Book book;
+  List<TextEditingController> valueControllers = [];
   @override
   void initState() {
     super.initState();
     book = widget.book;
+    valueControllers = book.tools.map((e) => TextEditingController()).toList();
   }
 
   @override
@@ -34,10 +37,15 @@ class _EditBookToolsTabState extends State<EditBookToolsTab> {
           child: ListView.builder(
               itemCount: book.tools.length,
               itemBuilder: (context, i) {
-                Tool tool = book.tools[i];
-                ListTile valueEditor = tool.generateValueInput(context,
-                    onValueChange: (_) {}, editingChanges: (_) {});
-                return BookToolCard(tool, valueEditor, updateBookTool: (_) {});
+                ListTile valueEditor = book.tools[i].generateValueInput(
+                    context, valueControllers[i], onValueChange: (value) {
+                  setState(() {
+                    book.tools[i].value = value;
+                    valueControllers[i].text = book.tools[i].displayValue();
+                  });
+                  widget.onValueChange(book);
+                });
+                return BookToolCard(book.tools[i], valueEditor);
               }),
         ),
       ],

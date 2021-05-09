@@ -6,9 +6,8 @@ import '../../../business_logic/utils/constants.dart';
 class BookToolCard extends StatefulWidget {
   final Tool tool;
   final ListTile valueEditor;
-  final Function(Tool) updateBookTool;
 
-  BookToolCard(this.tool, this.valueEditor, {@required this.updateBookTool});
+  BookToolCard(this.tool, this.valueEditor);
   @override
   _BookToolCardState createState() => _BookToolCardState();
 }
@@ -31,9 +30,9 @@ class _BookToolCardState extends State<BookToolCard> {
       trailing: Switch(
         activeColor: accentColor,
         value: tool.isActive,
-        onChanged: (value) {
+        onChanged: (isActive) {
           setState(() {
-            tool.isActive = value;
+            tool.isActive = isActive;
           });
           // widget.updateBookTool(tool);
         },
