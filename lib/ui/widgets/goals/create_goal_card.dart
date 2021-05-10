@@ -33,8 +33,7 @@ class CreateGoalCard extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => CreateGoalScreen(instance)));
                     if (goal == null) return;
-                    // addGoal(goal);
-                    instance.addNewGoal(goal);
+                    addGoal(goal);
                   },
                   child: Text('Create Goal'))
             ],

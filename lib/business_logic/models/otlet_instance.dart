@@ -179,6 +179,16 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteGoal(Goal goal) {
+    int i = 0;
+    for (; i < goals.length; i++) {
+      if (goals[i].id == goal.id) break;
+    }
+    goals.removeAt(i);
+    saveInstance();
+    notifyListeners();
+  }
+
   void deleteTool(Tool tool) {
     int index;
     for (int i = 0; i < tools.length; i++) {
@@ -216,7 +226,11 @@ class OtletInstance extends ChangeNotifier {
   }
 
   void modifyGoal(Goal goal) {
-    goals[0] = goal;
+    int i = 0;
+    for (; i < goals.length; i++) {
+      if (goals[i].id == goal.id) break;
+    }
+    goals[i] = goal;
     saveInstance();
     notifyListeners();
   }

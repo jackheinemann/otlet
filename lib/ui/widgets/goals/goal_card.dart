@@ -12,7 +12,7 @@ class GoalCard extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * .2,
         child: Column(
-          children: [Text('goal!')],
+          children: [Text('goal! ${goal.currentUnitCount}')],
         ),
       ),
     );

@@ -49,6 +49,14 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(isEdit ? 'Edit Goal' : 'Create Goal'),
+        actions: [
+          if (isEdit)
+            IconButton(
+                icon: Icon(Icons.delete_forever),
+                onPressed: () {
+                  Navigator.pop(context, Goal(id: goal.id));
+                })
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

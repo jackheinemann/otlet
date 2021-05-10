@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:otlet/business_logic/models/goal.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
-import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:otlet/ui/screens/home_screen/create_goal_screen.dart';
 import 'package:otlet/ui/screens/home_screen/edit_session_tools.dart';
 import 'package:otlet/ui/widgets/books/active_book_card.dart';
 import 'package:otlet/ui/widgets/goals/create_goal_card.dart';
@@ -35,7 +36,21 @@ class HomeScreen extends StatelessWidget {
                     ),
               if (!instance.hasActiveSession())
                 instance.goals.isNotEmpty
-                    ? GoalCard(instance.goals[0])
+                    ? GestureDetector(
+                        onTap: () async {
+                          Goal temp = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateGoalScreen(
+                                      instance,
+                                      goal: instance.goals[0])));
+                          if (temp == null) return;
+                          if (temp.isEmpty()) {
+                            instance.deleteGoal(temp);
+                          } else
+                            instance.modifyGoal(temp);
+                        },
+                        child: GoalCard(instance.goals[0]))
                     : CreateGoalCard(instance,
                         addGoal: (goal) => instance.addNewGoal(goal)),
               instance.hasActiveSession() ? EditSessionTools() : Spacer(),

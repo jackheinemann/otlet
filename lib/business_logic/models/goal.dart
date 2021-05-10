@@ -50,6 +50,15 @@ class Goal {
     completed = goal.completed;
   }
 
+  bool isEmpty() {
+    if (name != null) return false;
+    if (unit != null) return false;
+    if (goalDate != null) return false;
+    if (goalStarted != null) return false;
+    if (goalUnitCount != null) return false;
+    return true;
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
