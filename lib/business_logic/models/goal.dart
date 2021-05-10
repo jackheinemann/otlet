@@ -47,6 +47,7 @@ class Goal {
     goalDate = goal.goalDate;
     goalStarted = goal.goalStarted;
     goalUnitCount = goal.goalUnitCount;
+    currentUnitCount = goal.currentUnitCount;
     completed = goal.completed;
   }
 
@@ -57,6 +58,11 @@ class Goal {
     if (goalStarted != null) return false;
     if (goalUnitCount != null) return false;
     return true;
+  }
+
+  int daysLeft() {
+    if (goalDate == null) return -1;
+    return DateTime.now().difference(goalDate).inDays.abs();
   }
 
   Map<String, dynamic> toJson() {
@@ -70,6 +76,25 @@ class Goal {
       'currentUnitCount': currentUnitCount,
       'completed': completed
     };
+  }
+
+  double progressPercentage() {
+    if (goalUnitCount <= 0) return -1;
+    return currentUnitCount / goalUnitCount;
+  }
+
+  double requiredRate() {
+    int left = daysLeft();
+    if (left == -1) return null;
+    int remainingUnits = goalUnitCount - currentUnitCount;
+    double rate = remainingUnits / (left > 0 ? left : 0.01);
+    if (unit == Unit.pages)
+      return rate;
+    else {
+      double multiplier = 1 /
+          rate; // this will give us the multiplier to bring 0.11 books / day to 1 book / x days kinda thing
+      return multiplier;
+    }
   }
 }
 
