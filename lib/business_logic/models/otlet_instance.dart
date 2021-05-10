@@ -131,6 +131,12 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addNewGoal(Goal goal) {
+    goals.add(goal);
+    saveInstance();
+    notifyListeners();
+  }
+
   void addNewTool(Tool tool) {
     tools.add(tool);
     for (int i = 0; i < books.length; i++) {
@@ -139,6 +145,22 @@ class OtletInstance extends ChangeNotifier {
     }
     saveInstance();
     notifyListeners();
+  }
+
+  calculateGoalProgress(Goal goal) {
+    int total = 0;
+    for (Book book in books) {
+      if (book.finished == null || book.started == null) continue;
+      if (book.finished.isBefore(goal.goalStarted) ||
+          book.finished.isAfter(goal.goalDate)) continue;
+      if (goal.unit == Unit.pages) {
+        if (book.pageCount != null) total += book.pageCount;
+      } else {
+        // goal.unit == Unit.books
+        total += 1;
+      }
+    }
+    return total;
   }
 
   void deleteBook(Book book) {
@@ -190,6 +212,12 @@ class OtletInstance extends ChangeNotifier {
       }
     }
 
+    notifyListeners();
+  }
+
+  void modifyGoal(Goal goal) {
+    goals[0] = goal;
+    saveInstance();
     notifyListeners();
   }
 

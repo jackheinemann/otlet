@@ -36,7 +36,8 @@ class HomeScreen extends StatelessWidget {
               if (!instance.hasActiveSession())
                 instance.goals.isNotEmpty
                     ? GoalCard(instance.goals[0])
-                    : CreateGoalCard(),
+                    : CreateGoalCard(instance,
+                        addGoal: (goal) => instance.addNewGoal(goal)),
               instance.hasActiveSession() ? EditSessionTools() : Spacer(),
               if (instance.hasActiveBook()) SessionTrackerCard(instance)
             ],

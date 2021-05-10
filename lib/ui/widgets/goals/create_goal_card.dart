@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:otlet/business_logic/models/goal.dart';
+import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/ui/screens/home_screen/create_goal_screen.dart';
 
 class CreateGoalCard extends StatelessWidget {
+  final Function(Goal) addGoal;
+  final OtletInstance instance;
+
+  CreateGoalCard(this.instance, {@required this.addGoal});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -20,11 +27,14 @@ class CreateGoalCard extends StatelessWidget {
               ),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: primaryColor),
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    Goal goal = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CreateGoalScreen()));
+                            builder: (context) => CreateGoalScreen(instance)));
+                    if (goal == null) return;
+                    // addGoal(goal);
+                    instance.addNewGoal(goal);
                   },
                   child: Text('Create Goal'))
             ],
