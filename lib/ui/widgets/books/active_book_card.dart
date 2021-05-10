@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
 
 class ActiveBookCard extends StatelessWidget {
@@ -12,16 +11,8 @@ class ActiveBookCard extends StatelessWidget {
     double bookImageWidth = MediaQuery.of(context).size.width * .3;
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () async {
-        // Book temp = await Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => ViewBookScreen(book, bookshedInstance)));
-
-        // updateInstance(bookshedInstance);
-      },
+      onTap: () async {},
       child: Card(
-        elevation: 5,
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: bookImageWidth * 1.6,
