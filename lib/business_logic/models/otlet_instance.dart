@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:otlet/business_logic/models/reading_goal.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/services/session_stream.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'book.dart';
 import 'book.dart';
 
 class OtletInstance extends ChangeNotifier {
@@ -16,6 +16,7 @@ class OtletInstance extends ChangeNotifier {
   SharedPreferences preferences;
 
   List<Book> books = [];
+  List<ReadingGoal> goals = [];
 
   int activeBookIndex = -1;
   ReadingSession activeSession;
@@ -51,6 +52,9 @@ class OtletInstance extends ChangeNotifier {
     }
     if (instance.otletTools != null) {
       otletTools = instance.otletTools.map((e) => Tool.fromTool(e)).toList();
+    }
+    if (instance.goals != null) {
+      goals = instance.goals.map((e) => ReadingGoal.fromGoal(e)).toList();
     }
   }
 
@@ -95,6 +99,14 @@ class OtletInstance extends ChangeNotifier {
         otletToolsBuilder.add(Tool.fromJson(otletToolJson));
       }
       otletTools = otletToolsBuilder;
+    }
+    if (json.containsKey('goals')) {
+      List<ReadingGoal> goalsBuilder = [];
+      for (Map<String, dynamic> goalJson
+          in List<Map<String, dynamic>>.from(jsonDecode(json['goals']))) {
+        goalsBuilder.add(ReadingGoal.fromJson(goalJson));
+      }
+      goals = goalsBuilder;
     }
   }
 
@@ -262,7 +274,9 @@ class OtletInstance extends ChangeNotifier {
       if (tools != null)
         'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
       if (otletTools != null)
-        'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList())
+        'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList()),
+      if (goals != null)
+        'goals': jsonEncode(goals.map((e) => e.toJson()).toList())
     };
   }
 
