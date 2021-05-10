@@ -34,25 +34,25 @@ class HomeScreen extends StatelessWidget {
                             )),
                       ),
                     ),
-              if (!instance.hasActiveSession())
-                instance.goals.isNotEmpty
-                    ? GestureDetector(
-                        onTap: () async {
-                          Goal temp = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CreateGoalScreen(
-                                      instance,
-                                      goal: instance.goals[0])));
-                          if (temp == null) return;
-                          if (temp.isEmpty()) {
-                            instance.deleteGoal(temp);
-                          } else
-                            instance.modifyGoal(temp);
-                        },
-                        child: GoalCard(instance.goals[0]))
-                    : CreateGoalCard(instance,
-                        addGoal: (goal) => instance.addNewGoal(goal)),
+              // if (!instance.hasActiveSession())
+              //   instance.goals.isNotEmpty
+              //       ? GestureDetector(
+              //           onTap: () async {
+              //             Goal temp = await Navigator.push(
+              //                 context,
+              //                 MaterialPageRoute(
+              //                     builder: (context) => CreateGoalScreen(
+              //                         instance,
+              //                         goal: instance.goals[0])));
+              //             if (temp == null) return;
+              //             if (temp.isEmpty()) {
+              //               instance.deleteGoal(temp);
+              //             } else
+              //               instance.modifyGoal(temp);
+              //           },
+              //           child: GoalCard(instance.goals[0]))
+              //       : CreateGoalCard(instance,
+              //           addGoal: (goal) => instance.addNewGoal(goal)),
               instance.hasActiveSession() ? EditSessionTools() : Spacer(),
               if (instance.hasActiveBook()) SessionTrackerCard(instance)
             ],
