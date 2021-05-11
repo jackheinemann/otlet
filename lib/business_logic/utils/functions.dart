@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/tool.dart';
+import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/view_tools_screens/create_custom_tool_screen.dart';
 
 import '../../ui/screens/add_book_screen.dart';

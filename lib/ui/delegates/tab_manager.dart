@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/tool.dart';
+import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/business_logic/utils/functions.dart';
+import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/home_screen/home_screen.dart';
 import 'package:otlet/ui/screens/view_books_screen.dart';
 import 'package:otlet/ui/screens/view_tools_screens/view_tools_screen.dart';
@@ -36,7 +38,7 @@ class _TabManagerState extends State<TabManager> {
           title: Text('Otlet'),
           centerTitle: true,
           actions: [
-            if (_currentIndex == 1 || _currentIndex == 2)
+            if (_currentIndex >= 1)
               IconButton(
                   icon: Icon(Icons.add),
                   onPressed: () async {
@@ -52,35 +54,52 @@ class _TabManagerState extends State<TabManager> {
                       instance.saveInstance();
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text('Saved ${temp.title} to Books!')));
-                    } else {
+                    } else if (_currentIndex == 2) {
                       Tool tool = await createNewTool(context);
                       if (tool == null) return;
                       setState(() {
                         instance.addNewTool(tool);
                         instance.tools.sort((a, b) => a.name.compareTo(b.name));
                       });
+                    } else {
+                      // await createNewChart(context);
                     }
                   })
           ],
         ),
         body: IndexedStack(
           index: _currentIndex,
-          children: [HomeScreen(), ViewBooksScreen(), ViewToolsScreen()],
+          children: [
+            HomeScreen(),
+            ViewBooksScreen(),
+            ViewToolsScreen(),
+            ViewChartsScreen()
+          ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (i) {
-              setState(() {
-                _currentIndex = i;
-              });
-            },
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.library_books), label: 'My Books'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.build), label: 'My Tools'),
-            ]),
+        bottomNavigationBar: Theme(
+          data: ThemeData(
+              canvasColor: Colors.white, primaryColor: secondaryColor),
+          child: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: _currentIndex,
+              onTap: (i) {
+                setState(() {
+                  _currentIndex = i;
+                });
+              },
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.library_books), label: 'Books'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.build), label: 'Tools'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.bar_chart), label: 'Charts'),
+              ]),
+        ),
       ),
     );
   }
