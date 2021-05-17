@@ -36,7 +36,7 @@ class _BookInfoEditState extends State<BookInfoEdit> {
       finishedController.text = monthDayYearFormat.format(book.finished);
     titleController.text = book.title;
     authorController.text = book.author;
-    if (book.genres != null) genreController.text = book.genres.join(', ');
+    if (book.genre != null) genreController.text = book.genre;
     if (book.published != null)
       publishedController.text = DateFormat('y').format(book.published);
     if (book.pageCount != null)
@@ -113,17 +113,11 @@ class _BookInfoEditState extends State<BookInfoEdit> {
                       onEditingComplete: () {
                         FocusScope.of(context).unfocus();
                         setState(() {
-                          book.genres = genreController.text
-                              .trim()
-                              .split(',')
-                              .map((e) => e.trim())
-                              .toList();
+                          book.genre = genreController.text;
                         });
                       },
                       decoration: InputDecoration(
-                          labelText: 'Genres',
-                          hintText: 'Separate with commas',
-                          border: OutlineInputBorder()),
+                          labelText: 'Genre', border: OutlineInputBorder()),
                     ),
                     SizedBox(height: 15),
                     TextFormField(

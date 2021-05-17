@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-Future<String> showIdSelectorDialog(
-    BuildContext context, String title, Map<String, dynamic> options) async {
-  String target = await showDialog(
+Future<MapEntry> showIdSelectorDialog(
+    BuildContext context, String title, Map<dynamic, dynamic> options) async {
+  MapEntry target = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
             title: Text(title),
             content: SingleChildScrollView(
               child: Column(
                 children: options.entries.map((e) {
-                  String id = e.key;
+                  dynamic id = e.key;
                   dynamic value = e.value;
                   return ListTile(
-                    onTap: () => Navigator.pop(context, id),
+                    onTap: () => Navigator.pop(context, MapEntry(id, value)),
                     title: Text(value.toString()),
                   );
                 }).toList(),

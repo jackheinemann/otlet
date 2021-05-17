@@ -26,12 +26,37 @@ class OtletInstance extends ChangeNotifier {
   List<ReadingSession> sessionHistory = [];
   List<Tool> tools = [];
   List<Tool> otletTools = [
-    // Tool(
-    //     name: 'Track Progress',
-    //     toolType: Tool.doubleTool,
-    //     useFixedOptions: false,
-    //     setActiveForAll: false,
-    //     isBookTool: true)
+    // page count, genre, author, publication year, started, finished
+    Tool(
+        customId: 'pageCountTool',
+        name: 'Page Count',
+        toolType: Tool.integerTool,
+        isBookTool: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'genreTool',
+        name: 'Genre',
+        toolType: Tool.textTool,
+        isBookTool: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'publicationTool',
+        name: 'Publication Year',
+        toolType: Tool.integerTool,
+        isBookTool: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'dateStartedTool',
+        name: 'Date Started',
+        toolType: Tool.dateTool,
+        isBookTool: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'dateFinishedTool',
+        name: 'Date Finished',
+        toolType: Tool.dateTool,
+        isBookTool: true,
+        useFixedOptions: false)
   ];
 
   OtletInstance.empty();
@@ -123,7 +148,15 @@ class OtletInstance extends ChangeNotifier {
     }).toList();
     book.otletTools = otletTools.map((e) {
       Tool tool = Tool.fromTool(e);
-      if (e.setActiveForAll) tool.isActive = true;
+      if (tool.id == 'pageCountTool') tool.value = book.pageCount;
+      if (tool.id == 'genreTool') tool.value = book.genre;
+      if (book.published != null) if (tool.id == 'publicationTool')
+        tool.value = book.published.year;
+      if (book.started != null) if (tool.id == 'dateStartedTool')
+        tool.value = book.started;
+      if (book.finished != null) if (tool.id == 'dateFinishedTool')
+        tool.value = book.finished;
+
       return tool;
     }).toList();
     books.add(book);
@@ -217,6 +250,16 @@ class OtletInstance extends ChangeNotifier {
         } else
           activeBookIndex = i;
         book.isActive = null;
+        for (Tool tool in book.otletTools) {
+          if (tool.id == 'pageCountTool') tool.value = book.pageCount;
+          if (tool.id == 'genreTool') tool.value = book.genre;
+          if (book.published != null) if (tool.id == 'publicationTool')
+            tool.value = book.published.year;
+          if (book.started != null) if (tool.id == 'dateStartedTool')
+            tool.value = book.started;
+          if (book.finished != null) if (tool.id == 'dateFinishedTool')
+            tool.value = book.finished;
+        }
         books[i] = book;
         break;
       }

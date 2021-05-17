@@ -40,15 +40,17 @@ class _EditSessionToolsState extends State<EditSessionTools> {
                           itemCount: activeSessionTools.length,
                           itemBuilder: (context, i) {
                             Tool tool = activeSessionTools[i];
-                            return tool.generateValueInput(
-                                context, valueControllers[i],
-                                labelText: tool.name, onValueChange: (value) {
+                            return ListTile(
+                                title: tool.generateValueInput(
+                                    context, valueControllers[i],
+                                    labelText: tool.name,
+                                    onValueChange: (value) {
                               setState(() {
                                 tool.value = value;
                                 valueControllers[i].text = tool.displayValue();
                                 instance.updateSessionTool(tool);
                               });
-                            });
+                            }));
                           })),
                 ],
               ),

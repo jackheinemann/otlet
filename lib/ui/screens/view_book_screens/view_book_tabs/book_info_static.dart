@@ -90,7 +90,7 @@ class BookInfoStatic extends StatelessWidget {
           SizedBox(
             height: 20,
           ),
-          Text('Genres',
+          Text('Genre',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -98,15 +98,15 @@ class BookInfoStatic extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          book.genres.isEmpty
+          book.genre == null
               ? Text(
-                  'No Genres Assigned',
+                  'No Genre Assigned',
                   style: TextStyle(fontSize: 18),
                 )
               : Wrap(
                   alignment: WrapAlignment.start,
                   spacing: 10,
-                  children: book.genres.map((e) => GenreChip(e)).toList(),
+                  children: [GenreChip(book.genre)],
                 )
         ],
       ),

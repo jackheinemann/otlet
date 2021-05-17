@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<String> showSimpleSelectorDialog(
+Future<dynamic> showSimpleSelectorDialog(
     BuildContext context, String title, List<dynamic> options) async {
   String target = await showDialog(
       context: context,
@@ -10,8 +10,7 @@ Future<String> showSimpleSelectorDialog(
               child: Column(
                 children: options
                     .map((e) => ListTile(
-                          onTap: () => Navigator.pop(context,
-                              e.runtimeType == String ? e : e.toString()),
+                          onTap: () => Navigator.pop(context, e),
                           title: Text(e.toString()),
                         ))
                     .toList(),

@@ -21,7 +21,11 @@ class _EditBookToolsTabState extends State<EditBookToolsTab> {
   void initState() {
     super.initState();
     book = widget.book;
-    valueControllers = book.tools.map((e) => TextEditingController()).toList();
+    valueControllers = book.tools.map((e) {
+      TextEditingController controller = TextEditingController();
+      controller.text = e.displayValue();
+      return controller;
+    }).toList();
   }
 
   @override
@@ -33,14 +37,15 @@ class _EditBookToolsTabState extends State<EditBookToolsTab> {
         : ListView.builder(
             itemCount: book.tools.length,
             itemBuilder: (context, i) {
-              ListTile valueEditor = book.tools[i].generateValueInput(
-                  context, valueControllers[i], onValueChange: (value) {
+              ListTile valueEditor = ListTile(
+                  title: book.tools[i].generateValueInput(
+                      context, valueControllers[i], onValueChange: (value) {
                 setState(() {
                   book.tools[i].value = value;
                   valueControllers[i].text = book.tools[i].displayValue();
                 });
                 widget.onValueChange(book);
-              });
+              }));
               return BookToolCard(book.tools[i], valueEditor);
             });
   }

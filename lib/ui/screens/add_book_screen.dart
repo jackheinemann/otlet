@@ -58,7 +58,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     book.isbn = barcodeScan;
                     titleController.text = book.title;
                     authorController.text = book.author;
-                    genreController.text = book.genres.join(', ');
+                    genreController.text = book.genre;
                     if (book.published != null)
                       publishedController.text =
                           DateFormat('y').format(book.published);
@@ -103,9 +103,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                   textCapitalization: TextCapitalization.words,
                   controller: genreController,
                   decoration: InputDecoration(
-                      labelText: 'Genres',
-                      hintText: 'Separate with commas',
-                      border: OutlineInputBorder()),
+                      labelText: 'Genre', border: OutlineInputBorder()),
                 ),
                 SizedBox(height: 15),
                 TextFormField(
@@ -138,14 +136,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
                       if (!_formKey.currentState.validate()) return;
                       book.title = titleController.text.trim();
                       book.author = authorController.text.trim();
-                      book.genres = genreController.text
-                          .split(',')
-                          .map((e) => e.trim())
-                          .toList();
+                      book.genre = genreController.text;
+
                       book.pageCount =
                           int.tryParse(pageCountController.text.trim());
-                      book.published = DateFormat('y')
-                          .parse(publishedController.text.trim());
+                      try {
+                        book.published = DateFormat('y')
+                            .parse(publishedController.text.trim());
+                      } catch (e) {
+                        print('Error formatting published date');
+                      }
 
                       Navigator.pop(context, book);
                     },

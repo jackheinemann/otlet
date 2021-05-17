@@ -16,7 +16,7 @@ class Book {
   String author;
   DateTime started;
   DateTime finished;
-  List<String> genres = [];
+  String genre;
   int rating;
   DateTime published;
   int pageCount;
@@ -36,7 +36,7 @@ class Book {
     this.author,
     this.started,
     this.finished,
-    this.genres,
+    this.genre,
     this.rating,
     this.published,
     this.pageCount,
@@ -58,7 +58,7 @@ class Book {
     author = book.author;
     started = book.started;
     finished = book.finished;
-    genres = List<String>.from(book.genres);
+    genre = book.genre;
     rating = book.rating;
     published = book.published;
     pageCount = book.pageCount;
@@ -78,7 +78,7 @@ class Book {
     coverUrl = json['coverUrl'];
     if (json['started'] != null) started = DateTime.parse(json['started']);
     if (json['finished'] != null) finished = DateTime.parse(json['finished']);
-    genres = List<String>.from(jsonDecode(json['genres']));
+    genre = json['genre'];
     rating = json['rating'];
     if (json['published'] != null)
       published = DateTime.parse(json['published']);
@@ -114,9 +114,8 @@ class Book {
     if (json['authors'] != null) author = json['authors'].last['name'];
     if (json['subjects'] != null) {
       List<dynamic> subjects = json['subjects'];
-      genres = parseGenres(
+      genre = parseGenres(
           List<String>.from(subjects.map((e) => e['name']).toList()));
-      genres.removeWhere((element) => element.isEmpty);
     }
     if (json['publish_date'] != null) {
       String publishedString = json['publish_date'];
@@ -142,9 +141,9 @@ class Book {
     if (book.id != id) return false;
     if (book.title != title) return false;
     if (book.author != author) return false;
-    if (book.genres.length != genres.length) return false;
-    for (int i = 0; i < book.genres.length; i++) {
-      if (genres[i] != book.genres[i]) return false;
+    if (book.genre.length != genre.length) return false;
+    for (int i = 0; i < book.genre.length; i++) {
+      if (genre[i] != book.genre[i]) return false;
     }
     if (book.trackProgress != trackProgress) return false;
     if (book.coverUrl != coverUrl) return false;
@@ -206,28 +205,21 @@ class Book {
     if (title != null) return false;
     if (author != null) return false;
     if (published != null) return false;
-    if (genres.isNotEmpty) return false;
+    if (genre.isNotEmpty) return false;
     return true;
   }
 
-  List<String> parseGenres(List<String> subjects) {
+  String parseGenres(List<String> subjects) {
     List<String> parsedGenres = [];
     for (String subject in subjects) {
       for (String genre in litGenres) {
         if (subject.trim().toLowerCase() == genre.trim().toLowerCase() &&
             !parsedGenres.contains(genre)) {
-          parsedGenres.add(genre);
-          break;
+          return genre;
         }
       }
     }
-    return parsedGenres;
-  }
-
-  void promptSessionTools() {
-    List<Tool> activeSessionTools = tools
-        .where((element) => !element.isBookTool && element.isActive)
-        .toList();
+    return null;
   }
 
   String readingPercent() {
@@ -263,7 +255,7 @@ class Book {
       'coverUrl': coverUrl,
       'started': started?.toString(),
       'finished': finished?.toString(),
-      'genres': jsonEncode(genres ?? []),
+      'genre': genre,
       'rating': rating,
       'published': published?.toString(),
       'pageCount': pageCount,

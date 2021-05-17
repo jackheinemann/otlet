@@ -178,7 +178,8 @@ class Tool {
       BuildContext context, TextEditingController valueController,
       {@required Function(dynamic) onValueChange, String labelText}) {
     TextFormField textFormField;
-    if (value != null) valueController.text = displayValue();
+    if (value != null && isSpecialGrade())
+      valueController.text = displayValue();
     if (labelText == null) labelText = 'Value';
 
     if (useFixedOptions) {
@@ -189,8 +190,9 @@ class Tool {
             InputDecoration(labelText: labelText, border: OutlineInputBorder()),
         readOnly: true,
         onTap: () async {
-          String stringValue = await showSimpleSelectorDialog(
-              context, 'Select a value for $name', fixedOptions);
+          String stringValue = (await showSimpleSelectorDialog(
+                  context, 'Select a value for $name', fixedOptions))
+              .toString();
           assignValueFromString(stringValue);
           onValueChange(value);
         },
@@ -230,10 +232,7 @@ class Tool {
               }
             } else {
               bool val = await showSimpleSelectorDialog(
-                          context, 'Select a value', [true, false]) ==
-                      'true'
-                  ? true
-                  : false;
+                  context, 'Select a value', [true, false]);
               onValueChange(val);
             }
           },
@@ -250,6 +249,7 @@ class Tool {
           onEditingComplete: () {
             FocusScope.of(context).unfocus();
             String input = valueController.text.trim();
+            if (input.isEmpty) return;
             if (toolType == Tool.textTool)
               onValueChange(input);
             else if (toolType == Tool.doubleTool) {
@@ -271,7 +271,7 @@ class Tool {
         );
       }
     }
-    return ListTile(title: textFormField);
+    return textFormField;
   }
 
   bool isOnlyDate() =>
