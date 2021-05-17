@@ -131,6 +131,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                         if (relevantTools.isEmpty) {
                           showErrorDialog(context, 'No Valid Tools Available');
                         } else {
+                          relevantTools
+                              .sort((a, b) => a.name.compareTo(b.name));
                           Map<String, String> options =
                               Map<String, String>.fromIterable(relevantTools,
                                   key: (tool) => (tool as Tool).id,
@@ -161,11 +163,19 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                       controller: filterController,
                       readOnly: true,
                       onTap: () async {
-                        List<ChartFilter> filters = await Navigator.push(
+                        OtletChart temp = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     CreateFiltersScreen(instance, chart)));
+                        setState(() {
+                          chart = temp;
+                          if (chart.filters.isNotEmpty)
+                            filterController.text = chart.filters
+                                .map((e) => e.filterLabel())
+                                .toList()
+                                .join(', ');
+                        });
                       },
                       decoration: InputDecoration(
                           labelText: 'Filters',
