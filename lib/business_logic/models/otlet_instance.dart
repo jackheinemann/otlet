@@ -32,30 +32,35 @@ class OtletInstance extends ChangeNotifier {
         name: 'Page Count',
         toolType: Tool.integerTool,
         isBookTool: true,
+        isActive: true,
         useFixedOptions: false),
     Tool(
         customId: 'genreTool',
         name: 'Genre',
         toolType: Tool.textTool,
         isBookTool: true,
+        isActive: true,
         useFixedOptions: false),
     Tool(
         customId: 'publicationTool',
         name: 'Publication Year',
         toolType: Tool.integerTool,
         isBookTool: true,
+        isActive: true,
         useFixedOptions: false),
     Tool(
         customId: 'dateStartedTool',
         name: 'Date Started',
         toolType: Tool.dateTool,
         isBookTool: true,
+        isActive: true,
         useFixedOptions: false),
     Tool(
         customId: 'dateFinishedTool',
         name: 'Date Finished',
         toolType: Tool.dateTool,
         isBookTool: true,
+        isActive: true,
         useFixedOptions: false)
   ];
 

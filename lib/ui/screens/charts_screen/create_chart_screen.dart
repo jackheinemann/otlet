@@ -1,6 +1,7 @@
 import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/bar_chart_set.dart';
+import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/chart_helpers.dart';
 import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
@@ -142,7 +143,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                               context, 'Select an x var', options);
                           if (toolInfo == null) return;
                           setState(() {
-                            // chart.xToolInfo = toolInfo;
+                            chart.xToolId = toolInfo.key;
                             xAxisController.text = toolInfo.value;
                           });
                         }
@@ -175,6 +176,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                 .map((e) => e.filterLabel())
                                 .toList()
                                 .join(', ');
+                          else
+                            filterController.clear();
                         });
                       },
                       decoration: InputDecoration(
@@ -227,47 +230,77 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: primaryColor),
                         onPressed: () {
-                          Map<String, dynamic> dataset = {};
-                          // String toolId = chart.xToolInfo.key;
+                          Map<dynamic, int> dataSet = {};
+                          if (chart.scope == ChartScope.books) {
+                            // book only
+                            for (Book book in instance.books) {
+                              if (!book.doesPassChartFilters(chart)) continue;
+                              // if we make it here, the book passes all the filters
+                              Tool bookTool = (book.tools + book.otletTools)
+                                  .firstWhere((t) => t.id == chart.xToolId);
+                              if (bookTool.isActive && bookTool.value != null) {
+                                if (dataSet.containsKey(bookTool.value))
+                                  dataSet[bookTool.value] += 1;
+                                else
+                                  dataSet[bookTool.value] = 1;
+                              }
+                            }
+                            // dataset filled and ready
+                            var series = [
+                              Series(
+                                  id: 'Sources Filtered',
+                                  data: dataSet.entries
+                                      .map((e) => BarChartSet(e.key, e.value))
+                                      .toList(),
+                                  domainFn: (BarChartSet data, _) => data.label,
+                                  measureFn: (BarChartSet data, _) =>
+                                      data.value)
+                            ];
+                            var finalChart = BarChart(series, animate: true);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Scaffold(
+                                          body: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: Container(
+                                                  height: 500,
+                                                  child: finalChart),
+                                            ),
+                                          ),
+                                        )));
+                          } else
+                            print('SESSIONSS!!!');
+
+                          // Map<String, dynamic> dataset = {};
+                          // String toolId = chart.xToolId;
                           // for (Book book in instance.books) {
-                          //   for (Tool tool in book.tools) {
-                          //     if (tool.id == toolId) {
-                          //       if (tool.isActive && tool.value != null) {
-                          //         if (dataset.containsKey(tool.value))
-                          //           dataset[tool.value] += 1;
-                          //         else
-                          //           dataset[tool.value] = 1;
-                          //       }
+                          // for (Tool tool in book.tools) {
+                          //   if (tool.id == toolId) {
+                          //     if (tool.isActive && tool.value != null) {
+                          //       if (dataset.containsKey(tool.value))
+                          //         dataset[tool.value] += 1;
+                          //       else
+                          //         dataset[tool.value] = 1;
                           //     }
                           //   }
                           // }
-                          print(dataset);
-                          var series = [
-                            Series(
-                                id: 'Source Counts',
-                                data: dataset.entries
-                                    .map((e) => BarChartSet(e.key, e.value))
-                                    .toList(),
-                                domainFn: (BarChartSet data, _) => data.label,
-                                measureFn: (BarChartSet data, _) => data.value)
-                          ];
-                          var finalChart = BarChart(
-                            series,
-                            animate: true,
-                          );
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Scaffold(
-                                        body: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Center(
-                                            child: Container(
-                                                height: 500, child: finalChart),
-                                          ),
-                                        ),
-                                      )));
+                          // }
+                          // print(dataset);
+                          // var series = [
+                          //   Series(
+                          //       id: 'Source Counts',
+                          //       data: dataset.entries
+                          //           .map((e) => BarChartSet(e.key, e.value))
+                          //           .toList(),
+                          //       domainFn: (BarChartSet data, _) => data.label,
+                          //       measureFn: (BarChartSet data, _) => data.value)
+                          // ];
+                          // var finalChart = BarChart(
+                          //   series,
+                          //   animate: true,
+                          // );
                         },
                         child: Text('Generate Chart')),
                     SizedBox(height: 30)

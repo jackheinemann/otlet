@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:intl/intl.dart';
+import 'package:otlet/business_logic/models/chart_helpers.dart';
+import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
@@ -130,6 +132,19 @@ class Book {
         }
       }
     }
+  }
+
+  bool doesPassChartFilters(OtletChart chart) {
+    for (ChartFilter filter in chart.filters) {
+      Tool pseudoTool = filter.pseudoTool;
+      Tool bookTool = (tools + otletTools)
+          .firstWhere((element) => element.compareToolId(pseudoTool));
+      print(bookTool.name);
+      if (!bookTool.isActive) return false;
+      if (bookTool.value == null) return false;
+      if (!filter.compareFilterValue(bookTool)) return false;
+    }
+    return true;
   }
 
   bool compareIds(Book book) {
