@@ -61,6 +61,34 @@ class OtletInstance extends ChangeNotifier {
         toolType: Tool.dateTool,
         isBookTool: true,
         isActive: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'sessionLengthTool',
+        name: 'Session Length',
+        toolType: Tool.integerTool,
+        isBookTool: false,
+        isActive: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'sessionStartedTool',
+        name: 'Session Started',
+        toolType: Tool.timeTool,
+        isBookTool: false,
+        isActive: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'sessionEndedTool',
+        name: 'Session Ended',
+        toolType: Tool.timeTool,
+        isBookTool: false,
+        isActive: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'sessionDateTool',
+        name: 'Session Date',
+        toolType: Tool.dateTool,
+        isBookTool: false,
+        isActive: true,
         useFixedOptions: false)
   ];
 
@@ -401,6 +429,7 @@ class OtletInstance extends ChangeNotifier {
       if (activeSession.started == null) activeSession.started = DateTime.now();
       timerSubscription = _stream.listen((int newTick) {
         activeSession.timePassed += Duration(seconds: 1);
+        activeSession.otletTools[0].value = activeSession.timePassed.inSeconds;
         notifyListeners();
       });
     } else {
@@ -422,6 +451,16 @@ class OtletInstance extends ChangeNotifier {
     if (timePassed.inSeconds >= 1) {
       activeSession.ended = DateTime.now();
       activeSession.isReading = false;
+      print(activeSession.otletTools
+          .map((e) => '${e.name} : ${e.displayValue()}'));
+      activeSession.otletTools[1].value =
+          TimeOfDay.fromDateTime(activeSession.started);
+      activeSession.otletTools[2].value =
+          TimeOfDay.fromDateTime(activeSession.ended);
+      activeSession.otletTools[3].value = DateTime(activeSession.started.year,
+          activeSession.started.month, activeSession.started.day);
+      print(activeSession.otletTools
+          .map((e) => '${e.name} : ${e.displayValue()}'));
       sessionHistory.add(activeSession);
       sessionHistory.sort((b, a) => a.ended.compareTo(b.ended));
       books[activeBookIndex]

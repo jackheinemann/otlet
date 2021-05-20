@@ -7,6 +7,7 @@ class LocalStorageManager {
   Future<OtletInstance> getLocalInstance() async {
     OtletInstance otletInstance;
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    // preferences.clear();
     String instanceString = preferences.getString('otlet_instance');
 
     if (instanceString == null) {

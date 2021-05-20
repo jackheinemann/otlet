@@ -15,6 +15,7 @@ class ReadingSession {
   Duration timePassed;
 
   List<Tool> tools = [];
+  List<Tool> otletTools = [];
 
   ReadingSession({
     this.started,
@@ -32,6 +33,7 @@ class ReadingSession {
     isReading = session.isReading;
     timePassed = session.timePassed;
     tools = session.tools.map((e) => Tool.fromTool(e)).toList();
+    otletTools = session.otletTools.map((e) => Tool.fromTool(e)).toList();
   }
 
   ReadingSession.basic() {
@@ -51,6 +53,13 @@ class ReadingSession {
         tools.add(Tool.fromJson(json));
       }
     }
+    if (json['otletTools'] != null) {
+      List<dynamic> otletToolsJson =
+          List<dynamic>.from(jsonDecode(json['otletTools']));
+      for (Map<String, dynamic> json in otletToolsJson) {
+        otletTools.add(Tool.fromJson(json));
+      }
+    }
   }
 
   void importSessionTools(Book book) {
@@ -58,10 +67,15 @@ class ReadingSession {
         .where((element) => !element.isBookTool && element.isActive)
         .map((e) => Tool.fromTool(e))
         .toList();
+    otletTools = book.otletTools
+        .where((element) => !element.isBookTool && element.isActive)
+        .map((e) => Tool.fromTool(e))
+        .toList();
   }
 
   void updateTimePassed() {
     timePassed = DateTime.now().difference(started);
+    otletTools[0].value = timePassed.inSeconds;
   }
 
   String displayTimePassed() {
@@ -88,13 +102,13 @@ class ReadingSession {
     return true;
   }
 
-  Stream<String> maintainSession() async* {
-    while (true) {
-      await Future.delayed(Duration(seconds: 1));
-      if (isReading) updateTimePassed();
-      yield displayTimePassed();
-    }
-  }
+  // Stream<String> maintainSession() async* {
+  //   while (true) {
+  //     await Future.delayed(Duration(seconds: 1));
+  //     if (isReading) updateTimePassed();
+  //     yield displayTimePassed();
+  //   }
+  // }
 
   Map<String, dynamic> toJson() {
     return {
@@ -105,6 +119,8 @@ class ReadingSession {
       'timePassed': timePassed.inSeconds,
       if (tools != null)
         'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
+      if (otletTools != null)
+        'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList())
     };
   }
 }

@@ -253,9 +253,11 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                             for (ReadingSession session in sessionsToPull) {
                               if (!session.doesPassChartFilters(chart))
                                 continue;
-                              // if we make it here, the book passes all the filters
-                              Tool sessionTool = session.tools
-                                  .firstWhere((t) => t.id == chart.xToolId);
+                              // if we make it here, the session passes all the filters
+                              Tool sessionTool =
+                                  (session.tools + session.otletTools)
+                                      .firstWhere((t) => t.id == chart.xToolId);
+                              print(sessionTool.toJson());
                               if (sessionTool.isActive &&
                                   sessionTool.value != null) {
                                 String sessionToolString =
@@ -290,11 +292,12 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                   measureFn: (LabelChartSet data, _) =>
                                       data.value,
                                   labelAccessorFn: (LabelChartSet data, _) {
-                                    return data.label +
-                                        ': ' +
-                                        ((data.value * 1.0 / total) * 100)
-                                            .toStringAsFixed(2) +
-                                        '%';
+                                    return '${data.label}: ${data.value}';
+                                    // return data.label +
+                                    //     ': ' +
+                                    //     ((data.value * 1.0 / total) * 100)
+                                    //         .toStringAsFixed(2) +
+                                    //     '%';
                                   }),
                             ];
                           } else {
@@ -318,11 +321,11 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                           if (chart.type == ChartTypes.pie) {
                             finalChart = PieChart(series,
                                 animate: true,
-                                defaultRenderer:
-                                    ArcRendererConfig(arcRendererDecorators: [
-                                  ArcLabelDecorator(
-                                      labelPosition: ArcLabelPosition.inside)
-                                ]));
+                                defaultRenderer: ArcRendererConfig(
+                                    arcRendererDecorators: [
+                                      ArcLabelDecorator(
+                                          labelPosition: ArcLabelPosition.auto)
+                                    ]));
                           } else if (chart.type == ChartTypes.bar) {
                             finalChart = BarChart(
                               series,

@@ -1,5 +1,4 @@
 import 'package:otlet/business_logic/models/chart_helpers.dart';
-import 'package:otlet/business_logic/models/tool.dart';
 import 'package:uuid/uuid.dart';
 
 class OtletChart {
