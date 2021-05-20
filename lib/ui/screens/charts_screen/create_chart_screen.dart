@@ -68,7 +68,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
               readOnly: true,
               onTap: () async {
                 String type = await showSimpleSelectorDialog(
-                    context, 'Select Chart Type', ChartTypes.types);
+                    context, 'Select Chart Type', ChartType.types);
                 if (type == null) return;
                 setState(() {
                   chart.type = type;
@@ -277,8 +277,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                           // dataset filled and ready
                           int total =
                               dataSet.values.toList().reduce((a, b) => a + b);
-                          if (chart.type == ChartTypes.bar ||
-                              chart.type == ChartTypes.pie) {
+                          if (chart.type == ChartType.bar ||
+                              chart.type == ChartType.pie) {
                             series = [
                               Series<LabelChartSet, String>(
                                   id: 'Sources Filtered',
@@ -317,7 +317,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                             ];
                           }
                           var finalChart;
-                          if (chart.type == ChartTypes.pie) {
+                          if (chart.type == ChartType.pie) {
                             finalChart = PieChart(series,
                                 animate: true,
                                 defaultRenderer: ArcRendererConfig(
@@ -325,14 +325,14 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                       ArcLabelDecorator(
                                           labelPosition: ArcLabelPosition.auto)
                                     ]));
-                          } else if (chart.type == ChartTypes.bar) {
+                          } else if (chart.type == ChartType.bar) {
                             finalChart = BarChart(
                               series,
                               animate: true,
                             );
-                          } else if (chart.type == ChartTypes.line) {
+                          } else if (chart.type == ChartType.line) {
                             finalChart = LineChart(series, animate: true);
-                          } else if (chart.type == ChartTypes.dot) {
+                          } else if (chart.type == ChartType.dot) {
                             finalChart =
                                 ScatterPlotChart(series, animate: true);
                           }

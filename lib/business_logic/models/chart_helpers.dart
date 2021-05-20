@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:uuid/uuid.dart';
 
-class ChartTypes {
+class ChartType {
   static String bar = 'Bar';
   static String line = 'Line';
   static String dot = 'Dot';
   static String pie = 'Pie';
 
-  static List<String> types = [bar, line, dot, pie];
+  static List<String> types = [bar, pie, line, dot];
 }
 
 class ChartScope {
