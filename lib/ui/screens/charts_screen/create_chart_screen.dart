@@ -5,6 +5,7 @@ import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/chart_helpers.dart';
 import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/ui/screens/charts_screen/create_filters_screen.dart';
@@ -23,6 +24,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController typeController = TextEditingController();
   TextEditingController scopeController = TextEditingController();
+  TextEditingController singleBookController = TextEditingController();
   TextEditingController xAxisController = TextEditingController();
   TextEditingController yAxisController = TextEditingController();
   TextEditingController filterController = TextEditingController();
@@ -102,6 +104,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                   // chart.yToolInfo = null;
                   xAxisController.clear();
                   yAxisController.clear();
+                  singleBookController.clear();
+                  chart.selectedBookId = null;
                 });
               },
               decoration: InputDecoration(
@@ -114,7 +118,38 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
               },
             ),
             SizedBox(height: 15),
-            if (chart.scope != null && chart.type != null)
+            if (chart.scope == ChartScope.singleBook)
+              TextFormField(
+                textCapitalization: TextCapitalization.words,
+                controller: singleBookController,
+                readOnly: true,
+                onTap: () async {
+                  MapEntry selectedBook = await showIdSelectorDialog(
+                      context,
+                      'Select a book',
+                      Map<String, String>.fromIterable(instance.books,
+                          key: (book) => book.id, value: (book) => book.title));
+                  if (selectedBook == null) return;
+                  setState(() {
+                    chart.selectedBookId = selectedBook.key;
+                    singleBookController.text = selectedBook.value;
+                  });
+                },
+                decoration: InputDecoration(
+                    labelText: 'Book',
+                    suffixIcon: Icon(Icons.arrow_drop_down),
+                    border: OutlineInputBorder()),
+                validator: (value) {
+                  if (value.trim().isEmpty) return 'Book required';
+                  return null;
+                },
+              ),
+            if (chart.scope == ChartScope.singleBook) SizedBox(height: 15),
+            if (chart.scope != null &&
+                chart.type != null &&
+                (chart.scope == ChartScope.singleBook
+                    ? chart.selectedBookId != null
+                    : true))
               Expanded(
                 child: Column(
                   children: [
@@ -185,52 +220,13 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                           suffixIcon: Icon(Icons.filter_list),
                           border: OutlineInputBorder()),
                     ),
-                    // SizedBox(
-                    //   height: 15,
-                    // ),
-                    // TextFormField(
-                    //   textCapitalization: TextCapitalization.words,
-                    //   controller: yAxisController,
-                    //   readOnly: true,
-                    //   onTap: () async {
-                    //     List<Tool> relevantTools = instance.tools
-                    //         .where((element) => (chart.scope == ChartScope.books
-                    //             ? element.isBookTool
-                    //             : !element.isBookTool))
-                    //         .where((element) => element.isNumeric())
-                    //         .toList();
-
-                    //     if (relevantTools.isEmpty) {
-                    //       showErrorDialog(context, 'No Valid Tools Available');
-                    //     } else {
-                    //       Map<String, String> options =
-                    //           Map<String, String>.fromIterable(relevantTools,
-                    //               key: (tool) => (tool as Tool).id,
-                    //               value: (tool) => (tool as Tool).name);
-
-                    //       MapEntry toolInfo = await showIdSelectorDialog(
-                    //           context, 'Select an y var', options);
-                    //       if (toolInfo == null) return;
-                    //       setState(() {
-                    //         chart.yToolInfo = toolInfo;
-                    //         yAxisController.text = toolInfo.value;
-                    //       });
-                    //     }
-                    //   },
-                    //   decoration: InputDecoration(
-                    //       labelText: 'Y Axis Variable',
-                    //       suffixIcon: Icon(Icons.arrow_drop_down),
-                    //       border: OutlineInputBorder()),
-                    //   validator: (value) {
-                    //     if (value.trim().isEmpty) return 'Variable required';
-                    //     return null;
-                    //   },
-                    // ),
+                    //
                     Spacer(),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: primaryColor),
                         onPressed: () {
-                          Map<dynamic, int> dataSet = {};
+                          Map<String, int> dataSet = {};
+                          var series;
                           if (chart.scope == ChartScope.books) {
                             // book only
                             for (Book book in instance.books) {
@@ -239,68 +235,124 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                               Tool bookTool = (book.tools + book.otletTools)
                                   .firstWhere((t) => t.id == chart.xToolId);
                               if (bookTool.isActive && bookTool.value != null) {
-                                if (dataSet.containsKey(bookTool.value))
-                                  dataSet[bookTool.value] += 1;
+                                String bookToolString = bookTool.displayValue();
+                                if (dataSet.containsKey(bookToolString))
+                                  dataSet[bookToolString] += 1;
                                 else
-                                  dataSet[bookTool.value] = 1;
+                                  dataSet[bookToolString] = 1;
                               }
                             }
-                            // dataset filled and ready
-                            var series = [
-                              Series(
+                          } else {
+                            List<ReadingSession> sessionsToPull =
+                                chart.scope == ChartScope.singleBook
+                                    ? instance.books
+                                        .firstWhere((book) =>
+                                            book.id == chart.selectedBookId)
+                                        .sessions
+                                    : instance.sessionHistory;
+                            for (ReadingSession session in sessionsToPull) {
+                              if (!session.doesPassChartFilters(chart))
+                                continue;
+                              // if we make it here, the book passes all the filters
+                              Tool sessionTool = session.tools
+                                  .firstWhere((t) => t.id == chart.xToolId);
+                              if (sessionTool.isActive &&
+                                  sessionTool.value != null) {
+                                String sessionToolString =
+                                    sessionTool.displayValue();
+                                if (dataSet.containsKey(sessionToolString))
+                                  dataSet[sessionToolString] += 1;
+                                else
+                                  dataSet[sessionToolString] = 1;
+                              }
+                            }
+                          }
+                          if (dataSet.isEmpty) {
+                            showErrorDialog(
+                                context, 'No chartable data found.');
+                            return;
+                          }
+
+                          // dataset filled and ready
+                          int total =
+                              dataSet.values.toList().reduce((a, b) => a + b);
+                          if (chart.type == ChartTypes.bar ||
+                              chart.type == ChartTypes.pie) {
+                            series = [
+                              Series<LabelChartSet, String>(
                                   id: 'Sources Filtered',
                                   data: dataSet.entries
-                                      .map((e) => BarChartSet(e.key, e.value))
+                                      .map((e) => LabelChartSet(e.key, e.value))
                                       .toList(),
-                                  domainFn: (BarChartSet data, _) => data.label,
-                                  measureFn: (BarChartSet data, _) =>
-                                      data.value)
+                                  domainFn: (LabelChartSet data, _) {
+                                    return data.label;
+                                  },
+                                  measureFn: (LabelChartSet data, _) =>
+                                      data.value,
+                                  labelAccessorFn: (LabelChartSet data, _) {
+                                    return data.label +
+                                        ': ' +
+                                        ((data.value * 1.0 / total) * 100)
+                                            .toStringAsFixed(2) +
+                                        '%';
+                                  }),
                             ];
-                            var finalChart = BarChart(series, animate: true);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Scaffold(
-                                          body: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Center(
-                                              child: Container(
-                                                  height: 500,
-                                                  child: finalChart),
-                                            ),
-                                          ),
-                                        )));
-                          } else
-                            print('SESSIONSS!!!');
+                          } else {
+                            series = [
+                              Series<Map<int, int>, int>(
+                                  id: 'id',
+                                  data: [
+                                    {1: 1},
+                                    {2: 2},
+                                    {14: 1},
+                                    {15: 1},
+                                    {50: 50}
+                                  ],
+                                  domainFn: (Map<int, int> map, _) =>
+                                      map.keys.first,
+                                  measureFn: (Map<int, int> map, _) =>
+                                      map.values.first)
+                            ];
+                          }
+                          var finalChart;
+                          if (chart.type == ChartTypes.pie) {
+                            finalChart = PieChart(series,
+                                animate: true,
+                                defaultRenderer:
+                                    ArcRendererConfig(arcRendererDecorators: [
+                                  ArcLabelDecorator(
+                                      labelPosition: ArcLabelPosition.inside)
+                                ]));
+                          } else if (chart.type == ChartTypes.bar) {
+                            finalChart = BarChart(
+                              series,
+                              animate: true,
+                            );
+                          } else if (chart.type == ChartTypes.line) {
+                            finalChart = LineChart(series, animate: true);
+                          } else if (chart.type == ChartTypes.dot) {
+                            finalChart =
+                                ScatterPlotChart(series, animate: true);
+                          }
 
-                          // Map<String, dynamic> dataset = {};
-                          // String toolId = chart.xToolId;
-                          // for (Book book in instance.books) {
-                          // for (Tool tool in book.tools) {
-                          //   if (tool.id == toolId) {
-                          //     if (tool.isActive && tool.value != null) {
-                          //       if (dataset.containsKey(tool.value))
-                          //         dataset[tool.value] += 1;
-                          //       else
-                          //         dataset[tool.value] = 1;
-                          //     }
-                          //   }
-                          // }
-                          // }
-                          // print(dataset);
-                          // var series = [
-                          //   Series(
-                          //       id: 'Source Counts',
-                          //       data: dataset.entries
-                          //           .map((e) => BarChartSet(e.key, e.value))
-                          //           .toList(),
-                          //       domainFn: (BarChartSet data, _) => data.label,
-                          //       measureFn: (BarChartSet data, _) => data.value)
-                          // ];
-                          // var finalChart = BarChart(
-                          //   series,
-                          //   animate: true,
-                          // );
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Scaffold(
+                                        appBar: AppBar(
+                                            centerTitle: true,
+                                            title: Text(
+                                                nameController.text.isEmpty
+                                                    ? 'Untitled'
+                                                    : nameController.text)),
+                                        body: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Center(
+                                            child: Container(
+                                                height: 500, child: finalChart),
+                                          ),
+                                        ),
+                                      )));
                         },
                         child: Text('Generate Chart')),
                     SizedBox(height: 30)

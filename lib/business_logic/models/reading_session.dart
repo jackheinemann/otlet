@@ -4,6 +4,8 @@ import 'package:otlet/business_logic/models/tool.dart';
 import 'package:uuid/uuid.dart';
 
 import 'book.dart';
+import 'chart_helpers.dart';
+import 'otlet_chart.dart';
 
 class ReadingSession {
   String id;
@@ -71,6 +73,19 @@ class ReadingSession {
       return '$hours:${minutes >= 10 ? minutes : '0' + minutes.toString()}:${seconds >= 10 ? seconds : '0' + seconds.toString()}';
     } else
       return '${minutes >= 10 ? minutes : '0' + minutes.toString()}:${seconds >= 10 ? seconds : '0' + seconds.toString()}';
+  }
+
+  bool doesPassChartFilters(OtletChart chart) {
+    for (ChartFilter filter in chart.filters) {
+      Tool pseudoTool = filter.pseudoTool;
+      Tool sessionTool =
+          tools.firstWhere((element) => element.compareToolId(pseudoTool));
+      print(sessionTool.name);
+      if (!sessionTool.isActive) return false;
+      if (sessionTool.value == null) return false;
+      if (!filter.compareFilterValue(sessionTool)) return false;
+    }
+    return true;
   }
 
   Stream<String> maintainSession() async* {

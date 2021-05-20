@@ -214,6 +214,11 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
                                   onValueChange: (value) {
                                 setState(() {
                                   editingFilter.pseudoTool.value = value;
+                                  if (editingFilter
+                                      .pseudoTool.useFixedOptions) {
+                                    valueLimitController.text =
+                                        editingFilter.pseudoTool.displayValue();
+                                  }
                                   // editingFilter.valueLimit = value;
                                   // valueLimitController.text =
                                   //     editingFilter.pseudoTool.displayValue();

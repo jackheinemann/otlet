@@ -140,6 +140,7 @@ class Book {
       Tool bookTool = (tools + otletTools)
           .firstWhere((element) => element.compareToolId(pseudoTool));
       print(bookTool.name);
+      print(bookTool.value);
       if (!bookTool.isActive) return false;
       if (bookTool.value == null) return false;
       if (!filter.compareFilterValue(bookTool)) return false;

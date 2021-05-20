@@ -40,36 +40,6 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
               )
             : Column(
                 children: [
-                  // Padding(
-                  //   padding: const EdgeInsets.all(15.0),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       Text('Otlet Tools',
-                  //           style:
-                  //               TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-                  //       Text('Active for All',
-                  //           style:
-                  //               TextStyle(fontSize: 18, fontWeight: FontWeight.w600))
-                  //     ],
-                  //   ),
-                  // ),
-                  // Container(
-                  //   height: 1,
-                  //   width: MediaQuery.of(context).size.width,
-                  //   color: primaryColor,
-                  // ),
-                  // Column(
-                  //   children: instance.otletTools
-                  //       .map((e) => OtletToolCard(e, updateActivity: (masterTool) {
-                  //             setState(() {
-                  //               instance.setGlobalOtletToolActivity(masterTool);
-                  //             });
-                  //           }))
-                  //       .toList(),
-                  // ),
-                  // Expanded(
-
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Row(

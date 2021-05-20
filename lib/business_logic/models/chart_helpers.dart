@@ -50,6 +50,7 @@ class ChartFilter {
       if (filterValue == comparingValue) return false;
     } else if (filterComparator == FilterComparator.greaterThan) {
       // GREATER THAN
+      print('going in with greater than');
       if (tool.isOnlyDate()) {
         DateTime filterDate = filterValue as DateTime;
         DateTime comparingDate = comparingValue as DateTime;
@@ -59,7 +60,7 @@ class ChartFilter {
         TimeOfDay comparingTime = comparingValue as TimeOfDay;
         if (!(comparingTime.hour > filterTime.hour)) return false;
         if (!(comparingTime.minute > filterTime.minute)) return false;
-      } else if (!(filterValue > comparingValue)) return false;
+      } else if (!(comparingValue > filterValue)) return false;
     } else if (filterComparator == FilterComparator.lessThan) {
       // LESS THAN
       if (tool.isOnlyDate()) {
@@ -71,7 +72,7 @@ class ChartFilter {
         TimeOfDay comparingTime = comparingValue as TimeOfDay;
         if (!(comparingTime.hour < filterTime.hour)) return false;
         if (!(comparingTime.minute < filterTime.minute)) return false;
-      } else if (!(filterValue < comparingValue)) return false;
+      } else if (!(comparingValue < filterValue)) return false;
     } else if (filterComparator == FilterComparator.greaterThanEQ) {
       // GREATER THAN OR EQUAL TO
       if (tool.isOnlyDate()) {
@@ -84,7 +85,7 @@ class ChartFilter {
         TimeOfDay comparingTime = comparingValue as TimeOfDay;
         if (!(comparingTime.hour >= filterTime.hour)) return false;
         if (!(comparingTime.minute >= filterTime.minute)) return false;
-      } else if (!(filterValue >= comparingValue)) return false;
+      } else if (!(comparingValue >= filterValue)) return false;
     } else if (filterComparator == FilterComparator.lessThanEQ) {
       // LESS THAN OR EQUAL TO
       if (tool.isOnlyDate()) {
@@ -97,7 +98,7 @@ class ChartFilter {
         TimeOfDay comparingTime = comparingValue as TimeOfDay;
         if (!(comparingTime.hour <= filterTime.hour)) return false;
         if (!(comparingTime.minute <= filterTime.minute)) return false;
-      } else if (!(filterValue <= comparingValue)) return false;
+      } else if (!(comparingValue <= filterValue)) return false;
     } else
       return false; // happens only when the filterComparator is not met, which should be never
     return true;

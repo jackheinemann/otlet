@@ -1,6 +1,6 @@
-class BarChartSet {
+class LabelChartSet {
   String label;
   dynamic value;
 
-  BarChartSet(this.label, this.value);
+  LabelChartSet(this.label, this.value);
 }

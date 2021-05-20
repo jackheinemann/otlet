@@ -8,6 +8,7 @@ class OtletChart {
   String type;
   String scope;
   String xToolId;
+  String selectedBookId; // only for Sessions (Single Book) scope
 
   List<ChartFilter> filters = [];
 
