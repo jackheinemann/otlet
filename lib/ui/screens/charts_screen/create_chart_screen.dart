@@ -220,7 +220,6 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                           suffixIcon: Icon(Icons.filter_list),
                           border: OutlineInputBorder()),
                     ),
-                    //
                     Spacer(),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: primaryColor),

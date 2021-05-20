@@ -28,6 +28,20 @@ class OtletInstance extends ChangeNotifier {
   List<Tool> otletTools = [
     // page count, genre, author, publication year, started, finished
     Tool(
+        customId: 'titleTool',
+        name: 'Title',
+        toolType: Tool.textTool,
+        isBookTool: true,
+        isActive: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'authorTool',
+        name: 'Author',
+        toolType: Tool.textTool,
+        isBookTool: true,
+        isActive: true,
+        useFixedOptions: false),
+    Tool(
         customId: 'pageCountTool',
         name: 'Page Count',
         toolType: Tool.integerTool,
@@ -181,6 +195,8 @@ class OtletInstance extends ChangeNotifier {
     }).toList();
     book.otletTools = otletTools.map((e) {
       Tool tool = Tool.fromTool(e);
+      if (tool.id == 'titleTool') tool.value = book.title;
+      if (tool.id == 'authorTool') tool.value = book.author;
       if (tool.id == 'pageCountTool') tool.value = book.pageCount;
       if (tool.id == 'genreTool') tool.value = book.genre;
       if (book.published != null) if (tool.id == 'publicationTool')
@@ -284,6 +300,8 @@ class OtletInstance extends ChangeNotifier {
           activeBookIndex = i;
         book.isActive = null;
         for (Tool tool in book.otletTools) {
+          if (tool.id == 'titleTool') tool.value = book.title;
+          if (tool.id == 'authorTool') tool.value = book.author;
           if (tool.id == 'pageCountTool') tool.value = book.pageCount;
           if (tool.id == 'genreTool') tool.value = book.genre;
           if (book.published != null) if (tool.id == 'publicationTool')
