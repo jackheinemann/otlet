@@ -6,6 +6,7 @@ import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/business_logic/utils/functions.dart';
 import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/home_screen/home_screen.dart';
+import 'package:otlet/ui/screens/settings/settings_screen.dart';
 import 'package:otlet/ui/screens/view_books_screen.dart';
 import 'package:otlet/ui/screens/view_tools_screens/view_tools_screen.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,6 @@ class _TabManagerState extends State<TabManager> {
       create: (context) => instance,
       child: Scaffold(
         appBar: AppBar(
-          leading: Icon(Icons.menu_book),
           title: Text('Otlet'),
           centerTitle: true,
           actions: [
@@ -65,6 +65,15 @@ class _TabManagerState extends State<TabManager> {
                       // await createNewChart(context);
                     }
                   })
+            else
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsScreen()));
+                  },
+                  icon: Icon(Icons.settings))
           ],
         ),
         body: IndexedStack(
