@@ -40,6 +40,7 @@ class _EditBookToolsTabState extends State<EditBookToolsTab> {
               ListTile valueEditor = ListTile(
                   title: book.tools[i].generateValueInput(
                       context, valueControllers[i], onValueChange: (value) {
+                print('value $value is a ${value.runtimeType}');
                 setState(() {
                   book.tools[i].value = value;
                   valueControllers[i].text = book.tools[i].displayValue();

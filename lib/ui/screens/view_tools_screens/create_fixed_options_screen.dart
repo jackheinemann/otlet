@@ -4,7 +4,7 @@ import 'package:otlet/business_logic/models/tool.dart';
 import '../../../business_logic/utils/constants.dart';
 
 class CreateFixedOptionsScreen extends StatefulWidget {
-  Tool tool;
+  final Tool tool;
 
   CreateFixedOptionsScreen(this.tool);
   @override

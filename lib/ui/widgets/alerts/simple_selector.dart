@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Future<dynamic> showSimpleSelectorDialog(
     BuildContext context, String title, List<dynamic> options) async {
-  String target = await showDialog(
+  dynamic target = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
             title: Text(title),

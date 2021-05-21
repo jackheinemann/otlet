@@ -189,6 +189,7 @@ class _CreateCustomToolScreenState extends State<CreateCustomToolScreen> {
                                                 CreateFixedOptionsScreen(
                                                     tool)));
                                 if (fixedOptions == null) return;
+
                                 setState(() {
                                   tool.fixedOptions =
                                       List<dynamic>.from(fixedOptions);

@@ -7,6 +7,7 @@ class OtletChart {
   String type;
   String scope;
   String xToolId;
+  String yToolId;
   String selectedBookId; // only for Sessions (Single Book) scope
 
   List<ChartFilter> filters = [];
@@ -31,4 +32,6 @@ class OtletChart {
     // didnt find it, must be a new filter
     filters.add(filter);
   }
+
+  bool requiresNumeric() => type == ChartType.dot || type == ChartType.line;
 }

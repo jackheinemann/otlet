@@ -1,6 +1,6 @@
 import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:otlet/business_logic/models/label_chart_set.dart';
+import 'package:otlet/business_logic/models/chart_set.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/chart_helpers.dart';
 import 'package:otlet/business_logic/models/otlet_chart.dart';
@@ -12,6 +12,7 @@ import 'package:otlet/ui/screens/charts_screen/create_filters_screen.dart';
 import 'package:otlet/ui/widgets/alerts/error_dialog.dart';
 import 'package:otlet/ui/widgets/alerts/id_simple_selector.dart';
 import 'package:otlet/ui/widgets/alerts/simple_selector.dart';
+import 'package:uuid/uuid.dart';
 
 class CreateChartScreen extends StatefulWidget {
   final OtletInstance instance;
@@ -75,6 +76,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                   typeController.text = type;
                   // chart.xToolInfo = null;
                   // chart.yToolInfo = null;
+                  chart.xToolId = null;
+                  chart.yToolId = null;
                   xAxisController.clear();
                   yAxisController.clear();
                 });
@@ -105,6 +108,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                   xAxisController.clear();
                   yAxisController.clear();
                   singleBookController.clear();
+                  chart.xToolId = null;
+                  chart.yToolId = null;
                   chart.selectedBookId = null;
                 });
               },
@@ -167,6 +172,9 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                         if (relevantTools.isEmpty) {
                           showErrorDialog(context, 'No Valid Tools Available');
                         } else {
+                          if (chart.requiresNumeric())
+                            relevantTools
+                                .removeWhere((tool) => !tool.isPlottable());
                           relevantTools
                               .sort((a, b) => a.name.compareTo(b.name));
                           Map<String, String> options =
@@ -195,6 +203,60 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     SizedBox(
                       height: 15,
                     ),
+                    if (chart.requiresNumeric())
+                      Column(
+                        children: [
+                          TextFormField(
+                            textCapitalization: TextCapitalization.words,
+                            controller: yAxisController,
+                            readOnly: true,
+                            onTap: () async {
+                              List<Tool> relevantTools =
+                                  (instance.tools + instance.otletTools)
+                                      .where((element) =>
+                                          (chart.scope == ChartScope.books
+                                              ? element.isBookTool
+                                              : !element.isBookTool))
+                                      .toList();
+                              if (relevantTools.isEmpty) {
+                                showErrorDialog(
+                                    context, 'No Valid Tools Available');
+                              } else {
+                                if (chart.requiresNumeric())
+                                  relevantTools.removeWhere(
+                                      (tool) => !tool.isPlottable());
+                                relevantTools
+                                    .sort((a, b) => a.name.compareTo(b.name));
+                                Map<String, String> options =
+                                    Map<String, String>.fromIterable(
+                                        relevantTools,
+                                        key: (tool) => (tool as Tool).id,
+                                        value: (tool) => (tool as Tool).name);
+
+                                MapEntry toolInfo = await showIdSelectorDialog(
+                                    context, 'Select an y var', options);
+                                if (toolInfo == null) return;
+                                setState(() {
+                                  chart.yToolId = toolInfo.key;
+                                  yAxisController.text = toolInfo.value;
+                                });
+                              }
+                            },
+                            decoration: InputDecoration(
+                                labelText: 'Y Axis Variable',
+                                suffixIcon: Icon(Icons.arrow_drop_down),
+                                border: OutlineInputBorder()),
+                            validator: (value) {
+                              if (value.trim().isEmpty)
+                                return 'Variable required';
+                              return null;
+                            },
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      ),
                     TextFormField(
                       controller: filterController,
                       readOnly: true,
@@ -224,50 +286,93 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: primaryColor),
                         onPressed: () {
-                          Map<String, int> dataSet = {};
+                          List<ChartSet> dataSet = [];
                           var series;
-                          if (chart.scope == ChartScope.books) {
-                            // book only
-                            for (Book book in instance.books) {
-                              if (!book.doesPassChartFilters(chart)) continue;
-                              // if we make it here, the book passes all the filters
-                              Tool bookTool = (book.tools + book.otletTools)
-                                  .firstWhere((t) => t.id == chart.xToolId);
-                              if (bookTool.isActive && bookTool.value != null) {
-                                String bookToolString = bookTool.displayValue();
-                                if (dataSet.containsKey(bookToolString))
-                                  dataSet[bookToolString] += 1;
-                                else
-                                  dataSet[bookToolString] = 1;
-                              }
-                            }
-                          } else {
-                            List<ReadingSession> sessionsToPull =
+                          List<ReadingSession> sessionsToPull;
+                          if (chart.scope != ChartScope.books)
+                            sessionsToPull =
                                 chart.scope == ChartScope.singleBook
                                     ? instance.books
                                         .firstWhere((book) =>
                                             book.id == chart.selectedBookId)
                                         .sessions
                                     : instance.sessionHistory;
-                            for (ReadingSession session in sessionsToPull) {
-                              if (!session.doesPassChartFilters(chart))
-                                continue;
-                              // if we make it here, the session passes all the filters
-                              Tool sessionTool =
-                                  (session.tools + session.otletTools)
-                                      .firstWhere((t) => t.id == chart.xToolId);
-                              print(sessionTool.toJson());
-                              if (sessionTool.isActive &&
-                                  sessionTool.value != null) {
-                                String sessionToolString =
-                                    sessionTool.displayValue();
-                                if (dataSet.containsKey(sessionToolString))
-                                  dataSet[sessionToolString] += 1;
-                                else
-                                  dataSet[sessionToolString] = 1;
+                          for (dynamic bookOrSession
+                              in chart.scope == ChartScope.books
+                                  ? instance.books
+                                  : sessionsToPull) {
+                            if (!bookOrSession.doesPassChartFilters(chart))
+                              continue;
+                            // if we make it here, the book or tool passes all the filters
+                            Tool xTool =
+                                (bookOrSession.tools + bookOrSession.otletTools)
+                                    .firstWhere((t) => t.id == chart.xToolId);
+                            // print('${xTool.value}: ${xTool.value.runtimeType}');
+                            Tool yTool;
+                            if (chart.requiresNumeric())
+                              yTool = (bookOrSession.tools +
+                                      bookOrSession.otletTools)
+                                  .firstWhere((t) => t.id == chart.yToolId);
+                            if (xTool.isActive && xTool.value != null) {
+                              String xToolString = xTool.displayValue();
+                              if (yTool == null) {
+                                // simple frequency graph, yVal will always be an int
+                                if (!dataSet
+                                    .map((e) => e.xVal)
+                                    .toList()
+                                    .contains(xToolString)) {
+                                  // dataSet does not contain this xVal, so add it
+                                  dataSet.add(ChartSet(xToolString, 1));
+                                } else {
+                                  for (int i = 0; i < dataSet.length; i++) {
+                                    ChartSet chartSet = dataSet[i];
+                                    if (chartSet.xVal == xToolString) {
+                                      dataSet[i].yVal +=
+                                          1; // increment by 1 if it exists and is found
+                                    }
+                                  }
+                                }
+                              } else {
+                                // gonna be a numeric, have to do special stuff
+                                if (yTool.isActive && yTool.value != null) {
+                                  print(
+                                      '${yTool.value} is ${yTool.value.runtimeType}');
+                                  dataSet
+                                      .add(ChartSet(xTool.value, yTool.value));
+                                }
                               }
                             }
                           }
+                          // if (chart.scope == ChartScope.books) {
+                          //   // book only
+
+                          // } else {
+                          //   List<ReadingSession> sessionsToPull =
+                          //       chart.scope == ChartScope.singleBook
+                          //           ? instance.books
+                          //               .firstWhere((book) =>
+                          //                   book.id == chart.selectedBookId)
+                          //               .sessions
+                          //           : instance.sessionHistory;
+                          //   for (ReadingSession session in sessionsToPull) {
+                          //     if (!session.doesPassChartFilters(chart))
+                          //       continue;
+                          //     // if we make it here, the session passes all the filters
+                          //     Tool sessionTool =
+                          //         (session.tools + session.otletTools)
+                          //             .firstWhere((t) => t.id == chart.xToolId);
+                          //     print(sessionTool.toJson());
+                          //     if (sessionTool.isActive &&
+                          //         sessionTool.value != null) {
+                          //       String sessionToolString =
+                          //           sessionTool.displayValue();
+                          //       if (dataSet.containsKey(sessionToolString))
+                          //         dataSet[sessionToolString] += 1;
+                          //       else
+                          //         dataSet[sessionToolString] = 1;
+                          //     }
+                          //   }
+                          // }
                           if (dataSet.isEmpty) {
                             showErrorDialog(
                                 context, 'No chartable data found.');
@@ -275,23 +380,18 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                           }
 
                           // dataset filled and ready
-                          int total =
-                              dataSet.values.toList().reduce((a, b) => a + b);
+                          // int total =
+                          //     dataSet.values.toList().reduce((a, b) => a + b);
                           if (chart.type == ChartType.bar ||
                               chart.type == ChartType.pie) {
                             series = [
-                              Series<LabelChartSet, String>(
-                                  id: 'Sources Filtered',
-                                  data: dataSet.entries
-                                      .map((e) => LabelChartSet(e.key, e.value))
-                                      .toList(),
-                                  domainFn: (LabelChartSet data, _) {
-                                    return data.label;
-                                  },
-                                  measureFn: (LabelChartSet data, _) =>
-                                      data.value,
-                                  labelAccessorFn: (LabelChartSet data, _) {
-                                    return '${data.label}: ${data.value}';
+                              Series<ChartSet, String>(
+                                  id: Uuid().v1(),
+                                  data: dataSet,
+                                  domainFn: (ChartSet data, _) => data.xVal,
+                                  measureFn: (ChartSet data, _) => data.yVal,
+                                  labelAccessorFn: (ChartSet data, _) {
+                                    return '${data.xVal}: ${data.yVal}';
                                     // return data.label +
                                     //     ': ' +
                                     //     ((data.value * 1.0 / total) * 100)
@@ -301,19 +401,13 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                             ];
                           } else {
                             series = [
-                              Series<Map<int, int>, int>(
+                              Series<ChartSet, int>(
                                   id: 'id',
-                                  data: [
-                                    {1: 1},
-                                    {2: 2},
-                                    {14: 1},
-                                    {15: 1},
-                                    {50: 50}
-                                  ],
-                                  domainFn: (Map<int, int> map, _) =>
-                                      map.keys.first,
-                                  measureFn: (Map<int, int> map, _) =>
-                                      map.values.first)
+                                  data: dataSet,
+                                  domainFn: (ChartSet chartSet, _) =>
+                                      chartSet.xVal,
+                                  measureFn: (ChartSet chartSet, _) =>
+                                      chartSet.yVal)
                             ];
                           }
                           var finalChart;

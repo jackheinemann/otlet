@@ -190,10 +190,10 @@ class Tool {
             InputDecoration(labelText: labelText, border: OutlineInputBorder()),
         readOnly: true,
         onTap: () async {
-          String stringValue = (await showSimpleSelectorDialog(
-                  context, 'Select a value for $name', fixedOptions))
-              .toString();
-          assignValueFromString(stringValue);
+          dynamic result = await showSimpleSelectorDialog(
+              context, 'Select a value for $name', fixedOptions);
+          if (result == null) return;
+          value = result;
           onValueChange(value);
         },
       );
@@ -240,6 +240,7 @@ class Tool {
       } else {
         // either decimal, integer, or text
         textFormField = TextFormField(
+          textCapitalization: TextCapitalization.words,
           keyboardType: toolType == Tool.textTool
               ? TextInputType.text
               : TextInputType.numberWithOptions(signed: true),
@@ -296,6 +297,8 @@ class Tool {
     return (toolType == integerTool || toolType == doubleTool);
   }
 
+  bool isPlottable() => isNumeric() || isDateTime();
+
   bool isSpecialGrade() {
     if ((toolType == Tool.booleanTool || toolType == Tool.dateTimeTool) ||
         (toolType == Tool.dateTool || toolType == Tool.timeTool)) return true;
@@ -331,9 +334,7 @@ class Tool {
                 : value.toString())
             : value,
       'useFixedOptions': useFixedOptions,
-      if (useFixedOptions)
-        'fixedOptions':
-            jsonEncode(fixedOptions.map((e) => e.toString()).toList()),
+      if (useFixedOptions) 'fixedOptions': jsonEncode(fixedOptions),
       if (created != null) 'created': created.toString(),
       'isActive': isActive,
       'setActiveForAll': setActiveForAll
