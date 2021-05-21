@@ -199,11 +199,14 @@ class Book {
       Tool tool = tools[i];
       if (masterTool.compareToolId(tool)) {
         // means we've found the old version of master tool
-        if (masterTool.toolType == tool.toolType &&
-            masterTool.fixedOptions.toString() ==
-                tool.fixedOptions.toString()) {
+        if (masterTool.toolType == tool.toolType) {
           // toolType and fixedOptions have not changed, so attach old value
-          newTool.value = tool.value;
+          if (masterTool.fixedOptions.toString() ==
+                  tool.fixedOptions.toString() ||
+              masterTool.fixedOptions.contains(tool.value))
+            newTool.value = tool.value;
+          else
+            newTool.value = null;
         }
         newTool.isActive = tool.isActive;
         indexOfTool = i;
