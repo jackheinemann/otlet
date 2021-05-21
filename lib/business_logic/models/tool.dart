@@ -27,13 +27,13 @@ class Tool {
   static String timeTool = 'Time Only';
   static String dateTimeTool = 'Date and Time';
   static List<String> toolTypes = [
-    booleanTool,
+    textTool,
     integerTool,
     doubleTool,
-    textTool,
     dateTool,
-    timeTool,
-    dateTimeTool
+    // timeTool,
+    dateTimeTool,
+    booleanTool,
   ];
 
   Type valueType;

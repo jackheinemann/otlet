@@ -46,7 +46,13 @@ class _ViewBookScreenState extends State<ViewBookScreen>
     double bookImageWidth = MediaQuery.of(context).size.width * .35;
     return WillPopScope(
       onWillPop: () async {
-        if (book.hasBeenEdited || isEditing) {
+        if (isEditing) {
+          setState(() {
+            isEditing = false;
+          });
+          return Future.value(false);
+        }
+        if (book.hasBeenEdited) {
           bool shouldPop = await showConfirmDialog(
               'Discard changes to ${book.title}?', context);
           if (!shouldPop) return Future.value(false);

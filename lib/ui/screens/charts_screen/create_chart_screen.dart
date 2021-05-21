@@ -223,8 +223,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                     context, 'No Valid Tools Available');
                               } else {
                                 if (chart.requiresNumeric())
-                                  relevantTools.removeWhere(
-                                      (tool) => !tool.isPlottable());
+                                  relevantTools
+                                      .removeWhere((tool) => !tool.isNumeric());
                                 relevantTools
                                     .sort((a, b) => a.name.compareTo(b.name));
                                 Map<String, String> options =
@@ -375,15 +375,26 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                         chartSet.yVal)
                               ];
                             } else {
-                              series = [
-                                Series<ChartSet, int>(
-                                    id: Uuid().v1(),
-                                    data: dataSet,
-                                    domainFn: (ChartSet chartSet, _) =>
-                                        chartSet.xVal,
-                                    measureFn: (ChartSet chartSet, _) =>
-                                        chartSet.yVal)
-                              ];
+                              if (dataSet.first.xVal.runtimeType == int)
+                                series = [
+                                  Series<ChartSet, int>(
+                                      id: Uuid().v1(),
+                                      data: dataSet,
+                                      domainFn: (ChartSet chartSet, _) =>
+                                          chartSet.xVal,
+                                      measureFn: (ChartSet chartSet, _) =>
+                                          chartSet.yVal)
+                                ];
+                              else
+                                series = [
+                                  Series<ChartSet, double>(
+                                      id: Uuid().v1(),
+                                      data: dataSet,
+                                      domainFn: (ChartSet chartSet, _) =>
+                                          chartSet.xVal,
+                                      measureFn: (ChartSet chartSet, _) =>
+                                          chartSet.yVal)
+                                ];
                             }
                           }
                           var finalChart;
@@ -407,6 +418,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                 .toList());
                             finalChart = TimeSeriesChart(series,
                                 animate: true,
+                                domainAxis: DateTimeAxisSpec(),
                                 defaultRenderer:
                                     LineRendererConfig(includePoints: true));
                           } else if (chart.type == ChartType.line) {
