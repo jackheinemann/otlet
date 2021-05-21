@@ -1,7 +1,6 @@
 import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/chart_set.dart';
-import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/chart_helpers.dart';
 import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
@@ -297,12 +296,17 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                             book.id == chart.selectedBookId)
                                         .sessions
                                     : instance.sessionHistory;
+                          int loopIndex = -1;
                           for (dynamic bookOrSession
                               in chart.scope == ChartScope.books
                                   ? instance.books
                                   : sessionsToPull) {
                             if (!bookOrSession.doesPassChartFilters(chart))
                               continue;
+                            loopIndex += 1;
+                            print(chartColorCodes.length);
+                            if (loopIndex >= chartColorCodes.length)
+                              loopIndex = 0;
                             // if we make it here, the book or tool passes all the filters
                             Tool xTool =
                                 (bookOrSession.tools + bookOrSession.otletTools)
@@ -322,7 +326,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                     .toList()
                                     .contains(xToolString)) {
                                   // dataSet does not contain this xVal, so add it
-                                  dataSet.add(ChartSet(xToolString, 1));
+                                  dataSet
+                                      .add(ChartSet(xToolString, 1, loopIndex));
                                 } else {
                                   for (int i = 0; i < dataSet.length; i++) {
                                     ChartSet chartSet = dataSet[i];
@@ -337,8 +342,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                 if (yTool.isActive && yTool.value != null) {
                                   print(
                                       '${yTool.value} is ${yTool.value.runtimeType}');
-                                  dataSet
-                                      .add(ChartSet(xTool.value, yTool.value));
+                                  dataSet.add(ChartSet(
+                                      xTool.value, yTool.value, loopIndex));
                                 }
                               }
                             }
@@ -358,6 +363,10 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                   data: dataSet,
                                   domainFn: (ChartSet data, _) => data.xVal,
                                   measureFn: (ChartSet data, _) => data.yVal,
+                                  colorFn: (ChartSet chartSet, _) =>
+                                      Color.fromHex(
+                                          code:
+                                              chartColorCodes[chartSet.index]),
                                   labelAccessorFn: (ChartSet data, _) {
                                     return '${data.xVal}: ${data.yVal}';
                                   }),
@@ -372,7 +381,15 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                     domainFn: (ChartSet chartSet, _) =>
                                         chartSet.xVal,
                                     measureFn: (ChartSet chartSet, _) =>
-                                        chartSet.yVal)
+                                        chartSet.yVal,
+                                    colorFn: (ChartSet chartSet, _) => chart
+                                                .type ==
+                                            ChartType.dot
+                                        ? Color.fromHex(
+                                            code:
+                                                chartColorCodes[chartSet.index])
+                                        : Color.fromHex(
+                                            code: chartColorCodes[0])),
                               ];
                             } else {
                               if (dataSet.first.xVal.runtimeType == int)
@@ -383,7 +400,14 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                       domainFn: (ChartSet chartSet, _) =>
                                           chartSet.xVal,
                                       measureFn: (ChartSet chartSet, _) =>
-                                          chartSet.yVal)
+                                          chartSet.yVal,
+                                      colorFn: (ChartSet chartSet, _) =>
+                                          chart.type == ChartType.dot
+                                              ? Color.fromHex(
+                                                  code: chartColorCodes[
+                                                      chartSet.index])
+                                              : Color.fromHex(
+                                                  code: chartColorCodes[0]))
                                 ];
                               else
                                 series = [
@@ -393,7 +417,14 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                       domainFn: (ChartSet chartSet, _) =>
                                           chartSet.xVal,
                                       measureFn: (ChartSet chartSet, _) =>
-                                          chartSet.yVal)
+                                          chartSet.yVal,
+                                      colorFn: (ChartSet chartSet, _) =>
+                                          chart.type == ChartType.dot
+                                              ? Color.fromHex(
+                                                  code: chartColorCodes[
+                                                      chartSet.index])
+                                              : Color.fromHex(
+                                                  code: chartColorCodes[0]))
                                 ];
                             }
                           }
@@ -419,8 +450,9 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                             finalChart = TimeSeriesChart(series,
                                 animate: true,
                                 domainAxis: DateTimeAxisSpec(),
-                                defaultRenderer:
-                                    LineRendererConfig(includePoints: true));
+                                defaultRenderer: LineRendererConfig(
+                                    includePoints: true,
+                                    includeLine: chart.type == ChartType.line));
                           } else if (chart.type == ChartType.line) {
                             finalChart = LineChart(series,
                                 animate: true,
