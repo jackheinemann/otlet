@@ -343,36 +343,6 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                               }
                             }
                           }
-                          // if (chart.scope == ChartScope.books) {
-                          //   // book only
-
-                          // } else {
-                          //   List<ReadingSession> sessionsToPull =
-                          //       chart.scope == ChartScope.singleBook
-                          //           ? instance.books
-                          //               .firstWhere((book) =>
-                          //                   book.id == chart.selectedBookId)
-                          //               .sessions
-                          //           : instance.sessionHistory;
-                          //   for (ReadingSession session in sessionsToPull) {
-                          //     if (!session.doesPassChartFilters(chart))
-                          //       continue;
-                          //     // if we make it here, the session passes all the filters
-                          //     Tool sessionTool =
-                          //         (session.tools + session.otletTools)
-                          //             .firstWhere((t) => t.id == chart.xToolId);
-                          //     print(sessionTool.toJson());
-                          //     if (sessionTool.isActive &&
-                          //         sessionTool.value != null) {
-                          //       String sessionToolString =
-                          //           sessionTool.displayValue();
-                          //       if (dataSet.containsKey(sessionToolString))
-                          //         dataSet[sessionToolString] += 1;
-                          //       else
-                          //         dataSet[sessionToolString] = 1;
-                          //     }
-                          //   }
-                          // }
                           if (dataSet.isEmpty) {
                             showErrorDialog(
                                 context, 'No chartable data found.');
@@ -380,8 +350,6 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                           }
 
                           // dataset filled and ready
-                          // int total =
-                          //     dataSet.values.toList().reduce((a, b) => a + b);
                           if (chart.type == ChartType.bar ||
                               chart.type == ChartType.pie) {
                             series = [
@@ -392,23 +360,31 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                   measureFn: (ChartSet data, _) => data.yVal,
                                   labelAccessorFn: (ChartSet data, _) {
                                     return '${data.xVal}: ${data.yVal}';
-                                    // return data.label +
-                                    //     ': ' +
-                                    //     ((data.value * 1.0 / total) * 100)
-                                    //         .toStringAsFixed(2) +
-                                    //     '%';
                                   }),
                             ];
                           } else {
-                            series = [
-                              Series<ChartSet, int>(
-                                  id: 'id',
-                                  data: dataSet,
-                                  domainFn: (ChartSet chartSet, _) =>
-                                      chartSet.xVal,
-                                  measureFn: (ChartSet chartSet, _) =>
-                                      chartSet.yVal)
-                            ];
+                            if (dataSet.first.xVal.runtimeType == DateTime) {
+                              dataSet.sort((a, b) => a.xVal.compareTo(b.xVal));
+                              series = [
+                                Series<ChartSet, DateTime>(
+                                    id: Uuid().v1(),
+                                    data: dataSet,
+                                    domainFn: (ChartSet chartSet, _) =>
+                                        chartSet.xVal,
+                                    measureFn: (ChartSet chartSet, _) =>
+                                        chartSet.yVal)
+                              ];
+                            } else {
+                              series = [
+                                Series<ChartSet, int>(
+                                    id: Uuid().v1(),
+                                    data: dataSet,
+                                    domainFn: (ChartSet chartSet, _) =>
+                                        chartSet.xVal,
+                                    measureFn: (ChartSet chartSet, _) =>
+                                        chartSet.yVal)
+                              ];
+                            }
                           }
                           var finalChart;
                           if (chart.type == ChartType.pie) {
@@ -424,8 +400,20 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                               series,
                               animate: true,
                             );
+                          } else if (dataSet.first.xVal.runtimeType ==
+                              DateTime) {
+                            print(dataSet
+                                .map((e) => '${e.xVal} ${e.yVal}')
+                                .toList());
+                            finalChart = TimeSeriesChart(series,
+                                animate: true,
+                                defaultRenderer:
+                                    LineRendererConfig(includePoints: true));
                           } else if (chart.type == ChartType.line) {
-                            finalChart = LineChart(series, animate: true);
+                            finalChart = LineChart(series,
+                                animate: true,
+                                defaultRenderer:
+                                    LineRendererConfig(includePoints: true));
                           } else if (chart.type == ChartType.dot) {
                             finalChart =
                                 ScatterPlotChart(series, animate: true);
