@@ -21,7 +21,11 @@ class MyApp extends StatelessWidget {
             primaryColor: primaryColor,
             backgroundColor: secondaryColor,
             accentColor: accentColor,
-            appBarTheme: AppBarTheme(brightness: Brightness.dark)),
+            appBarTheme: AppBarTheme(brightness: Brightness.dark),
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                selectedIconTheme: IconThemeData(color: primaryColor),
+                selectedItemColor: primaryColor,
+                selectedLabelStyle: TextStyle(color: primaryColor))),
         home: NavManager());
   }
 }

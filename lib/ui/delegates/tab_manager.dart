@@ -102,30 +102,25 @@ class _TabManagerState extends State<TabManager> {
             ViewChartsScreen()
           ],
         ),
-        bottomNavigationBar: Theme(
-          data: ThemeData(
-              canvasColor: Colors.white, primaryColor: secondaryColor),
-          child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              currentIndex: _currentIndex,
-              onTap: (i) {
-                setState(() {
-                  _currentIndex = i;
-                });
-              },
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.library_books), label: 'Books'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.build), label: 'Tools'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.bar_chart), label: 'Charts'),
-              ]),
-        ),
+        bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _currentIndex,
+            onTap: (i) {
+              setState(() {
+                _currentIndex = i;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.library_books), label: 'Books'),
+              BottomNavigationBarItem(icon: Icon(Icons.build), label: 'Tools'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart), label: 'Charts'),
+            ]),
       ),
     );
   }
