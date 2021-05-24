@@ -353,7 +353,10 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                 context, 'No chartable data found.');
                             return;
                           }
-
+                          if (nameController.text.isNotEmpty)
+                            chart.name = nameController.text.trim();
+                          else
+                            chart.name = 'Chart ${instance.charts.length + 1}';
                           // dataset filled and ready
                           if (chart.type == ChartType.bar ||
                               chart.type == ChartType.pie) {
@@ -462,25 +465,7 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                             finalChart =
                                 ScatterPlotChart(series, animate: true);
                           }
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Scaffold(
-                                        appBar: AppBar(
-                                            centerTitle: true,
-                                            title: Text(
-                                                nameController.text.isEmpty
-                                                    ? 'Untitled'
-                                                    : nameController.text)),
-                                        body: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Center(
-                                            child: Container(
-                                                height: 500, child: finalChart),
-                                          ),
-                                        ),
-                                      )));
+                          Navigator.pop(context, chart);
                         },
                         child: Text('Generate Chart')),
                     SizedBox(height: 30)

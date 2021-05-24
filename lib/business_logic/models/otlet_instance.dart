@@ -183,6 +183,14 @@ class OtletInstance extends ChangeNotifier {
       }
       goals = goalsBuilder;
     }
+    if (json.containsKey('charts')) {
+      List<OtletChart> chartsBuilder = [];
+      for (Map<String, dynamic> chartJson
+          in List<Map<String, dynamic>>.from(jsonDecode(json['charts']))) {
+        chartsBuilder.add(OtletChart.fromJson(chartJson));
+      }
+      charts = chartsBuilder;
+    }
   }
 
   Book activeBook() {
@@ -213,6 +221,12 @@ class OtletInstance extends ChangeNotifier {
     }).toList();
     books.add(book);
 
+    notifyListeners();
+  }
+
+  void addNewChart(OtletChart chart) {
+    charts.add(chart);
+    saveInstance();
     notifyListeners();
   }
 
@@ -319,6 +333,16 @@ class OtletInstance extends ChangeNotifier {
       }
     }
 
+    notifyListeners();
+  }
+
+  void modifyChart(OtletChart chart) {
+    int i = 0;
+    for (; i < charts.length; i++) {
+      if (charts[i].id == chart.id) break;
+    }
+    charts[i] = chart;
+    saveInstance();
     notifyListeners();
   }
 
@@ -430,7 +454,9 @@ class OtletInstance extends ChangeNotifier {
       if (otletTools != null)
         'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList()),
       if (goals != null)
-        'goals': jsonEncode(goals.map((e) => e.toJson()).toList())
+        'goals': jsonEncode(goals.map((e) => e.toJson()).toList()),
+      if (charts != null)
+        'charts': jsonEncode(charts.map((e) => e.toJson()).toList())
     };
   }
 

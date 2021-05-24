@@ -1,8 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/ui/delegates/nav_manager.dart';
 
 void main() {
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    InAppPurchaseAndroidPlatformAddition.enablePendingPurchases();
+  }
   runApp(MyApp());
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
@@ -40,7 +41,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Clear all data'),
               trailing: Icon(Icons.delete_forever),
             ),
-            ListTile(title: Text('Donate'), trailing: Icon(Icons.money))
+            ListTile(
+                onTap: () async {
+                  final bool available =
+                      await InAppPurchase.instance.isAvailable();
+                  if (!available) {
+                    // The store cannot be reached or accessed. Update the UI accordingly.
+                    print('unavailable');
+                  }
+                },
+                title: Text('Donate'),
+                trailing: Icon(Icons.money))
           ],
         ),
       ),

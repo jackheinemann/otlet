@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/book.dart';
+import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/business_logic/utils/functions.dart';
+import 'package:otlet/ui/screens/charts_screen/create_chart_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/home_screen/home_screen.dart';
 import 'package:otlet/ui/screens/settings/settings_screen.dart';
@@ -62,7 +64,15 @@ class _TabManagerState extends State<TabManager> {
                         instance.tools.sort((a, b) => a.name.compareTo(b.name));
                       });
                     } else {
-                      // await createNewChart(context);
+                      OtletChart temp = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  CreateChartScreen(instance)));
+                      if (temp == null) return;
+                      setState(() {
+                        instance.addNewChart(temp);
+                      });
                     }
                   })
             else

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:uuid/uuid.dart';
 
@@ -34,6 +35,41 @@ class ChartFilter {
     if (comparator == FilterComparator.greaterThanEQ) return '>=';
     if (comparator == FilterComparator.lessThanEQ) return '<=';
     return null;
+  }
+
+  ChartFilter.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    filterComparator = json['filterComparator'];
+    pseudoTool = json['pseudoTool'];
+    if (pseudoTool.isDateTime()) {
+      try {
+        valueLimit = DateTime.parse(json['valueLimit']);
+      } catch (e) {
+        print('Error parsing date: $e. Trying new style');
+        try {
+          valueLimit =
+              DateFormat('MMMM d, y m:ss aa').parse(json['valueLimit']);
+        } catch (e) {
+          print('Error on second date parse: $e. Trying once more');
+          try {
+            valueLimit = DateFormat('MMMM d, y').parse(json['valueLimit']);
+          } catch (e) {
+            print('giving up on date, assigning DateTime.now()');
+            valueLimit = DateTime.now();
+          }
+        }
+      }
+    } else
+      valueLimit = json['valueLimit'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'filterComparator': filterComparator,
+      'pseudoTool': pseudoTool,
+      'valueLimit': pseudoTool.isDateTime() ? valueLimit.toString() : valueLimit
+    };
   }
 
   bool compareFilterValue(Tool tool) {
