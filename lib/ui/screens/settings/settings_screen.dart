@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
+  final OtletInstance instance;
+
+  SettingsScreen(this.instance);
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  OtletInstance instance;
+
+  @override
+  void initState() {
+    super.initState();
+    instance = widget.instance;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +31,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           children: [
             ListTile(
+              onTap: () async {
+                bool shouldWipe = await showConfirmDialog(
+                    'Permanently wipe all of your data?', context);
+                if (!shouldWipe) return;
+                Navigator.pop(context, true);
+              },
               title: Text('Clear all data'),
               trailing: Icon(Icons.delete_forever),
             ),

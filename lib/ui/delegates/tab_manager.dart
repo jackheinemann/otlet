@@ -67,11 +67,17 @@ class _TabManagerState extends State<TabManager> {
                   })
             else
               IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsScreen()));
+                  onPressed: () async {
+                    bool wipingEverything = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SettingsScreen(instance))) ??
+                        false;
+                    if (wipingEverything)
+                      setState(() {
+                        instance.scorchEarth();
+                      });
                   },
                   icon: Icon(Icons.settings))
           ],

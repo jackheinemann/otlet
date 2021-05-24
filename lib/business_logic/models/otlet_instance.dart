@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/goal.dart';
+import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/services/session_stream.dart';
@@ -105,6 +106,8 @@ class OtletInstance extends ChangeNotifier {
         isActive: true,
         useFixedOptions: false)
   ];
+
+  List<OtletChart> charts = [];
 
   OtletInstance.empty();
 
@@ -350,6 +353,21 @@ class OtletInstance extends ChangeNotifier {
 
   void saveInstance() {
     preferences.setString('otlet_instance', jsonEncode(toJson()));
+  }
+
+  void scorchEarth() {
+    // wipe everything out
+    preferences.clear();
+    books.clear();
+    tools.clear();
+    sessionHistory.clear();
+    activeBookIndex = -1;
+    goals.clear();
+    charts.clear();
+    _stream = null;
+    timerSubscription?.cancel();
+    timerSubscription = null;
+    notifyListeners();
   }
 
   void setGlobalOtletToolActivity(Tool masterTool) {
