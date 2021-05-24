@@ -17,7 +17,11 @@ class NavManager extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(title: Icon(Icons.menu_book), centerTitle: true),
             body: Center(
-              child: LinearProgressIndicator(),
+              child: LinearProgressIndicator(
+                backgroundColor: Theme.of(context).backgroundColor,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).accentColor),
+              ),
             ),
           );
         });

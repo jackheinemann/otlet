@@ -115,6 +115,9 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                   width: MediaQuery.of(context).size.width * .75,
                   child: LinearProgressIndicator(
                     value: book.readingProgress(),
+                    backgroundColor: Theme.of(context).backgroundColor,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).accentColor),
                   ),
                 ),
                 Spacer(),

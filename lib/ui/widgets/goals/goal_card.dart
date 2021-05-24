@@ -27,7 +27,12 @@ class GoalCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 10),
-              LinearProgressIndicator(value: goal.progressPercentage()),
+              LinearProgressIndicator(
+                value: goal.progressPercentage(),
+                backgroundColor: Theme.of(context).backgroundColor,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).accentColor),
+              ),
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

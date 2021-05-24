@@ -30,9 +30,9 @@ const List<String> litGenres = [
   'Speech'
 ];
 
-Color primaryColor = Color(0xFF373F51);
-Color secondaryColor = Color(0xFF58A4B0);
-Color accentColor = Color(0xFFDAA49A);
+Color primaryColor = Color(0xFF14213D);
+Color secondaryColor = Color(0xFFE5E5E5);
+Color accentColor = Color(0xFFFCA311);
 
 List<String> chartColorCodes = [
   '3366cc',

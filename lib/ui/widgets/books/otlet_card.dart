@@ -94,6 +94,10 @@ class OtletCard extends StatelessWidget {
                                       MediaQuery.of(context).size.width * .45,
                                   child: LinearProgressIndicator(
                                     value: book.readingProgress(),
+                                    backgroundColor:
+                                        Theme.of(context).backgroundColor,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Theme.of(context).accentColor),
                                   ),
                                 ),
                                 SizedBox(width: 10),

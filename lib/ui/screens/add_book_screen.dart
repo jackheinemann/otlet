@@ -41,7 +41,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                          title: LinearProgressIndicator(),
+                          title: LinearProgressIndicator(
+                            backgroundColor: Theme.of(context).backgroundColor,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).accentColor),
+                          ),
                         ));
 
                 // we have an ISBN code to lookup
@@ -136,7 +140,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                       if (!_formKey.currentState.validate()) return;
                       book.title = titleController.text.trim();
                       book.author = authorController.text.trim();
-                      book.genre = genreController.text;
+                      book.genre = genreController.text.trim();
 
                       book.pageCount =
                           int.tryParse(pageCountController.text.trim());

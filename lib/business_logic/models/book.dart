@@ -224,7 +224,7 @@ class Book {
     if (title != null) return false;
     if (author != null) return false;
     if (published != null) return false;
-    if (genre.isNotEmpty) return false;
+    if (genre != null) return false;
     return true;
   }
 
