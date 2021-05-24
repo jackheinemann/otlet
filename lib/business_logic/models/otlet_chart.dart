@@ -45,6 +45,12 @@ class OtletChart {
         .toList();
   }
 
+  OtletChart.toDelete(OtletChart chart) {
+    id = chart.id;
+  }
+
+  bool markedForDeletion() => name == null && type == null;
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -207,5 +213,12 @@ class OtletChart {
     }
 
     return finalChart;
+  }
+
+  Icon chartIcon() {
+    if (type == ChartType.bar) return Icon(Icons.bar_chart);
+    if (type == ChartType.pie) return Icon(Icons.pie_chart);
+    if (type == ChartType.line) return Icon(Icons.show_chart);
+    return Icon(Icons.insert_chart_outlined);
   }
 }

@@ -278,6 +278,16 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteChart(OtletChart chart) {
+    int i = 0;
+    for (; i < charts.length; i++) {
+      if (chart.id == charts[i].id) break;
+    }
+    charts.removeAt(i);
+    saveInstance();
+    notifyListeners();
+  }
+
   void deleteGoal(Goal goal) {
     int i = 0;
     for (; i < goals.length; i++) {

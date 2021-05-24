@@ -8,6 +8,7 @@ import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/ui/screens/charts_screen/create_filters_screen.dart';
+import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 import 'package:otlet/ui/widgets/alerts/error_dialog.dart';
 import 'package:otlet/ui/widgets/alerts/id_simple_selector.dart';
 import 'package:otlet/ui/widgets/alerts/simple_selector.dart';
@@ -15,7 +16,8 @@ import 'package:uuid/uuid.dart';
 
 class CreateChartScreen extends StatefulWidget {
   final OtletInstance instance;
-  CreateChartScreen(this.instance);
+  final OtletChart chart;
+  CreateChartScreen(this.instance, {this.chart});
   @override
   _CreateChartScreenState createState() => _CreateChartScreenState();
 }
@@ -31,11 +33,46 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
   OtletChart chart;
   OtletInstance instance;
 
+  bool isEditing;
+
   @override
   initState() {
     super.initState();
     instance = widget.instance;
-    chart = OtletChart.basic();
+    chart = widget.chart ?? OtletChart.basic();
+    isEditing = widget.chart != null;
+    if (chart.name != null) nameController.text = chart.name;
+    typeController.text = chart.type;
+    scopeController.text = chart.scope;
+    if (instance.books
+        .map((e) => e.id)
+        .toList()
+        .contains(chart.selectedBookId ?? 'no id'))
+      singleBookController.text = instance.books
+          .firstWhere((element) => element.id == chart.selectedBookId)
+          .title;
+    else
+      chart.selectedBookId = null; // handle missing book
+    if ((instance.tools + instance.otletTools)
+        .map((e) => e.id)
+        .toList()
+        .contains(chart.xToolId ?? 'no id'))
+      xAxisController.text = (instance.tools + instance.otletTools)
+          .firstWhere((element) => element.id == chart.xToolId)
+          .name;
+    else
+      chart.xToolId = null;
+    if ((instance.tools + instance.otletTools)
+        .map((e) => e.id)
+        .toList()
+        .contains(chart.yToolId ?? 'no id'))
+      yAxisController.text = (instance.tools + instance.otletTools)
+          .firstWhere((element) => element.id == chart.yToolId)
+          .name;
+    else
+      chart.yToolId = null;
+    filterController.text =
+        chart.filters.map((e) => e.filterLabel()).toList().join(', ');
   }
 
   @override
@@ -44,6 +81,17 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('Create New Chart'),
+        actions: [
+          if (isEditing)
+            IconButton(
+                onPressed: () async {
+                  bool shouldDelete = await showConfirmDialog(
+                      'Delete chart ${chart.name}?', context);
+                  if (!shouldDelete) return;
+                  Navigator.pop(context, OtletChart.toDelete(chart));
+                },
+                icon: Icon(Icons.delete))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -467,7 +515,8 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                           }
                           Navigator.pop(context, chart);
                         },
-                        child: Text('Generate Chart')),
+                        child:
+                            Text(isEditing ? 'Save Chart' : 'Generate Chart')),
                     SizedBox(height: 30)
                   ],
                 ),
