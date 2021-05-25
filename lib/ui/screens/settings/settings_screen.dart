@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/ui/screens/settings/licenses_screen.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -41,6 +42,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Clear all data'),
               trailing: Icon(Icons.delete_forever),
             ),
+            ListTile(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LicensesScreen())),
+                title: Text('View Credits and Licenses'),
+                trailing: Icon(Icons.copyright)),
             ListTile(
                 onTap: () async {
                   final bool available =
