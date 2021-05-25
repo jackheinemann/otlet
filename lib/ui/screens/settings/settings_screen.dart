@@ -45,7 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListTile(
                 onTap: () => Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LicensesScreen())),
-                title: Text('View Credits and Licenses'),
+                title: Text('View credits and licenses'),
                 trailing: Icon(Icons.copyright)),
             ListTile(
                 onTap: () async {

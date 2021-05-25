@@ -145,7 +145,10 @@ class _ViewBookScreenState extends State<ViewBookScreen>
 
         return Scaffold(
           appBar: AppBar(
-            title: Icon(Icons.menu_book),
+            title: Image.asset(
+              'assets/images/book_logo_small.png',
+              scale: 2.7,
+            ),
             centerTitle: true,
             actions: [
               if (isEditing)
