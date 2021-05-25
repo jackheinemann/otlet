@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.otlet">
+    package="com.heinemann.otlet">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="otlet"
+        android:label="Otlet"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
