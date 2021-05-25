@@ -85,6 +85,7 @@ Map<String, String> packageLicenses = Map.fromIterables(
       'In App Purchase',
       'Flutter Launcher Icons',
       'Intl',
+      'Flutter Native Splash'
     ],
     [
       'Copyright 2017 The Chromium Authors. All rights reserved.$bsdLicense',
@@ -96,7 +97,8 @@ Map<String, String> packageLicenses = Map.fromIterables(
       'Copyright [yyyy] [name of copyright owner]$apacheLicense',
       'Copyright 2013 The Flutter Authors. All rights reserved.$bsdLicense',
       "Copyright (c) 2019 Mark O'Sullivan$mitLicense",
-      'Copyright 2013, the Dart project authors. All rights reserved.$bsdLicense'
+      'Copyright 2013, the Dart project authors. All rights reserved.$bsdLicense',
+      "Copyright (c) 2019 Mark O'Sullivan$mitLicense",
     ].map((e) => e.contains(mitLicense) ? 'MIT License\n\n' + e : e));
 
 String bsdLicense =
