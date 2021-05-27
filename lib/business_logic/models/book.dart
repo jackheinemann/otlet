@@ -134,6 +134,19 @@ class Book {
     }
   }
 
+  Book.fromOpenLibrarySearch(Map<String, dynamic> json) {
+    title = json['title_suggest'] ?? json['title'];
+    if (json['cover_i'] != null)
+      coverUrl = 'https://covers.openlibrary.org/b/id/${json['cover_i']}-M.jpg';
+    if (json['author_name'] != null) author = json['author_name'].first;
+    if (json['subject'] != null) {
+      List<String> subjects = List<String>.from(json['subject']);
+      genre = parseGenres(subjects) ?? null;
+    }
+    if (json['first_publish_year'] != null)
+      published = DateFormat('y').parse(json['first_publish_year'].toString());
+  }
+
   bool doesPassChartFilters(OtletChart chart) {
     for (ChartFilter filter in chart.filters) {
       Tool pseudoTool = filter.pseudoTool;
@@ -260,7 +273,7 @@ class Book {
 
   String relevantFirstChar() {
     String titleString = title.toLowerCase();
-    titleString = titleString.replaceAll('the', '');
+    titleString = titleString.replaceAll('the ', '');
     titleString = titleString.replaceAll('a ', '');
     titleString = titleString.trim();
     return titleString[0].toUpperCase();

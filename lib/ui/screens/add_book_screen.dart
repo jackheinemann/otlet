@@ -3,6 +3,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/services/open_library_service.dart';
+import 'package:otlet/ui/widgets/books/book_search_result_card.dart';
 
 import '../../business_logic/utils/constants.dart';
 
@@ -15,6 +16,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
   final _formKey = GlobalKey<FormState>();
 
   Book book = Book();
+
+  bool isSearching = false;
+  List<Book> searchResults = [];
 
   TextEditingController titleController = TextEditingController();
   TextEditingController authorController = TextEditingController();
@@ -72,6 +76,27 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 }
 
                 Navigator.pop(context);
+              }),
+          IconButton(
+              icon: Icon(isSearching ? Icons.search_off : Icons.search),
+              onPressed: () async {
+                // if (isSearching && titleController.text.isNotEmpty) {
+                //   showDialog(
+                //       context: context,
+                //       builder: (context) => AlertDialog(
+                //             title: Text('Loading search results'),
+                //             content: LinearProgressIndicator(),
+                //           ));
+                //   List<Map<String, dynamic>> results = await libraryService
+                //       .searchForBook(titleController.text);
+                //   searchResults = results
+                //       .map((e) => Book.fromOpenLibrarySearch(e))
+                //       .toList();
+                //   Navigator.pop(context);
+                // }
+                setState(() {
+                  isSearching = !isSearching;
+                });
               })
         ],
       ),
@@ -79,84 +104,159 @@ class _AddBookScreenState extends State<AddBookScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 10),
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  controller: titleController,
-                  decoration: InputDecoration(
-                      labelText: 'Title (required)',
-                      border: OutlineInputBorder()),
-                  validator: (value) {
-                    if (value.trim().isEmpty) return 'Title required';
-                    return null;
-                  },
-                ),
-                SizedBox(height: 15),
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  controller: authorController,
-                  decoration: InputDecoration(
-                      labelText: 'Author', border: OutlineInputBorder()),
-                ),
-                SizedBox(height: 15),
-                TextFormField(
-                  textCapitalization: TextCapitalization.words,
-                  controller: genreController,
-                  decoration: InputDecoration(
-                      labelText: 'Genre', border: OutlineInputBorder()),
-                ),
-                SizedBox(height: 15),
-                TextFormField(
-                  controller: publishedController,
-                  keyboardType: TextInputType.numberWithOptions(signed: true),
-                  validator: (value) {
-                    if (value.trim().isEmpty) return null;
-                    try {
-                      DateFormat('y').parse(value.trim());
-                      return null;
-                    } catch (e) {
-                      return 'Enter a valid year';
-                    }
-                  },
-                  decoration: InputDecoration(
-                      labelText: 'Publication Year',
-                      border: OutlineInputBorder()),
-                ),
-                SizedBox(height: 15),
-                TextFormField(
-                  keyboardType: TextInputType.numberWithOptions(signed: true),
-                  controller: pageCountController,
-                  decoration: InputDecoration(
-                      labelText: 'Page Count', border: OutlineInputBorder()),
-                ),
-                SizedBox(height: 40),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: primaryColor),
-                    onPressed: () {
-                      if (!_formKey.currentState.validate()) return;
-                      book.title = titleController.text.trim();
-                      book.author = authorController.text.trim();
-                      book.genre = genreController.text.trim();
+          child: isSearching
+              ? Column(
+                  children: [
+                    SizedBox(height: 10),
+                    TextFormField(
+                      textCapitalization: TextCapitalization.words,
+                      controller: titleController,
+                      decoration: InputDecoration(
+                          labelText: 'Search by title',
+                          border: OutlineInputBorder()),
+                      onEditingComplete: () async {
+                        FocusScope.of(context).unfocus();
+                        if (!isSearching) return;
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text('Loading search results'),
+                                  content: LinearProgressIndicator(),
+                                ));
+                        List<Map<String, dynamic>> results =
+                            await libraryService
+                                .searchForBook(titleController.text);
+                        setState(() {
+                          searchResults = results
+                              .map((e) => Book.fromOpenLibrarySearch(e))
+                              .toList();
+                        });
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(height: 15),
+                    if (isSearching)
+                      searchResults.length == 0
+                          ? Column(
+                              children: [
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Center(
+                                  child: Text('No Results To Display',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500)),
+                                ),
+                              ],
+                            )
+                          : Expanded(
+                              child: ListView.builder(
+                                  itemCount: searchResults.length,
+                                  itemBuilder: (context, i) => GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          book = searchResults[i];
+                                          titleController.text = book.title;
+                                          authorController.text = book.author;
+                                          genreController.text = book.genre;
+                                          if (book.published != null)
+                                            publishedController.text =
+                                                DateFormat('y')
+                                                    .format(book.published);
+                                          // if (book.pageCount != null)
+                                          //   pageCountController.text =
+                                          //       book.pageCount.toString();
+                                          isSearching = false;
+                                        });
+                                      },
+                                      child: BookSearchResultCard(
+                                          searchResults[i]))),
+                            )
+                  ],
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 10),
+                      TextFormField(
+                        textCapitalization: TextCapitalization.words,
+                        controller: titleController,
+                        decoration: InputDecoration(
+                            labelText: 'Title (required)',
+                            border: OutlineInputBorder()),
+                        validator: (value) {
+                          if (value.trim().isEmpty) return 'Title required';
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 15),
+                      TextFormField(
+                        textCapitalization: TextCapitalization.words,
+                        controller: authorController,
+                        decoration: InputDecoration(
+                            labelText: 'Author', border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 15),
+                      TextFormField(
+                        textCapitalization: TextCapitalization.words,
+                        controller: genreController,
+                        decoration: InputDecoration(
+                            labelText: 'Genre', border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 15),
+                      TextFormField(
+                        controller: publishedController,
+                        keyboardType:
+                            TextInputType.numberWithOptions(signed: true),
+                        validator: (value) {
+                          if (value.trim().isEmpty) return null;
+                          try {
+                            DateFormat('y').parse(value.trim());
+                            return null;
+                          } catch (e) {
+                            return 'Enter a valid year';
+                          }
+                        },
+                        decoration: InputDecoration(
+                            labelText: 'Publication Year',
+                            border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 15),
+                      TextFormField(
+                        keyboardType:
+                            TextInputType.numberWithOptions(signed: true),
+                        controller: pageCountController,
+                        decoration: InputDecoration(
+                            labelText: 'Page Count',
+                            border: OutlineInputBorder()),
+                      ),
+                      SizedBox(height: 40),
+                      ElevatedButton(
+                          style:
+                              ElevatedButton.styleFrom(primary: primaryColor),
+                          onPressed: () {
+                            if (!_formKey.currentState.validate()) return;
+                            book.title = titleController.text.trim();
+                            book.author = authorController.text.trim();
+                            book.genre = genreController.text.trim();
 
-                      book.pageCount =
-                          int.tryParse(pageCountController.text.trim());
-                      try {
-                        book.published = DateFormat('y')
-                            .parse(publishedController.text.trim());
-                      } catch (e) {
-                        print('Error formatting published date');
-                      }
+                            book.pageCount =
+                                int.tryParse(pageCountController.text.trim());
+                            try {
+                              book.published = DateFormat('y')
+                                  .parse(publishedController.text.trim());
+                            } catch (e) {
+                              print('Error formatting published date');
+                            }
 
-                      Navigator.pop(context, book);
-                    },
-                    child: Text('Add to My Books')),
-              ],
-            ),
-          ),
+                            Navigator.pop(context, book);
+                          },
+                          child: Text('Add to My Books')),
+                    ],
+                  ),
+                ),
         ),
       ),
     );
