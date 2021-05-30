@@ -242,7 +242,6 @@ class Tool {
         textFormField = TextFormField(
           focusNode: focusNode,
           textCapitalization: TextCapitalization.words,
-          textInputAction: TextInputAction.next,
           keyboardType: toolType == Tool.textTool
               ? TextInputType.text
               : TextInputType.numberWithOptions(signed: true),
