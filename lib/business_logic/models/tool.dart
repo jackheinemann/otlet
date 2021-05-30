@@ -174,8 +174,8 @@ class Tool {
     return generalized;
   }
 
-  Widget generateValueInput(
-      BuildContext context, TextEditingController valueController,
+  Widget generateValueInput(BuildContext context,
+      TextEditingController valueController, FocusNode focusNode,
       {@required Function(dynamic) onValueChange, String labelText}) {
     TextFormField textFormField;
     if (value != null && isSpecialGrade())
@@ -240,7 +240,9 @@ class Tool {
       } else {
         // either decimal, integer, or text
         textFormField = TextFormField(
+          focusNode: focusNode,
           textCapitalization: TextCapitalization.words,
+          textInputAction: TextInputAction.next,
           keyboardType: toolType == Tool.textTool
               ? TextInputType.text
               : TextInputType.numberWithOptions(signed: true),

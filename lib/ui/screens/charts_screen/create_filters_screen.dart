@@ -30,6 +30,8 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  // FocusNode focusNode;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,21 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
     pseudoToolController = TextEditingController();
     comparatorController = TextEditingController();
     valueLimitController = TextEditingController();
+    // focusNode = FocusNode();
+    // focusNode.addListener(() {
+    //   if (!focusNode.hasFocus) {
+    //           // means we just lost focus, keep checking
+    //           if (activeSessionTools[i].displayValue() !=
+    //               valueControllers[i].text.trim()) {
+    //             // means the value in the tool and its formfield are different
+    //             setState(() {
+    //               activeSessionTools[i]
+    //                   .assignValueFromString(valueControllers[i].text.trim());
+    //               instance.updateSessionTool(activeSessionTools[i]);
+    //             });
+    //           }
+    //         }
+    // })
   }
 
   @override
@@ -209,7 +226,7 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
                             ),
                             if (editingFilter.pseudoTool != null)
                               editingFilter.pseudoTool.generateValueInput(
-                                  context, valueLimitController,
+                                  context, valueLimitController, FocusNode(),
                                   labelText: 'Filter Limit',
                                   onValueChange: (value) {
                                 setState(() {

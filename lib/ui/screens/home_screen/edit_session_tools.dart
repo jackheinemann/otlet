@@ -12,6 +12,7 @@ class EditSessionTools extends StatefulWidget {
 class _EditSessionToolsState extends State<EditSessionTools> {
   List<TextEditingController> valueControllers = [];
   List<Tool> activeSessionTools = [];
+  List<FocusNode> focusNodes = [];
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +21,27 @@ class _EditSessionToolsState extends State<EditSessionTools> {
       if (valueControllers.isEmpty)
         valueControllers =
             activeSessionTools.map((e) => TextEditingController()).toList();
+      if (focusNodes.isEmpty) {
+        for (int i = 0; i < activeSessionTools.length; i++) {
+          FocusNode focusNode = FocusNode();
+          focusNode.addListener(() {
+            if (!focusNode.hasFocus) {
+              // means we just lost focus, keep checking
+              if (activeSessionTools[i].displayValue() !=
+                  valueControllers[i].text.trim()) {
+                // means the value in the tool and its formfield are different
+                setState(() {
+                  activeSessionTools[i]
+                      .assignValueFromString(valueControllers[i].text.trim());
+                  instance.updateSessionTool(activeSessionTools[i]);
+                });
+              }
+            }
+          });
+          focusNodes.add(focusNode);
+        }
+      }
+      // focusNodes = activeSessionTools.map((e) => FocusNode()).toList();
       return Expanded(
         child: activeSessionTools.isEmpty
             ? Center(
@@ -42,7 +64,7 @@ class _EditSessionToolsState extends State<EditSessionTools> {
                             Tool tool = activeSessionTools[i];
                             return ListTile(
                                 title: tool.generateValueInput(
-                                    context, valueControllers[i],
+                                    context, valueControllers[i], focusNodes[i],
                                     labelText: tool.name,
                                     onValueChange: (value) {
                               setState(() {

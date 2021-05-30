@@ -17,6 +17,7 @@ class EditBookToolsTab extends StatefulWidget {
 class _EditBookToolsTabState extends State<EditBookToolsTab> {
   Book book;
   List<TextEditingController> valueControllers = [];
+  List<FocusNode> focusNodes = [];
   @override
   void initState() {
     super.initState();
@@ -26,6 +27,23 @@ class _EditBookToolsTabState extends State<EditBookToolsTab> {
       controller.text = e.displayValue();
       return controller;
     }).toList();
+    for (int i = 0; i < book.tools.length; i++) {
+      FocusNode focusNode = FocusNode();
+      focusNode.addListener(() {
+        if (!focusNode.hasFocus) {
+          // means we just lost focus, keep checking
+          if (book.tools[i].displayValue() != valueControllers[i].text.trim()) {
+            // means the value in the tool and its formfield are different
+            setState(() {
+              book.tools[i]
+                  .assignValueFromString(valueControllers[i].text.trim());
+            });
+            widget.onValueChange(book);
+          }
+        }
+      });
+      focusNodes.add(focusNode);
+    }
   }
 
   @override
@@ -39,7 +57,8 @@ class _EditBookToolsTabState extends State<EditBookToolsTab> {
             itemBuilder: (context, i) {
               ListTile valueEditor = ListTile(
                   title: book.tools[i].generateValueInput(
-                      context, valueControllers[i], onValueChange: (value) {
+                      context, valueControllers[i], focusNodes[i],
+                      onValueChange: (value) {
                 print('value $value is a ${value.runtimeType}');
                 setState(() {
                   book.tools[i].value = value;

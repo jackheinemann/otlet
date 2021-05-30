@@ -9,7 +9,10 @@ class SessionRecordCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text('Session on ${DateFormat('MMMd').format(session.started)}'),
+      title: Text(session.tools
+          .map((e) => e.name + ' ' + e.displayValue())
+          .toList()
+          .toString()),
       subtitle: Text(
           'From ${DateFormat(session.timePassed.inMinutes >= 1 ? 'h:mm aa' : 'h:mm:ss aa').format(session.started)} to ${DateFormat(session.timePassed.inMinutes >= 1 ? 'h:mm aa' : 'h:mm:ss aa').format(session.ended)}'),
       trailing: Text(session.displayTimePassed()),
