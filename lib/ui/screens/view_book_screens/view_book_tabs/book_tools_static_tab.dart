@@ -20,20 +20,22 @@ class BookToolsStaticTab extends StatelessWidget {
                 book.tools.isEmpty ? 'No Tools Created' : 'No Active Tools',
                 style: TextStyle(fontSize: 18)),
           )
-        : Column(
-            children: <Widget>[
-                  if (bookTools.isNotEmpty)
-                    Text('Active Book Tools',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500))
-                ] +
-                bookTools.map((e) => StaticToolCard(e)).toList() +
-                [
-                  if (sessionTools.isNotEmpty)
-                    Text('Active Session Tools',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500))
-                ] +
-                sessionTools.map((e) => StaticToolCard(e)).toList());
+        : SingleChildScrollView(
+            child: Column(
+                children: <Widget>[
+                      if (bookTools.isNotEmpty)
+                        Text('Active Book Tools',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500))
+                    ] +
+                    bookTools.map((e) => StaticToolCard(e)).toList() +
+                    [
+                      if (sessionTools.isNotEmpty)
+                        Text('Active Session Tools',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500))
+                    ] +
+                    sessionTools.map((e) => StaticToolCard(e)).toList()),
+          );
   }
 }
