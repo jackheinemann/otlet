@@ -153,7 +153,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
             actions: [
               if (isEditing)
                 IconButton(
-                    icon: Icon(Icons.delete_forever),
+                    icon: Icon(Icons.delete),
                     onPressed: () async {
                       bool shouldDelete = await showConfirmDialog(
                           'Are you sure you want to delete ${book.title}?',

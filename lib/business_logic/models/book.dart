@@ -139,6 +139,7 @@ class Book {
   }
 
   Book.fromOpenLibraryEdition(Map<String, dynamic> json) {
+    id = Uuid().v1();
     title = json['title'] ?? json['full_title'] ?? 'title error';
     if (json['covers'] != null) {
       List<int> coverKeys = List<int>.from(json['covers']);
@@ -163,6 +164,7 @@ class Book {
   }
 
   Book.fromOpenLibrarySearch(Map<String, dynamic> json) {
+    id = Uuid().v1();
     title = json['title_suggest'] ?? json['title'];
     if (json['cover_i'] != null)
       coverUrl = generateCoverUrl(json['cover_i'].toString());
