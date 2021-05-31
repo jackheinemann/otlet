@@ -75,6 +75,7 @@ Map<Unit, String> unitDisplays = Map.fromIterables(Unit.values,
 
 Map<String, String> packageLicenses = Map.fromIterables(
     [
+      'Async',
       'Shared Preferences',
       'Uuid',
       'Http',
@@ -88,6 +89,7 @@ Map<String, String> packageLicenses = Map.fromIterables(
       'Flutter Native Splash'
     ],
     [
+      'Copyright 2015, the Dart project authors.$bsdLicense',
       'Copyright 2017 The Chromium Authors. All rights reserved.$bsdLicense',
       'Copyright (c) 2021 Yulian Kuncheff$mitLicense',
       'Copyright 2014, the Dart project authors.$bsdLicense',

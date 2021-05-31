@@ -25,3 +25,6 @@ Future<Book> createNewBook(BuildContext context) async {
   return await Navigator.push(
       context, MaterialPageRoute(builder: (context) => AddBookScreen()));
 }
+
+String generateCoverUrl(String coverKey, {String size = 'M'}) =>
+    'https://covers.openlibrary.org/b/id/$coverKey-$size.jpg';

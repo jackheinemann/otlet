@@ -6,6 +6,7 @@ import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
+import 'package:otlet/business_logic/utils/functions.dart';
 import 'package:uuid/uuid.dart';
 
 import 'reading_session.dart';
@@ -32,6 +33,8 @@ class Book {
   List<ReadingSession> sessions = [];
   List<Tool> tools = [];
   List<Tool> otletTools = [];
+
+  List<String> editionIds = []; // openlibrary title search stuff
 
   Book({
     this.title,
@@ -71,6 +74,7 @@ class Book {
     isActive = book.isActive;
     tools = book.tools.map((e) => Tool.fromTool(e)).toList();
     otletTools = book.otletTools.map((e) => Tool.fromTool(e)).toList();
+    editionIds = List<String>.from(book.editionIds);
   }
 
   Book.fromJson(Map<String, dynamic> json) {
@@ -134,10 +138,34 @@ class Book {
     }
   }
 
+  Book.fromOpenLibraryEdition(Map<String, dynamic> json) {
+    title = json['title'] ?? json['full_title'] ?? 'title error';
+    if (json['covers'] != null) {
+      List<int> coverKeys = List<int>.from(json['covers']);
+
+      if (!coverKeys.contains(-1))
+        coverUrl = generateCoverUrl(coverKeys.first.toString());
+    }
+    if (json['publish_date'] != null) {
+      print(json['publish_date']);
+      try {
+        published = DateTime.parse(json['publish_date']);
+      } catch (e) {
+        print(e);
+        try {
+          published = DateFormat('y').parse(json['publish_date']);
+        } catch (e) {
+          print(e);
+        }
+      }
+    }
+    if (json['number_of_pages'] != null) pageCount = json['number_of_pages'];
+  }
+
   Book.fromOpenLibrarySearch(Map<String, dynamic> json) {
     title = json['title_suggest'] ?? json['title'];
     if (json['cover_i'] != null)
-      coverUrl = 'https://covers.openlibrary.org/b/id/${json['cover_i']}-M.jpg';
+      coverUrl = generateCoverUrl(json['cover_i'].toString());
     if (json['author_name'] != null) author = json['author_name'].first;
     if (json['subject'] != null) {
       List<String> subjects = List<String>.from(json['subject']);
@@ -145,6 +173,8 @@ class Book {
     }
     if (json['first_publish_year'] != null)
       published = DateFormat('y').parse(json['first_publish_year'].toString());
+    if (json['edition_key'] != null)
+      editionIds = List<String>.from(json['edition_key']);
   }
 
   bool doesPassChartFilters(OtletChart chart) {
@@ -204,6 +234,13 @@ class Book {
   }
 
   String displayPublicationYear() => DateFormat('y').format(published);
+
+  void importEditionInfo(Book edition) {
+    title = edition.title;
+    if (edition.published != null) published = edition.published;
+    if (edition.pageCount != null) pageCount = edition.pageCount;
+    if (edition.coverUrl != null) coverUrl = edition.coverUrl;
+  }
 
   void injectModifiedMasterTool(Tool masterTool) {
     Tool newTool = Tool.fromTool(masterTool); // make a copy of the master tool

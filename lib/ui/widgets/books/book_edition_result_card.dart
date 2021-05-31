@@ -1,24 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
-import 'package:otlet/ui/screens/view_book_editions_screen.dart';
 
-class BookSearchResultCard extends StatelessWidget {
+class BookEditionResultCard extends StatelessWidget {
   final Book book;
-  final Function(Book) selectEdition;
-  BookSearchResultCard(this.book, {@required this.selectEdition});
+  final VoidCallback selectBook;
+
+  BookEditionResultCard(this.book, {@required this.selectBook});
   @override
   Widget build(BuildContext context) {
     double bookImageWidth = MediaQuery.of(context).size.width * .15;
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ViewBookEditionsScreen(
-                      book,
-                      selectEdition: (book) => selectEdition(book),
-                    )));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => ViewBookEditionsScreen(book)));
+        selectBook();
       },
       child: Card(
         elevation: 5,
@@ -59,15 +58,14 @@ class BookSearchResultCard extends StatelessWidget {
                           Text(book.author,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.w400)),
-                        // if (book.published != null)
-                        //   Text(DateFormat('y').format(book.published),
-                        //       style: TextStyle(
-                        //           fontSize: 16, fontWeight: FontWeight.w400)),
+                                  fontSize: 16, fontWeight: FontWeight.w400)),
+                        if (book.published != null)
+                          Text(DateFormat('y').format(book.published),
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400)),
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward)
                 ],
               )),
         ),

@@ -111,6 +111,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     TextFormField(
                       textCapitalization: TextCapitalization.words,
                       controller: titleController,
+                      textInputAction:
+                          isSearching ? TextInputAction.search : null,
                       decoration: InputDecoration(
                           labelText: 'Search by title',
                           border: OutlineInputBorder()),
@@ -153,25 +155,27 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           : Expanded(
                               child: ListView.builder(
                                   itemCount: searchResults.length,
-                                  itemBuilder: (context, i) => GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          book = searchResults[i];
-                                          titleController.text = book.title;
-                                          authorController.text = book.author;
-                                          genreController.text = book.genre;
-                                          if (book.published != null)
-                                            publishedController.text =
-                                                DateFormat('y')
-                                                    .format(book.published);
-                                          // if (book.pageCount != null)
-                                          //   pageCountController.text =
-                                          //       book.pageCount.toString();
-                                          isSearching = false;
-                                        });
-                                      },
-                                      child: BookSearchResultCard(
-                                          searchResults[i]))),
+                                  itemBuilder: (context, i) =>
+                                      BookSearchResultCard(
+                                        searchResults[i],
+                                        selectEdition: (edition) {
+                                          setState(() {
+                                            book = searchResults[i];
+                                            book.importEditionInfo(edition);
+                                            titleController.text = book.title;
+                                            authorController.text = book.author;
+                                            genreController.text = book.genre;
+                                            if (book.published != null)
+                                              publishedController.text =
+                                                  DateFormat('y')
+                                                      .format(book.published);
+                                            // if (book.pageCount != null)
+                                            //   pageCountController.text =
+                                            //       book.pageCount.toString();
+                                            isSearching = false;
+                                          });
+                                        },
+                                      )),
                             )
                   ],
                 )
