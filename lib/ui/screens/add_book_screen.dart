@@ -128,10 +128,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
                         List<Map<String, dynamic>> results =
                             await libraryService
                                 .searchForBook(titleController.text);
+                        searchResults = results
+                            .map((e) => Book.fromOpenLibrarySearch(e))
+                            .toList();
                         setState(() {
-                          searchResults = results
-                              .map((e) => Book.fromOpenLibrarySearch(e))
-                              .toList();
+                          searchResults.removeWhere(
+                              (element) => element.coverUrl == null);
                         });
                         Navigator.pop(context);
                       },
