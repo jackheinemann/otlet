@@ -31,8 +31,8 @@ class _ViewBookEditionsScreenState extends State<ViewBookEditionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<dynamic>(
-      future: libraryService.getEditionsForBook(book, memoizer),
+    return StreamBuilder<dynamic>(
+      stream: libraryService.getEditionsForBook(book, memoizer),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           showErrorDialog(

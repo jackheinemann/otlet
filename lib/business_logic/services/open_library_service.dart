@@ -29,20 +29,32 @@ class OpenLibraryService {
     }
   }
 
-  Future<dynamic> getEditionsForBook(Book book, AsyncMemoizer memoizer) async {
-    return memoizer.runOnce(() async {
-      List<Book> editions = [];
-      for (String editionKey in book.editionIds) {
-        if (editions.length == 40) break;
-        Map<String, dynamic> editionJson =
-            await getBookInfoFromEditionKey(editionKey);
-        if (editionJson.isNotEmpty) {
-          Book book = Book.fromOpenLibraryEdition(editionJson);
-          if (book.coverUrl != null) editions.add(book);
-        }
+  Stream<dynamic> getEditionsForBook(Book book, AsyncMemoizer memoizer) async* {
+    // return memoizer.runOnce(() async {
+    //   List<Book> editions = [];
+    //   for (String editionKey in book.editionIds) {
+    //     if (editions.length == 40) break;
+    //     Map<String, dynamic> editionJson =
+    //         await getBookInfoFromEditionKey(editionKey);
+    //     if (editionJson.isNotEmpty) {
+    //       Book book = Book.fromOpenLibraryEdition(editionJson);
+    //       if (book.coverUrl != null) editions.add(book);
+    //     }
+    //   }
+    //   return editions;
+    // });
+    List<Book> editions = [];
+    for (String editionKey in book.editionIds) {
+      if (editions.length == 40) break;
+      Map<String, dynamic> editionJson =
+          await getBookInfoFromEditionKey(editionKey);
+      if (editionJson.isNotEmpty) {
+        Book book = Book.fromOpenLibraryEdition(editionJson);
+        if (book.coverUrl != null) editions.add(book);
+        yield editions;
       }
-      return editions;
-    });
+    }
+    yield editions;
   }
 
   Future<Map<String, dynamic>> getBookInfoFromEditionKey(String key) async {
