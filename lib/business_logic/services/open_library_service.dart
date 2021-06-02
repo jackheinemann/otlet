@@ -45,7 +45,7 @@ class OpenLibraryService {
     // });
     List<Book> editions = [];
     for (String editionKey in book.editionIds) {
-      if (editions.length == 40) break;
+      // if (editions.length == 40) break;
       Map<String, dynamic> editionJson =
           await getBookInfoFromEditionKey(editionKey);
       if (editionJson.isNotEmpty) {

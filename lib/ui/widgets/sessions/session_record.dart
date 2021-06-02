@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:otlet/business_logic/utils/constants.dart';
 
 class SessionRecordCard extends StatelessWidget {
   final ReadingSession session;
@@ -9,10 +10,12 @@ class SessionRecordCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(session.tools
-          .map((e) => e.name + ' ' + e.displayValue())
-          .toList()
-          .toString()),
+      title: Text(
+          // session.tools
+          //   .map((e) => e.name + ' ' + e.displayValue())
+          //   .toList()
+          //   .toString()
+          'Session on ${monthDayYearFormat.format(session.started)}'),
       subtitle: Text(
           'From ${DateFormat(session.timePassed.inMinutes >= 1 ? 'h:mm aa' : 'h:mm:ss aa').format(session.started)} to ${DateFormat(session.timePassed.inMinutes >= 1 ? 'h:mm aa' : 'h:mm:ss aa').format(session.ended)}'),
       trailing: Text(session.displayTimePassed()),

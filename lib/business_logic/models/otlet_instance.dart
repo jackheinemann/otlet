@@ -500,7 +500,8 @@ class OtletInstance extends ChangeNotifier {
     if (reading) {
       if (activeSession.started == null) activeSession.started = DateTime.now();
       timerSubscription = _stream.listen((int newTick) {
-        activeSession.timePassed += Duration(seconds: 1);
+        activeSession.timePassed =
+            DateTime.now().difference(activeSession.started);
         activeSession.otletTools[0].value = activeSession.timePassed.inSeconds;
         notifyListeners();
       });
