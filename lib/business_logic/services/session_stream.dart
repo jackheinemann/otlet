@@ -1,10 +1,9 @@
 import 'dart:async';
 
-Stream<int> sessionStream() {
+Stream<int> sessionStream({int counter = 0}) {
   StreamController<int> streamController;
   Timer timer;
   Duration timerInterval = Duration(seconds: 1);
-  int counter = 0;
 
   void stopTimer() {
     if (timer != null) {

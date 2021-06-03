@@ -479,7 +479,7 @@ class OtletInstance extends ChangeNotifier {
     activeSession.importSessionTools(activeBook());
 
     if (activeSession.started == null) activeSession.started = DateTime.now();
-    _stream = sessionStream();
+    _stream = sessionStream(counter: activeSession.timePassed?.inSeconds);
 
     notifyListeners();
   }
@@ -498,10 +498,15 @@ class OtletInstance extends ChangeNotifier {
     if (!hasActiveSession()) return;
     activeSession.isReading = reading;
     if (reading) {
-      if (activeSession.started == null) activeSession.started = DateTime.now();
+      if (activeSession.started == null)
+        activeSession.started = DateTime.now();
+      else {
+        // resuming from a paused stream
+        _stream = sessionStream(counter: activeSession.timePassed.inSeconds);
+      }
       timerSubscription = _stream.listen((int newTick) {
-        activeSession.timePassed =
-            DateTime.now().difference(activeSession.started);
+        activeSession.timePassed += Duration(seconds: 1);
+        // DateTime.now().difference(activeSession.started);
         activeSession.otletTools[0].value = activeSession.timePassed.inSeconds;
         notifyListeners();
       });

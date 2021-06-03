@@ -10,6 +10,7 @@ import 'otlet_chart.dart';
 class ReadingSession {
   String id;
   DateTime started;
+  DateTime lastPaused;
   DateTime ended;
   bool isReading = false;
   Duration timePassed;
