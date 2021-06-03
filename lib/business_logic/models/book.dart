@@ -215,10 +215,7 @@ class Book {
     if (book.id != id) return false;
     if (book.title != title) return false;
     if (book.author != author) return false;
-    if (book.genre.length != genre.length) return false;
-    for (int i = 0; i < book.genre.length; i++) {
-      if (genre[i] != book.genre[i]) return false;
-    }
+    if (book.genre != genre) return false;
     if (book.trackProgress != trackProgress) return false;
     if (book.coverUrl != coverUrl) return false;
     if (book.pageCount != pageCount) return false;

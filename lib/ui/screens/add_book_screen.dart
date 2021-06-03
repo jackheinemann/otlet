@@ -305,7 +305,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
                             if (!_formKey.currentState.validate()) return;
                             book.title = titleController.text.trim();
                             book.author = authorController.text.trim();
-                            book.genre = genreController.text.trim();
+                            book.genre = genreController.text.isEmpty
+                                ? null
+                                : genreController.text.trim();
 
                             book.pageCount =
                                 int.tryParse(pageCountController.text.trim());
