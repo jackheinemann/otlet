@@ -65,10 +65,7 @@ class _ViewBookScreenState extends State<ViewBookScreen>
           Row(
             children: [
               book.coverUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: book.coverUrl,
-                      width: bookImageWidth,
-                    )
+                  ? book.coverImage(bookImageWidth)
                   : Container(
                       color: Colors.grey,
                       width: bookImageWidth,

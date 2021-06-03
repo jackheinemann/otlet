@@ -21,10 +21,11 @@ class ActiveBookCard extends StatelessWidget {
               child: Row(
                 children: [
                   book.coverUrl != null
-                      ? CachedNetworkImage(
-                          imageUrl: book.coverUrl,
-                          width: bookImageWidth,
-                        )
+                      // ? CachedNetworkImage(
+                      //     imageUrl: book.coverUrl,
+                      //     width: bookImageWidth,
+                      //   )
+                      ? book.coverImage(bookImageWidth, bookImageWidth * 1.4)
                       : Container(
                           color: Colors.grey,
                           width: bookImageWidth,

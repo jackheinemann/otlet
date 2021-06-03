@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
@@ -33,13 +35,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   double bookImageWidth;
 
-  File _image;
   final picker = ImagePicker();
-
-  // @override
-  // initState() {
-  //   super.initState();
-  // }
+  final cropper = ImageCropper;
 
   @override
   Widget build(BuildContext context) {
@@ -204,30 +201,42 @@ class _AddBookScreenState extends State<AddBookScreen> {
                       Row(children: [
                         if (!isSearching)
                           GestureDetector(
-                            onTap: () async {
-                              final picked = await picker.getImage(
-                                  source: ImageSource.gallery);
+                              onTap: () async {
+                                final picked = await picker.getImage(
+                                    source: ImageSource.gallery);
 
-                              if (picked == null) return;
+                                if (picked == null) return;
 
-                              setState(() {
-                                _image = File(picked.path);
-                              });
-                            },
-                            child: _image == null
-                                ? Container(
-                                    color: primaryColor,
-                                    width: bookImageWidth,
-                                    height: bookImageWidth * 1.4,
-                                    child: Center(
-                                        child: Icon(
-                                      Icons.add_a_photo,
-                                      size: 20,
-                                      color: Colors.white,
-                                    )),
-                                  )
-                                : Image.file(_image, width: bookImageWidth),
-                          ),
+                                File cropped = await ImageCropper.cropImage(
+                                    sourcePath: picked.path,
+                                    aspectRatio: CropAspectRatio(
+                                        ratioX: 1, ratioY: 1.4));
+
+                                setState(() {
+                                  book.coverUrl = cropped.path;
+                                });
+                              },
+                              child: book.coverUrl == null
+                                  ? Container(
+                                      color: primaryColor,
+                                      width: bookImageWidth,
+                                      height: bookImageWidth * 1.4,
+                                      child: Center(
+                                          child: Icon(
+                                        Icons.add_a_photo,
+                                        size: 20,
+                                        color: Colors.white,
+                                      )),
+                                    )
+                                  : book.coverImage(
+                                      bookImageWidth, bookImageWidth * 1.4)
+                              // : book.coverUrl.contains('http')
+                              //     ? CachedNetworkImage(
+                              //         imageUrl: book.coverUrl,
+                              //       )
+                              //     : Image.file(File(book.coverUrl),
+                              //         width: bookImageWidth),
+                              ),
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.only(

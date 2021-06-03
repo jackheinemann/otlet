@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/chart_helpers.dart';
 import 'package:otlet/business_logic/models/otlet_chart.dart';
@@ -177,6 +180,16 @@ class Book {
       published = DateFormat('y').parse(json['first_publish_year'].toString());
     if (json['edition_key'] != null)
       editionIds = List<String>.from(json['edition_key']);
+  }
+
+  Widget coverImage(double width, [double height]) {
+    if (coverUrl.contains('http'))
+      return CachedNetworkImage(
+        imageUrl: coverUrl,
+        width: width,
+      );
+    else
+      return Image.file(File(coverUrl), height: height, width: width);
   }
 
   bool doesPassChartFilters(OtletChart chart) {
