@@ -27,8 +27,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
   TextEditingController pageCountController = TextEditingController();
   OpenLibraryService libraryService = OpenLibraryService();
 
+  double bookImageWidth;
+
+  // @override
+  // initState() {
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
+    bookImageWidth = MediaQuery.of(context).size.width * .15;
     return Scaffold(
       appBar: AppBar(
         title: Text('Add New Book'),
@@ -186,17 +194,41 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 10),
-                      TextFormField(
-                        textCapitalization: TextCapitalization.words,
-                        controller: titleController,
-                        decoration: InputDecoration(
-                            labelText: 'Title (required)',
-                            border: OutlineInputBorder()),
-                        validator: (value) {
-                          if (value.trim().isEmpty) return 'Title required';
-                          return null;
-                        },
-                      ),
+                      Row(children: [
+                        if (!isSearching)
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              color: primaryColor,
+                              width: bookImageWidth,
+                              height: bookImageWidth * 1.4,
+                              child: Center(
+                                  child: Icon(
+                                Icons.add_a_photo,
+                                size: 20,
+                                color: Colors.white,
+                              )),
+                            ),
+                          ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 8.0, bottom: 8, left: 8),
+                            child: TextFormField(
+                              textCapitalization: TextCapitalization.words,
+                              controller: titleController,
+                              decoration: InputDecoration(
+                                  labelText: 'Title (required)',
+                                  border: OutlineInputBorder()),
+                              validator: (value) {
+                                if (value.trim().isEmpty)
+                                  return 'Title required';
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                      ]),
                       SizedBox(height: 15),
                       TextFormField(
                         textCapitalization: TextCapitalization.words,
