@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:otlet/ui/widgets/alerts/input_dialog.dart';
 
 class SessionTrackerCard extends StatelessWidget {
   final OtletInstance instance;
@@ -38,7 +39,15 @@ class SessionTrackerCard extends StatelessWidget {
                         width: 40,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
+                          String pagesRead = await showInputDialog(
+                              context, 'Edit pages read?',
+                              initialValue:
+                                  instance.activeBook().currentPage?.toString(),
+                              labelText: 'Enter a number',
+                              submitText: 'Save');
+                          instance.books[instance.activeBookIndex].currentPage =
+                              int.tryParse(pagesRead) ?? 0;
                           instance.endSession();
                           instance.saveInstance();
                         },
