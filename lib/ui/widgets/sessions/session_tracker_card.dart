@@ -40,14 +40,26 @@ class SessionTrackerCard extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          String pagesRead = await showInputDialog(
-                              context, 'Edit pages read?',
-                              initialValue:
-                                  instance.activeBook().currentPage?.toString(),
-                              labelText: 'Enter a number',
-                              submitText: 'Save');
-                          instance.books[instance.activeBookIndex].currentPage =
-                              int.tryParse(pagesRead) ?? 0;
+                          if (session.timePassed.inSeconds >= 1) {
+                            instance.updateSession(false);
+                            String currentPageString = await showInputDialog(
+                                    context, 'Enter current page?',
+                                    initialValue: instance
+                                        .activeBook()
+                                        .currentPage
+                                        ?.toString(),
+                                    labelText: 'Enter a number',
+                                    submitText: 'Save') ??
+                                'null';
+                            int currentPage = int.tryParse(currentPageString);
+                            if (currentPage != null) {
+                              session.pagesRead = currentPage -
+                                      instance.activeBook()?.currentPage ??
+                                  0;
+                              instance.books[instance.activeBookIndex]
+                                  .currentPage = currentPage;
+                            }
+                          }
                           instance.endSession();
                           instance.saveInstance();
                         },

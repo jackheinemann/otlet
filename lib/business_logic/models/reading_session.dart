@@ -14,6 +14,7 @@ class ReadingSession {
   DateTime ended;
   bool isReading = false;
   Duration timePassed;
+  int pagesRead;
 
   List<Tool> tools = [];
   List<Tool> otletTools = [];
@@ -33,6 +34,7 @@ class ReadingSession {
     ended = session.ended;
     isReading = session.isReading;
     timePassed = session.timePassed;
+    pagesRead = session.pagesRead;
     tools = session.tools.map((e) => Tool.fromTool(e)).toList();
     otletTools = session.otletTools.map((e) => Tool.fromTool(e)).toList();
   }
@@ -48,6 +50,7 @@ class ReadingSession {
     ended = DateTime.parse(json['ended']);
     isReading = json['isReading'];
     timePassed = Duration(seconds: json['timePassed']);
+    pagesRead = json['pagesRead'];
     if (json['tools'] != null) {
       List<dynamic> toolsJson = List<dynamic>.from(jsonDecode(json['tools']));
       for (Map<String, dynamic> json in toolsJson) {
@@ -118,6 +121,7 @@ class ReadingSession {
       'ended': ended.toString(),
       'isReading': isReading,
       'timePassed': timePassed.inSeconds,
+      'pagesRead': pagesRead,
       if (tools != null)
         'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
       if (otletTools != null)

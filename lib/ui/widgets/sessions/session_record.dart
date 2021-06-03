@@ -15,7 +15,9 @@ class SessionRecordCard extends StatelessWidget {
           //   .map((e) => e.name + ' ' + e.displayValue())
           //   .toList()
           //   .toString()
-          'Session on ${monthDayYearFormat.format(session.started)}'),
+          session.pagesRead == null
+              ? 'Session on ${monthDayYearFormat.format(session.started)}'
+              : '${session.pagesRead} page session on ${monthDayYearFormat.format(session.started)}'),
       subtitle: Text(
           'From ${DateFormat(session.timePassed.inMinutes >= 1 ? 'h:mm aa' : 'h:mm:ss aa').format(session.started)} to ${DateFormat(session.timePassed.inMinutes >= 1 ? 'h:mm aa' : 'h:mm:ss aa').format(session.ended)}'),
       trailing: Text(session.displayTimePassed()),
