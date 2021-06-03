@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/services/open_library_service.dart';
+import 'package:otlet/ui/widgets/alerts/simple_selector.dart';
 import 'package:otlet/ui/widgets/books/book_search_result_card.dart';
 
 import '../../business_logic/utils/constants.dart';
@@ -28,6 +32,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
   OpenLibraryService libraryService = OpenLibraryService();
 
   double bookImageWidth;
+
+  File _image;
+  final picker = ImagePicker();
 
   // @override
   // initState() {
@@ -197,18 +204,29 @@ class _AddBookScreenState extends State<AddBookScreen> {
                       Row(children: [
                         if (!isSearching)
                           GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              color: primaryColor,
-                              width: bookImageWidth,
-                              height: bookImageWidth * 1.4,
-                              child: Center(
-                                  child: Icon(
-                                Icons.add_a_photo,
-                                size: 20,
-                                color: Colors.white,
-                              )),
-                            ),
+                            onTap: () async {
+                              final picked = await picker.getImage(
+                                  source: ImageSource.gallery);
+
+                              if (picked == null) return;
+
+                              setState(() {
+                                _image = File(picked.path);
+                              });
+                            },
+                            child: _image == null
+                                ? Container(
+                                    color: primaryColor,
+                                    width: bookImageWidth,
+                                    height: bookImageWidth * 1.4,
+                                    child: Center(
+                                        child: Icon(
+                                      Icons.add_a_photo,
+                                      size: 20,
+                                      color: Colors.white,
+                                    )),
+                                  )
+                                : Image.file(_image, width: bookImageWidth),
                           ),
                         Expanded(
                           child: Padding(
