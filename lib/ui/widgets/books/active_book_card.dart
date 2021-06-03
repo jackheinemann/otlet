@@ -25,11 +25,11 @@ class ActiveBookCard extends StatelessWidget {
                       //     imageUrl: book.coverUrl,
                       //     width: bookImageWidth,
                       //   )
-                      ? book.coverImage(bookImageWidth, bookImageWidth * 1.4)
+                      ? book.coverImage(bookImageWidth, bookImageWidth * 1.5)
                       : Container(
                           color: Colors.grey,
                           width: bookImageWidth,
-                          height: bookImageWidth * 1.4,
+                          height: bookImageWidth * 1.5,
                           child: Center(
                               child: Text(book.relevantFirstChar(),
                                   style: TextStyle(

@@ -210,7 +210,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                 File cropped = await ImageCropper.cropImage(
                                     sourcePath: picked.path,
                                     aspectRatio: CropAspectRatio(
-                                        ratioX: 1, ratioY: 1.4));
+                                        ratioX: 1, ratioY: 1.5));
 
                                 setState(() {
                                   book.coverUrl = cropped.path;
@@ -220,7 +220,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                   ? Container(
                                       color: primaryColor,
                                       width: bookImageWidth,
-                                      height: bookImageWidth * 1.4,
+                                      height: bookImageWidth * 1.5,
                                       child: Center(
                                           child: Icon(
                                         Icons.add_a_photo,
@@ -229,7 +229,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                       )),
                                     )
                                   : book.coverImage(
-                                      bookImageWidth, bookImageWidth * 1.4)
+                                      bookImageWidth, bookImageWidth * 1.5)
                               // : book.coverUrl.contains('http')
                               //     ? CachedNetworkImage(
                               //         imageUrl: book.coverUrl,

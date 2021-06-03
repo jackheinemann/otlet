@@ -37,7 +37,7 @@ class BookSearchResultCard extends StatelessWidget {
                       : Container(
                           color: Colors.brown,
                           width: bookImageWidth,
-                          height: bookImageWidth * 1.4,
+                          height: bookImageWidth * 1.5,
                           child: Center(
                               child: Text(book.relevantFirstChar(),
                                   style: TextStyle(
