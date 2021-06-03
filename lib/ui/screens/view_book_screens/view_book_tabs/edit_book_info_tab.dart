@@ -99,9 +99,7 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
                       });
                     },
                     decoration: InputDecoration(
-                        labelText: 'Genres',
-                        hintText: 'Separate with commas',
-                        border: OutlineInputBorder()),
+                        labelText: 'Genre', border: OutlineInputBorder()),
                   ),
                   SizedBox(height: 15),
                   TextFormField(
