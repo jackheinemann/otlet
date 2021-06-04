@@ -11,6 +11,7 @@ class ReadingSession {
   String id;
   DateTime started;
   DateTime lastPaused;
+  Duration timeSpentPaused = Duration(seconds: 0);
   DateTime ended;
   bool isReading = false;
   Duration timePassed;

@@ -502,16 +502,29 @@ class OtletInstance extends ChangeNotifier {
         activeSession.started = DateTime.now();
       else {
         // resuming from a paused stream
+        if (activeSession.lastPaused != null)
+          activeSession.timeSpentPaused +=
+              DateTime.now().difference(activeSession.lastPaused);
         _stream = sessionStream(counter: activeSession.timePassed.inSeconds);
       }
       timerSubscription = _stream.listen((int newTick) {
-        activeSession.timePassed += Duration(seconds: 1);
-        // DateTime.now().difference(activeSession.started);
+        Duration timePassedRaw =
+            DateTime.now().difference(activeSession.started) -
+                (activeSession.timeSpentPaused ?? Duration(seconds: 0));
+
+        if (timePassedRaw.inSeconds - activeSession.timePassed.inSeconds > 1)
+          timePassedRaw -= Duration(
+              seconds:
+                  1); // this handles awkward second and a half stuff that rounds up to 2 seconds
+        activeSession.timePassed = Duration(seconds: timePassedRaw.inSeconds);
+
         activeSession.otletTools[0].value = activeSession.timePassed.inSeconds;
         notifyListeners();
       });
     } else {
       timerSubscription.pause();
+      activeSession.lastPaused = DateTime
+          .now(); // mark when the pause was to calculate how much time was spent not reading
     }
     notifyListeners();
   }
