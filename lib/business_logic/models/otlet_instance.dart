@@ -104,6 +104,13 @@ class OtletInstance extends ChangeNotifier {
         toolType: Tool.dateTool,
         isBookTool: false,
         isActive: true,
+        useFixedOptions: false),
+    Tool(
+        customId: 'pagesReadTool',
+        name: 'Pages Read',
+        toolType: Tool.integerTool,
+        isBookTool: false,
+        isActive: true,
         useFixedOptions: false)
   ];
 
@@ -550,6 +557,7 @@ class OtletInstance extends ChangeNotifier {
           TimeOfDay.fromDateTime(activeSession.ended);
       activeSession.otletTools[3].value = DateTime(activeSession.started.year,
           activeSession.started.month, activeSession.started.day);
+      activeSession.otletTools[4].value = activeSession.pagesRead;
       print(activeSession.otletTools
           .map((e) => '${e.name} : ${e.displayValue()}'));
       sessionHistory.add(activeSession);

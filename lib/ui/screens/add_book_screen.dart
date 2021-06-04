@@ -84,6 +84,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           DateFormat('y').format(book.published);
                     if (book.pageCount != null)
                       pageCountController.text = book.pageCount.toString();
+                    isSearching = false;
                   });
                 }
 
