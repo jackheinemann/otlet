@@ -18,6 +18,7 @@ class OtletInstance extends ChangeNotifier {
 
   List<Book> books = [];
   List<Goal> goals = [];
+  List<String> collections = [];
 
   int activeBookIndex = -1;
   ReadingSession activeSession;
@@ -78,6 +79,14 @@ class OtletInstance extends ChangeNotifier {
         isActive: true,
         useFixedOptions: false),
     Tool(
+        customId: 'bookCollectionTool',
+        name: 'Collection',
+        toolType: Tool.textTool,
+        isBookTool: true,
+        useFixedOptions: true,
+        isActive: true,
+        fixedOptions: []),
+    Tool(
         customId: 'sessionLengthTool',
         name: 'Session Length',
         toolType: Tool.integerTool,
@@ -111,7 +120,7 @@ class OtletInstance extends ChangeNotifier {
         toolType: Tool.integerTool,
         isBookTool: false,
         isActive: true,
-        useFixedOptions: false)
+        useFixedOptions: false),
   ];
 
   List<OtletChart> charts = [];
@@ -138,6 +147,7 @@ class OtletInstance extends ChangeNotifier {
     if (instance.goals != null) {
       goals = instance.goals.map((e) => Goal.fromGoal(e)).toList();
     }
+    collections = List<String>.from(instance.collections);
   }
 
   OtletInstance.fromJson(Map<String, dynamic> json) {
@@ -198,6 +208,9 @@ class OtletInstance extends ChangeNotifier {
       }
       charts = chartsBuilder;
     }
+    if (json.containsKey('collections')) {
+      collections = List<String>.from(json['collections']);
+    }
   }
 
   Book activeBook() {
@@ -223,11 +236,17 @@ class OtletInstance extends ChangeNotifier {
         tool.value = book.started;
       if (book.finished != null) if (tool.id == 'dateFinishedTool')
         tool.value = book.finished;
-
+      if (book.collections != null) {
+        for (String collection in book.collections) {
+          // check for any new collections
+          if (collections.contains(collection)) continue;
+          collections.add(collection);
+        }
+      }
       return tool;
     }).toList();
     books.add(book);
-
+    saveInstance();
     notifyListeners();
   }
 
@@ -322,6 +341,18 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
+  Map<String, bool> generateBookCollections(Book book) {
+    Map<String, bool> options = {};
+    for (String collection in collections) {
+      print(book.collections);
+      if (book.collections.contains(collection))
+        options.putIfAbsent(collection, () => true);
+      else
+        options.putIfAbsent(collection, () => false);
+    }
+    return options;
+  }
+
   void modifyBook(Book book) {
     for (int i = 0; i < books.length; i++) {
       if (book.compareIds(books[i])) {
@@ -338,6 +369,7 @@ class OtletInstance extends ChangeNotifier {
           if (tool.id == 'authorTool') tool.value = book.author;
           if (tool.id == 'pageCountTool') tool.value = book.pageCount;
           if (tool.id == 'genreTool') tool.value = book.genre;
+          if (tool.id == 'bookCollectionTool') tool.value = book.collections;
           if (book.published != null) if (tool.id == 'publicationTool')
             tool.value = book.published.year;
           if (book.started != null) if (tool.id == 'dateStartedTool')
@@ -473,8 +505,15 @@ class OtletInstance extends ChangeNotifier {
       if (goals != null)
         'goals': jsonEncode(goals.map((e) => e.toJson()).toList()),
       if (charts != null)
-        'charts': jsonEncode(charts.map((e) => e.toJson()).toList())
+        'charts': jsonEncode(charts.map((e) => e.toJson()).toList()),
+      if (collections != null) 'collections': collections
     };
+  }
+
+  void updateCollections(List<String> updated) {
+    collections = List<String>.from(updated);
+    saveInstance();
+    notifyListeners();
   }
 
   // SESSION CODE

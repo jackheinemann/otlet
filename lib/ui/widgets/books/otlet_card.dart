@@ -25,7 +25,8 @@ class OtletCard extends StatelessWidget {
         Book temp = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ViewBookScreen(Book.fromBook(book))));
+                builder: (context) =>
+                    ViewBookScreen(Book.fromBook(book), instance)));
 
         if (temp == null) return;
         if (temp.isEmpty()) {

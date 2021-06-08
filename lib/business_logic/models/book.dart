@@ -39,6 +39,8 @@ class Book {
 
   List<String> editionIds = []; // openlibrary title search stuff
 
+  List<String> collections = [];
+
   Book({
     this.title,
     this.author,
@@ -78,6 +80,7 @@ class Book {
     tools = book.tools.map((e) => Tool.fromTool(e)).toList();
     otletTools = book.otletTools.map((e) => Tool.fromTool(e)).toList();
     editionIds = List<String>.from(book.editionIds);
+    collections = book.collections;
   }
 
   Book.fromJson(Map<String, dynamic> json) {
@@ -113,6 +116,7 @@ class Book {
         otletTools.add(Tool.fromJson(json));
       }
     }
+    collections = List<String>.from(json['collection']);
   }
 
   Book.fromOpenLibrary(Map<String, dynamic> json) {
@@ -343,6 +347,7 @@ class Book {
       'wordCount': wordCount,
       'currentPage': currentPage,
       'trackProgress': trackProgress,
+      'collection': collections,
       if (sessions != null)
         'sessions': jsonEncode(sessions.map((e) => e.toJson()).toList()),
       if (tools != null)

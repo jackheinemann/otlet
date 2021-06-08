@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_info_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_tools_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_info_static.dart';
@@ -13,8 +14,9 @@ import '../../../business_logic/utils/constants.dart';
 
 class ViewBookScreen extends StatefulWidget {
   final Book book;
+  final OtletInstance instance;
 
-  ViewBookScreen(this.book);
+  ViewBookScreen(this.book, this.instance);
   @override
   _ViewBookScreenState createState() => _ViewBookScreenState();
 }

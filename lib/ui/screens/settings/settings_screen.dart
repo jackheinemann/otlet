@@ -31,6 +31,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            // ListTile(
+            //   onTap: () async {
+            //     List<String> collections = await Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) => MultiTextSelector(
+            //                 currentList: instance.collections,
+            //                 title: 'Manage Collections')));
+
+            //   },
+            //   title: Text('Manage Collections'),
+            //   trailing: Icon(Icons.collections_bookmark),
+            // ),
+            ListTile(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LicensesScreen())),
+                title: Text('View credits and licenses'),
+                trailing: Icon(Icons.copyright)),
             ListTile(
               onTap: () async {
                 bool shouldWipe = await showConfirmDialog(
@@ -41,11 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Clear all data'),
               trailing: Icon(Icons.delete_forever),
             ),
-            ListTile(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LicensesScreen())),
-                title: Text('View credits and licenses'),
-                trailing: Icon(Icons.copyright)),
+
             // ListTile(
             //     onTap: () async {
             //       final bool available =

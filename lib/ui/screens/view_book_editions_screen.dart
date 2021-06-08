@@ -57,7 +57,6 @@ class _ViewBookEditionsScreenState extends State<ViewBookEditionsScreen> {
                       editions[i],
                       selectBook: () {
                         widget.selectEdition(editions[i]);
-                        Navigator.pop(context);
                       },
                     )),
           );

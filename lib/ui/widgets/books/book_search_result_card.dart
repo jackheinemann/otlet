@@ -1,25 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/book.dart';
-import 'package:otlet/ui/screens/view_book_editions_screen.dart';
 
 class BookSearchResultCard extends StatelessWidget {
   final Book book;
-  final Function(Book) selectEdition;
-  BookSearchResultCard(this.book, {@required this.selectEdition});
+  final Function(Book) selectWork;
+  BookSearchResultCard(this.book, {@required this.selectWork});
   @override
   Widget build(BuildContext context) {
     double bookImageWidth = MediaQuery.of(context).size.width * .15;
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ViewBookEditionsScreen(
-                      book,
-                      selectEdition: (book) => selectEdition(book),
-                    )));
-      },
+      onTap: () => selectWork(book),
       child: Card(
         elevation: 5,
         child: Container(

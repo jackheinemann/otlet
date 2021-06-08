@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/business_logic/utils/functions.dart';
+import 'package:otlet/ui/screens/add_book_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/create_chart_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/home_screen/home_screen.dart';
@@ -24,8 +24,10 @@ class TabManager extends StatefulWidget {
 
 class _TabManagerState extends State<TabManager> {
   OtletInstance instance;
+  int _screensIndex = 0;
   int _currentIndex = 0;
 
+  List<Widget> screens = [];
   @override
   void initState() {
     super.initState();
@@ -34,11 +36,10 @@ class _TabManagerState extends State<TabManager> {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableProvider<OtletInstance>(
-      create: (context) => instance,
-      child: Scaffold(
+    screens = [
+      Scaffold(
         appBar: AppBar(
-          title: Text('Otlet'),
+          title: defaultAppBarTitle,
           centerTitle: true,
           actions: [
             if (_currentIndex >= 1)
@@ -46,17 +47,10 @@ class _TabManagerState extends State<TabManager> {
                   icon: Icon(Icons.add),
                   onPressed: () async {
                     if (_currentIndex == 1) {
-                      Book temp = await createNewBook(context);
-                      if (temp == null) return;
-                      // got a new book!
                       setState(() {
-                        instance.addNewBook(temp);
+                        _screensIndex = 1; // 1 is the index of add book
                       });
-
-                      // save to json local storage
-                      instance.saveInstance();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Saved ${temp.title} to Books!')));
+                      return;
                     } else if (_currentIndex == 2) {
                       Tool tool = await createNewTool(context);
                       if (tool == null) return;
@@ -97,7 +91,11 @@ class _TabManagerState extends State<TabManager> {
           index: _currentIndex,
           children: [
             HomeScreen(),
-            ViewBooksScreen(),
+            ViewBooksScreen(updateScreenIndex: (index) {
+              setState(() {
+                _screensIndex = index;
+              });
+            }),
             ViewToolsScreen(),
             ViewChartsScreen()
           ],
@@ -122,6 +120,15 @@ class _TabManagerState extends State<TabManager> {
                   icon: Icon(Icons.bar_chart), label: 'Charts'),
             ]),
       ),
-    );
+      AddBookScreen(
+        updateScreenIndex: (index) {
+          setState(() {
+            _screensIndex = index;
+          });
+        },
+      )
+    ];
+    return ChangeNotifierProvider<OtletInstance>(
+        create: (context) => instance, child: screens[_screensIndex]);
   }
 }

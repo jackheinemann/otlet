@@ -73,6 +73,11 @@ DateFormat monthDayYearFormat = DateFormat('MMMM d, y');
 Map<Unit, String> unitDisplays = Map.fromIterables(Unit.values,
     Unit.values.map((e) => e.toString().replaceAll('Unit.', '')).toList());
 
+Image defaultAppBarTitle = Image.asset(
+  'assets/images/book_logo_small.png',
+  scale: 2.7,
+);
+
 Map<String, String> packageLicenses = Map.fromIterables(
     [
       'Async',
