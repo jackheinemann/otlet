@@ -24,7 +24,7 @@ class TabManager extends StatefulWidget {
 
 class _TabManagerState extends State<TabManager> {
   OtletInstance instance;
-  int _screensIndex = 0;
+  int _screensIndex = ScreenIndex.mainTabs;
   int _currentIndex = 0;
 
   List<Widget> screens = [];
@@ -48,7 +48,8 @@ class _TabManagerState extends State<TabManager> {
                   onPressed: () async {
                     if (_currentIndex == 1) {
                       setState(() {
-                        _screensIndex = 1; // 1 is the index of add book
+                        _screensIndex = ScreenIndex
+                            .addBookScreen; // 1 is the index of add book
                       });
                       return;
                     } else if (_currentIndex == 2) {

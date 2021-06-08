@@ -35,7 +35,8 @@ class ViewBooksScreen extends StatelessWidget {
                         ElevatedButton(
                             style:
                                 ElevatedButton.styleFrom(primary: primaryColor),
-                            onPressed: () => updateScreenIndex(1),
+                            onPressed: () =>
+                                updateScreenIndex(ScreenIndex.addBookScreen),
                             child: Text('Add New Book',
                                 style: TextStyle(fontSize: 17))),
                       ],

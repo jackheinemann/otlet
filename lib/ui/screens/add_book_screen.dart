@@ -63,7 +63,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               onWillPop: () async {
                 bool shouldPop =
                     await showConfirmDialog('Discard current book?', context);
-                if (shouldPop) widget.updateScreenIndex(0);
+                if (shouldPop) widget.updateScreenIndex(ScreenIndex.mainTabs);
                 return Future.value(false);
               },
               child: Scaffold(
@@ -77,7 +77,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                       onPressed: () async {
                         bool shouldPop = await showConfirmDialog(
                             'Discard current book?', context);
-                        if (shouldPop) widget.updateScreenIndex(0);
+                        if (shouldPop)
+                          widget.updateScreenIndex(ScreenIndex.mainTabs);
                       }),
                   actions: [
                     IconButton(
@@ -371,7 +372,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                           .showSnackBar(SnackBar(
                                               content: Text(
                                                   'Saved ${book.title} to Books!')));
-                                      widget.updateScreenIndex(0);
+                                      widget.updateScreenIndex(
+                                          ScreenIndex.mainTabs);
                                     },
                                     child: Text('Add to My Books')),
                               ],

@@ -34,6 +34,16 @@ Color primaryColor = Color(0xFF14213D);
 Color secondaryColor = Color(0xFFE5E5E5);
 Color accentColor = Color(0xFFFCA311);
 
+class ScreenIndex {
+  static int mainTabs = 0;
+  static int addBookScreen = 1;
+  static int viewBookScreen = 2;
+  static int addEditTool = 3;
+  static int addEditChart = 4;
+  static int viewChart = 5;
+  static int settings = 6;
+}
+
 List<String> chartColorCodes = [
   '3366cc',
   'dc3912',
