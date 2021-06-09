@@ -10,6 +10,7 @@ import 'package:otlet/ui/screens/charts_screen/create_chart_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/home_screen/home_screen.dart';
 import 'package:otlet/ui/screens/settings/settings_screen.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_screen.dart';
 import 'package:otlet/ui/screens/view_books_screen.dart';
 import 'package:otlet/ui/screens/view_tools_screens/view_tools_screen.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,8 @@ class _TabManagerState extends State<TabManager> {
   int _currentIndex = 0;
 
   List<Widget> screens = [];
+  Book selectedBook; // for when otlet card is pressed
+
   @override
   void initState() {
     super.initState();
@@ -92,7 +95,8 @@ class _TabManagerState extends State<TabManager> {
           index: _currentIndex,
           children: [
             HomeScreen(),
-            ViewBooksScreen(updateScreenIndex: (index) {
+            ViewBooksScreen(updateScreenIndex: (index, {book}) {
+              if (book != null) selectedBook = book;
               setState(() {
                 _screensIndex = index;
               });
@@ -127,7 +131,12 @@ class _TabManagerState extends State<TabManager> {
             _screensIndex = index;
           });
         },
-      )
+      ),
+      ViewBookScreen(selectedBook, updateScreenIndex: (index) {
+        setState(() {
+          _screensIndex = index;
+        });
+      })
     ];
     return ChangeNotifierProvider<OtletInstance>(
         create: (context) => instance, child: screens[_screensIndex]);

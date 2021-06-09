@@ -381,7 +381,7 @@ class OtletInstance extends ChangeNotifier {
         break;
       }
     }
-
+    saveInstance();
     notifyListeners();
   }
 

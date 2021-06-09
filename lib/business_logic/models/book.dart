@@ -31,7 +31,7 @@ class Book {
   bool trackProgress = false;
 
   bool hasBeenEdited = false; // just for local 'show save button' stuff
-  bool isActive;
+  bool isActive = false;
 
   List<ReadingSession> sessions = [];
   List<Tool> tools = [];

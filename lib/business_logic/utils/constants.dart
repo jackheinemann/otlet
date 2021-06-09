@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/goal.dart';
@@ -42,6 +44,12 @@ class ScreenIndex {
   static int addEditChart = 4;
   static int viewChart = 5;
   static int settings = 6;
+}
+
+Icon backButton() {
+  return Platform.isAndroid
+      ? Icon(Icons.arrow_back)
+      : Icon(Icons.arrow_back_ios);
 }
 
 List<String> chartColorCodes = [

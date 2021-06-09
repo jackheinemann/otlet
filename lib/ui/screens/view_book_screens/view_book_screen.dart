@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
@@ -8,15 +7,16 @@ import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_info_stat
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_sessions_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_tools_static_tab.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
+import 'package:provider/provider.dart';
 
 import '../../../business_logic/models/book.dart';
 import '../../../business_logic/utils/constants.dart';
 
 class ViewBookScreen extends StatefulWidget {
   final Book book;
-  final OtletInstance instance;
+  final Function(int) updateScreenIndex;
 
-  ViewBookScreen(this.book, this.instance);
+  ViewBookScreen(this.book, {@required this.updateScreenIndex});
   @override
   _ViewBookScreenState createState() => _ViewBookScreenState();
 }
@@ -59,10 +59,10 @@ class _ViewBookScreenState extends State<ViewBookScreen>
               'Discard changes to ${book.title}?', context);
           if (!shouldPop) return Future.value(false);
         }
-        Navigator.pop(context);
-        return Future.value(true);
+        widget.updateScreenIndex(ScreenIndex.mainTabs);
+        return Future.value(false);
       },
-      child: Builder(builder: (context) {
+      child: Consumer<OtletInstance>(builder: (context, instance, _) {
         Column bookviewHeader = Column(children: [
           Row(
             children: [
@@ -149,6 +149,22 @@ class _ViewBookScreenState extends State<ViewBookScreen>
               scale: 2.7,
             ),
             centerTitle: true,
+            leading: IconButton(
+                icon: backButton(),
+                onPressed: () async {
+                  if (isEditing) {
+                    setState(() {
+                      isEditing = false;
+                    });
+                    return;
+                  }
+                  if (book.hasBeenEdited) {
+                    bool shouldPop = await showConfirmDialog(
+                        'Discard changes to ${book.title}?', context);
+                    if (!shouldPop) return;
+                  }
+                  widget.updateScreenIndex(ScreenIndex.mainTabs);
+                }),
             actions: [
               if (isEditing)
                 IconButton(
@@ -212,21 +228,6 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                               });
                             },
                           ),
-                    // BookToolsTab(
-                    //   book,
-                    //   updateBook: (updatedBook) {
-                    //     setState(() {
-                    //       book = updatedBook;
-                    //       book.hasBeenEdited = true;
-                    //     });
-                    //   },
-                    //   toolIsEditing: (tool, editing) {
-                    //     setState(() {
-                    //       editingTool = editing ? tool : null;
-                    //       if (editing == false) book.hasBeenEdited = true;
-                    //     });
-                    //   },
-                    // ),
                     isEditing
                         ? EditBookToolsTab(
                             book,
@@ -272,7 +273,8 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                     style: ElevatedButton.styleFrom(primary: primaryColor),
                     onPressed: () {
                       book.hasBeenEdited = false;
-                      Navigator.pop(context, book);
+                      instance.modifyBook(book);
+                      widget.updateScreenIndex(ScreenIndex.mainTabs);
                     },
                     child: Container(
                         width: MediaQuery.of(context).size.width * .65,

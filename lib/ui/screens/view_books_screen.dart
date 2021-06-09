@@ -8,13 +8,13 @@ import '../../business_logic/models/book.dart';
 import '../../business_logic/utils/constants.dart';
 
 class ViewBooksScreen extends StatelessWidget {
-  final Function(int) updateScreenIndex;
+  final Function(int, {Book book}) updateScreenIndex;
 
   ViewBooksScreen({@required this.updateScreenIndex});
   @override
   Widget build(BuildContext context) {
     return Consumer<OtletInstance>(builder: (context, instance, _) {
-      List<Book> books = List<Book>.from(instance.books);
+      List<Book> books = instance.books;
       books.sort((a, b) => a.title.compareTo(b.title));
       return Scaffold(
         body: Padding(
@@ -24,7 +24,12 @@ class ViewBooksScreen extends StatelessWidget {
                     itemCount: books.length,
                     itemBuilder: (context, i) {
                       Book book = books[i];
-                      return OtletCard(book, instance);
+                      return OtletCard(
+                        book,
+                        instance,
+                        updateScreenIndex: (index, book) =>
+                            updateScreenIndex(index, book: book),
+                      );
                     })
                 : Center(
                     child: Column(

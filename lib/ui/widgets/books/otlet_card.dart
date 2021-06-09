@@ -1,16 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/book.dart';
-import 'package:otlet/ui/screens/view_book_screens/view_book_screen.dart';
+import 'package:otlet/business_logic/utils/constants.dart';
 
 import '../../../business_logic/models/otlet_instance.dart';
 
 class OtletCard extends StatelessWidget {
   final Book book;
   final OtletInstance instance;
+  final Function(int, Book) updateScreenIndex;
 
-  OtletCard(this.book, this.instance);
+  OtletCard(this.book, this.instance, {@required this.updateScreenIndex});
   @override
   Widget build(BuildContext context) {
     double bookImageWidth = MediaQuery.of(context).size.width * .25;
@@ -22,23 +22,7 @@ class OtletCard extends StatelessWidget {
         else
           book.isActive = false;
 
-        Book temp = await Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ViewBookScreen(Book.fromBook(book), instance)));
-
-        if (temp == null) return;
-        if (temp.isEmpty()) {
-          print('empty!');
-          // book with temp.id is marked for deletion
-          instance.deleteBook(temp);
-          return;
-        }
-
-        if (temp.compareToBook(book)) return;
-        instance.modifyBook(temp);
-        instance.saveInstance();
+        updateScreenIndex(ScreenIndex.viewBookScreen, Book.fromBook(book));
       },
       child: Card(
         elevation: 5,
@@ -50,13 +34,9 @@ class OtletCard extends StatelessWidget {
               child: Row(
                 children: [
                   book.coverUrl != null
-                      // ? CachedNetworkImage(
-                      //     imageUrl: book.coverUrl,
-                      //     width: bookImageWidth,
-                      //   )
                       ? book.coverImage(bookImageWidth, bookImageWidth * 1.5)
                       : Container(
-                          color: Colors.grey,
+                          color: primaryColor,
                           width: bookImageWidth,
                           height: bookImageWidth * 1.5,
                           child: Center(
