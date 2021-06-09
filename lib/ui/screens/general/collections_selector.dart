@@ -88,7 +88,8 @@ class _CollectionsSelectorState extends State<CollectionsSelector> {
                   });
                 },
                 decoration: InputDecoration(
-                    labelText: 'Separate values with commas',
+                    labelText: 'Add new collections',
+                    hintText: 'Separate values with commas',
                     border: OutlineInputBorder()),
               ),
               Wrap(

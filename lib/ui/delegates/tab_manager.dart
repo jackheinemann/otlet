@@ -70,17 +70,10 @@ class _TabManagerState extends State<TabManager> {
                   })
             else
               IconButton(
-                  onPressed: () async {
-                    bool wipingEverything = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    SettingsScreen(instance))) ??
-                        false;
-                    if (wipingEverything)
-                      setState(() {
-                        instance.scorchEarth();
-                      });
+                  onPressed: () {
+                    setState(() {
+                      _screensIndex = ScreenIndex.settings;
+                    });
                   },
                   icon: Icon(Icons.settings))
           ],
@@ -169,6 +162,11 @@ class _TabManagerState extends State<TabManager> {
         setState(() {
           _screensIndex = index;
           if (_screensIndex == ScreenIndex.mainTabs) selectedChart = null;
+        });
+      }),
+      SettingsScreen(instance, updateScreenIndex: (index) {
+        setState(() {
+          _screensIndex = index;
         });
       })
     ];
