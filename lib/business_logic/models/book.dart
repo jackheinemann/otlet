@@ -9,7 +9,6 @@ import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
-import 'package:otlet/business_logic/utils/functions.dart';
 import 'package:uuid/uuid.dart';
 
 import 'reading_session.dart';

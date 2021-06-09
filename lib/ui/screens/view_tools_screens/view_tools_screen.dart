@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/tool.dart';
-import 'package:otlet/business_logic/utils/functions.dart';
 import 'package:otlet/ui/widgets/tools/tool_card.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +7,9 @@ import '../../../business_logic/models/otlet_instance.dart';
 import '../../../business_logic/utils/constants.dart';
 
 class ViewToolsScreen extends StatefulWidget {
+  final Function(int, {Tool tool}) updateScreenIndex;
+
+  ViewToolsScreen({@required this.updateScreenIndex});
   @override
   _ViewToolsScreenState createState() => _ViewToolsScreenState();
 }
@@ -26,13 +28,8 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                     SizedBox(height: 10),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(primary: primaryColor),
-                        onPressed: () async {
-                          Tool tool = await createNewTool(context);
-                          if (tool == null) return;
-                          setState(() {
-                            instance.addNewTool(tool);
-                          });
-                        },
+                        onPressed: () =>
+                            widget.updateScreenIndex(ScreenIndex.addEditTool),
                         child: Text('Create New Tool',
                             style: TextStyle(fontSize: 17))),
                   ],
@@ -66,13 +63,8 @@ class _ViewToolsScreenState extends State<ViewToolsScreen> {
                           Tool tool = instance.tools[i];
                           return ToolCard(
                             tool,
-                            updateTool: (modifiedTool) {
-                              setState(() {
-                                modifiedTool.isMarkedForDeletion()
-                                    ? instance.deleteTool(modifiedTool)
-                                    : instance.modifyTool(modifiedTool);
-                              });
-                            },
+                            updateScreenIndex: (index) =>
+                                widget.updateScreenIndex(index, tool: tool),
                             updateActivity: (modifiedTool) {
                               setState(() {
                                 instance.setGlobalToolActivity(modifiedTool);

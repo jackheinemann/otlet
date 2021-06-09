@@ -4,7 +4,6 @@ import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
-import 'package:otlet/business_logic/utils/functions.dart';
 import 'package:otlet/ui/screens/add_book_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/create_chart_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
@@ -12,6 +11,7 @@ import 'package:otlet/ui/screens/home_screen/home_screen.dart';
 import 'package:otlet/ui/screens/settings/settings_screen.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_screen.dart';
 import 'package:otlet/ui/screens/view_books_screen.dart';
+import 'package:otlet/ui/screens/view_tools_screens/create_custom_tool_screen.dart';
 import 'package:otlet/ui/screens/view_tools_screens/view_tools_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +30,7 @@ class _TabManagerState extends State<TabManager> {
 
   List<Widget> screens = [];
   Book selectedBook; // for when otlet card is pressed
+  Tool selectedTool; // for when a tool card is pressed
 
   @override
   void initState() {
@@ -56,11 +57,8 @@ class _TabManagerState extends State<TabManager> {
                       });
                       return;
                     } else if (_currentIndex == 2) {
-                      Tool tool = await createNewTool(context);
-                      if (tool == null) return;
                       setState(() {
-                        instance.addNewTool(tool);
-                        instance.tools.sort((a, b) => a.name.compareTo(b.name));
+                        _screensIndex = ScreenIndex.addEditTool;
                       });
                     } else {
                       OtletChart temp = await Navigator.push(
@@ -101,7 +99,14 @@ class _TabManagerState extends State<TabManager> {
                 _screensIndex = index;
               });
             }),
-            ViewToolsScreen(),
+            ViewToolsScreen(
+              updateScreenIndex: (index, {tool}) {
+                if (tool != null) selectedTool = tool;
+                setState(() {
+                  _screensIndex = index;
+                });
+              },
+            ),
             ViewChartsScreen()
           ],
         ),
@@ -129,6 +134,7 @@ class _TabManagerState extends State<TabManager> {
         updateScreenIndex: (index) {
           setState(() {
             _screensIndex = index;
+            if (_screensIndex == ScreenIndex.mainTabs) selectedBook = null;
           });
         },
       ),
@@ -136,7 +142,16 @@ class _TabManagerState extends State<TabManager> {
         setState(() {
           _screensIndex = index;
         });
-      })
+      }),
+      CreateCustomToolScreen(
+          tool: selectedTool,
+          isEdit: selectedTool != null,
+          updateScreenIndex: (index) {
+            setState(() {
+              _screensIndex = index;
+              if (_screensIndex == ScreenIndex.mainTabs) selectedTool = null;
+            });
+          })
     ];
     return ChangeNotifierProvider<OtletInstance>(
         create: (context) => instance, child: screens[_screensIndex]);

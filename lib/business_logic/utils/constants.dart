@@ -52,6 +52,9 @@ Icon backButton() {
       : Icon(Icons.arrow_back_ios);
 }
 
+String generateCoverUrl(String coverKey, {String size = 'M'}) =>
+    'https://covers.openlibrary.org/b/id/$coverKey-$size.jpg';
+
 List<String> chartColorCodes = [
   '3366cc',
   'dc3912',
