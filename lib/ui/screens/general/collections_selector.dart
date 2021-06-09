@@ -10,12 +10,14 @@ class CollectionsSelector extends StatefulWidget {
   final OtletInstance instance;
   final String title;
   final Function(int, {Map<String, bool> options}) updateAddIndex;
+  final bool isBookScope;
 
   CollectionsSelector(
       {@required this.options,
       @required this.instance,
       @required this.title,
-      @required this.updateAddIndex});
+      @required this.updateAddIndex,
+      this.isBookScope = true});
 
   @override
   _CollectionsSelectorState createState() => _CollectionsSelectorState();
@@ -24,6 +26,7 @@ class CollectionsSelector extends StatefulWidget {
 class _CollectionsSelectorState extends State<CollectionsSelector> {
   String title;
   Map<String, bool> options;
+  bool isBookScope;
 
   TextEditingController controller = TextEditingController();
 
@@ -31,13 +34,14 @@ class _CollectionsSelectorState extends State<CollectionsSelector> {
   void initState() {
     options = widget.options;
     title = widget.title;
+    isBookScope = widget.isBookScope;
     controller.addListener(() {
       String value = controller.text;
       if (value.contains(',')) {
         String payload = value;
         // capitalizeFirst(value.substring(0, value.length - 1).trim());
         setState(() {
-          options.putIfAbsent(payload, () => true);
+          options.putIfAbsent(payload, () => isBookScope);
           controller.clear();
         });
       }
@@ -83,7 +87,7 @@ class _CollectionsSelectorState extends State<CollectionsSelector> {
                   String lastInput = controller.text.trim();
                   if (lastInput.isEmpty) return;
                   setState(() {
-                    options.putIfAbsent(lastInput, () => true);
+                    options.putIfAbsent(lastInput, () => isBookScope);
                     controller.clear();
                   });
                 },
@@ -97,6 +101,7 @@ class _CollectionsSelectorState extends State<CollectionsSelector> {
                 children: options.keys
                     .map((e) => InputChip(
                           onPressed: () {
+                            if (!isBookScope) return;
                             setState(() {
                               options[e] = !options[e];
                             });

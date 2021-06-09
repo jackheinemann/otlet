@@ -339,8 +339,12 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, bool> generateBookCollections(Book book) {
+  Map<String, bool> generateBookCollections([Book book]) {
     Map<String, bool> options = {};
+    if (book == null) {
+      book = Book();
+      book.collections = [];
+    }
     for (String collection in collections) {
       print(book.collections);
       if (book.collections.contains(collection))
@@ -441,6 +445,8 @@ class OtletInstance extends ChangeNotifier {
     _stream = null;
     timerSubscription?.cancel();
     timerSubscription = null;
+    collections.clear();
+    selectedCollections.clear();
     notifyListeners();
   }
 
