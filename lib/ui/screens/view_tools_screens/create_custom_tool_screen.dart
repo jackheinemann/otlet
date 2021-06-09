@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/ui/widgets/alerts/confirm_dialog.dart';
 import 'package:otlet/ui/widgets/alerts/error_dialog.dart';
 import 'package:otlet/ui/widgets/alerts/simple_selector.dart';
+import 'package:provider/provider.dart';
 
 import '../../../business_logic/utils/constants.dart';
 import 'create_fixed_options_screen.dart';
@@ -11,8 +13,10 @@ import 'create_fixed_options_screen.dart';
 class CreateCustomToolScreen extends StatefulWidget {
   final bool isEdit;
   final Tool tool;
+  final Function(int) updateScreenIndex;
 
-  CreateCustomToolScreen({this.isEdit = false, this.tool});
+  CreateCustomToolScreen(
+      {this.isEdit = false, this.tool, @required this.updateScreenIndex});
   @override
   _CreateCustomToolScreenState createState() => _CreateCustomToolScreenState();
 }
@@ -213,190 +217,33 @@ class _CreateCustomToolScreenState extends State<CreateCustomToolScreen> {
                           SizedBox(
                             height: 15,
                           ),
-                      // if (tool.isInitialized())
-                      //   if (tool.isBookTool)
-                      //     tool.useFixedOptions
-                      //         ? ListTile(
-                      //             title: Text(
-                      //                 tool.value == null
-                      //                     ? 'Initial Value (optional)'
-                      //                     : tool.value.toString(),
-                      //                 style: TextStyle(fontSize: 16)),
-                      //             trailing: Icon(Icons.arrow_drop_down),
-                      //             onTap: () async {
-                      //               if (tool.fixedOptions.isEmpty) {
-                      //                 ScaffoldMessenger.of(context)
-                      //                     .showSnackBar(SnackBar(
-                      //                         content: Text(
-                      //                             'Set fixed options first to select an initial value.')));
-                      //                 return;
-                      //               }
-                      //               FocusScope.of(context).unfocus();
-                      //               String initialValue =
-                      //                   await showSimpleSelectorDialog(
-                      //                       context,
-                      //                       'Select an initial value${toolNameController.text.isNotEmpty ? ' for ' + toolNameController.text : ''}',
-                      //                       tool.fixedOptions);
-
-                      //               if (initialValue == null) return;
-                      //               setState(() {
-                      //                 tool.value = initialValue;
-                      //                 toolValueController.text = initialValue;
-                      //               });
-                      //             },
-                      //           )
-                      //         : Padding(
-                      //             padding: const EdgeInsets.symmetric(
-                      //                 horizontal: 7.0),
-                      //             child: TextFormField(
-                      //               onTap: () async {
-                      //                 if (!tool.isSpecialGrade()) return;
-
-                      //                 if (tool.toolType == Tool.dateTimeTool ||
-                      //                     tool.toolType == Tool.dateTool) {
-                      //                   DateTime value = await showDatePicker(
-                      //                       context: context,
-                      //                       initialDate: DateTime.now(),
-                      //                       firstDate: DateTime.now().subtract(
-                      //                           Duration(days: 365 * 50)),
-                      //                       lastDate: DateTime.now()
-                      //                           .add(Duration(days: 365 * 50)));
-                      //                   if (value == null) return;
-                      //                   tool.value = value;
-                      //                 }
-                      //                 if (tool.toolType == Tool.dateTimeTool ||
-                      //                     tool.toolType == Tool.timeTool) {
-                      //                   TimeOfDay timeOfDay =
-                      //                       await showTimePicker(
-                      //                           context: context,
-                      //                           initialTime: TimeOfDay.now());
-                      //                   if (timeOfDay == null) return;
-                      //                   if (tool.toolType ==
-                      //                       Tool.dateTimeTool) {
-                      //                     DateTime value =
-                      //                         tool.value as DateTime;
-
-                      //                     tool.value = DateTime(
-                      //                         value.year,
-                      //                         value.month,
-                      //                         value.day,
-                      //                         timeOfDay.hour,
-                      //                         timeOfDay.minute);
-                      //                   } else {
-                      //                     tool.value = timeOfDay;
-                      //                   }
-                      //                 }
-                      //                 if (tool.toolType == Tool.booleanTool) {
-                      //                   bool value = await showDialog(
-                      //                       context: context,
-                      //                       builder: (context) => AlertDialog(
-                      //                             title: Text('Select a value'),
-                      //                             actions: [
-                      //                               TextButton(
-                      //                                   onPressed: () =>
-                      //                                       Navigator.of(
-                      //                                               context)
-                      //                                           .pop(true),
-                      //                                   child: Text('True')),
-                      //                               TextButton(
-                      //                                   onPressed: () =>
-                      //                                       Navigator.of(
-                      //                                               context)
-                      //                                           .pop(false),
-                      //                                   child: Text('False')),
-                      //                             ],
-                      //                           ));
-                      //                   if (value == null) return;
-                      //                   tool.value = value;
-                      //                 }
-                      //                 setState(() {
-                      //                   if (tool.toolType == Tool.booleanTool)
-                      //                     toolValueController.text =
-                      //                         tool.value.toString();
-                      //                   else {
-                      //                     if (tool.toolType == Tool.dateTool)
-                      //                       toolValueController.text =
-                      //                           DateFormat('MMMM d y')
-                      //                               .format(tool.value);
-                      //                     else if (tool.toolType ==
-                      //                         Tool.timeTool) {
-                      //                       TimeOfDay time = tool.value;
-                      //                       toolValueController.text =
-                      //                           DateFormat(
-                      //                                   DateFormat.HOUR_MINUTE)
-                      //                               .format(DateTime(
-                      //                                   1,
-                      //                                   1,
-                      //                                   1,
-                      //                                   time.hour,
-                      //                                   time.minute));
-                      //                     } else {
-                      //                       // datetime, need both
-                      //                       toolValueController.text =
-                      //                           DateFormat('MMMM d, y hh:mm aa')
-                      //                               .format(tool.value);
-                      //                     }
-                      //                   }
-                      //                 });
-                      //               },
-                      //               textCapitalization:
-                      //                   TextCapitalization.words,
-                      //               keyboardType: tool.isNumeric()
-                      //                   ? TextInputType.numberWithOptions(
-                      //                       signed: true)
-                      //                   : TextInputType.text,
-                      //               readOnly: tool.isSpecialGrade(),
-                      //               controller: toolValueController,
-                      //               decoration: InputDecoration(
-                      //                   labelText: 'Initial Value (optional)',
-                      //                   border: OutlineInputBorder()),
-                      //               validator: (value) {
-                      //                 value = value.trim();
-
-                      //                 if (value.isEmpty) return null;
-                      //                 if (tool.toolType == Tool.doubleTool) {
-                      //                   double val = double.tryParse(value);
-                      //                   if (val == null)
-                      //                     return '$value is not a decimal figure';
-                      //                   tool.value = val;
-                      //                 } else if (tool.toolType ==
-                      //                     Tool.integerTool) {
-                      //                   int val = int.tryParse(value);
-                      //                   if (val == null)
-                      //                     return '$value is not an integer figure';
-                      //                   tool.value = val;
-                      //                 } else if (tool.toolType ==
-                      //                     Tool.textTool) {
-                      //                   tool.value = value;
-                      //                 }
-                      //                 return null;
-                      //               },
-                      //             ),
-                      //           ),
                     ],
                   ),
                 ),
               ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: primaryColor),
-                  onPressed: () {
-                    if (!_formKey.currentState.validate()) return;
-                    if (tool?.isBookTool == null) {
-                      showErrorDialog(context, 'You must select a target.');
-                      return;
-                    }
-                    if (tool?.toolType == null) {
-                      showErrorDialog(context, 'You must select a tool type.');
-                      return;
-                    }
+              Consumer<OtletInstance>(
+                builder: (context, instance, _) => ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: primaryColor),
+                    onPressed: () {
+                      if (!_formKey.currentState.validate()) return;
+                      if (tool?.isBookTool == null) {
+                        showErrorDialog(context, 'You must select a target.');
+                        return;
+                      }
+                      if (tool?.toolType == null) {
+                        showErrorDialog(
+                            context, 'You must select a tool type.');
+                        return;
+                      }
 
-                    Navigator.pop(context, tool);
-                  },
-                  child: Container(
-                      width: MediaQuery.of(context).size.width * .5,
-                      child: Center(
-                          child: Text('Save Tool',
-                              style: TextStyle(fontSize: 17))))),
+                      Navigator.pop(context, tool);
+                    },
+                    child: Container(
+                        width: MediaQuery.of(context).size.width * .5,
+                        child: Center(
+                            child: Text('Save Tool',
+                                style: TextStyle(fontSize: 17))))),
+              ),
               SizedBox(height: 20)
             ],
           ),

@@ -174,7 +174,8 @@ class _ViewBookScreenState extends State<ViewBookScreen>
                           'Are you sure you want to delete ${book.title}?',
                           context);
                       if (!shouldDelete) return;
-                      Navigator.pop(context, Book.toDelete(book));
+                      instance.deleteBook(book);
+                      widget.updateScreenIndex(ScreenIndex.mainTabs);
                     })
             ],
           ),
