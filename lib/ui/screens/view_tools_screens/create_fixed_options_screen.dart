@@ -5,8 +5,9 @@ import '../../../business_logic/utils/constants.dart';
 
 class CreateFixedOptionsScreen extends StatefulWidget {
   final Tool tool;
+  final Function(int, {Tool updatedTool}) updateCustomToolIndex;
 
-  CreateFixedOptionsScreen(this.tool);
+  CreateFixedOptionsScreen(this.tool, {@required this.updateCustomToolIndex});
   @override
   _CreateFixedOptionsScreenState createState() =>
       _CreateFixedOptionsScreenState();
@@ -110,7 +111,7 @@ class _CreateFixedOptionsScreenState extends State<CreateFixedOptionsScreen> {
                 style: ElevatedButton.styleFrom(primary: primaryColor),
                 onPressed: () {
                   if (options.isEmpty) {
-                    Navigator.pop(context);
+                    widget.updateCustomToolIndex(0);
                     return;
                   } else if (tool.toolType == Tool.doubleTool) {
                     List<double> values = [];
@@ -124,7 +125,8 @@ class _CreateFixedOptionsScreenState extends State<CreateFixedOptionsScreen> {
                       }
                       values.add(val);
                     }
-                    Navigator.pop(context, values);
+                    tool.fixedOptions = values;
+                    widget.updateCustomToolIndex(0, updatedTool: tool);
                   } else if (tool.toolType == Tool.integerTool) {
                     List<int> values = [];
                     for (String option in options) {
@@ -137,9 +139,11 @@ class _CreateFixedOptionsScreenState extends State<CreateFixedOptionsScreen> {
                       }
                       values.add(val);
                     }
-                    Navigator.pop(context, values);
+                    tool.fixedOptions = values;
+                    widget.updateCustomToolIndex(0, updatedTool: tool);
                   } else {
-                    Navigator.pop(context, options);
+                    tool.fixedOptions = options;
+                    widget.updateCustomToolIndex(0, updatedTool: tool);
                   }
                 },
                 child: Text('Save Options', style: TextStyle(fontSize: 17))),
