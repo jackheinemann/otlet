@@ -6,6 +6,7 @@ import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/ui/screens/add_book_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/create_chart_screen.dart';
+import 'package:otlet/ui/screens/charts_screen/view_chart_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/home_screen/home_screen.dart';
 import 'package:otlet/ui/screens/settings/settings_screen.dart';
@@ -89,14 +90,14 @@ class _TabManagerState extends State<TabManager> {
           children: [
             HomeScreen(),
             ViewBooksScreen(updateScreenIndex: (index, {book}) {
-              if (book != null) selectedBook = book;
+              if (book != null) selectedBook = Book.fromBook(book);
               setState(() {
                 _screensIndex = index;
               });
             }),
             ViewToolsScreen(
               updateScreenIndex: (index, {tool}) {
-                if (tool != null) selectedTool = tool;
+                if (tool != null) selectedTool = Tool.fromTool(tool);
                 setState(() {
                   _screensIndex = index;
                 });
@@ -104,7 +105,7 @@ class _TabManagerState extends State<TabManager> {
             ),
             ViewChartsScreen(
               updateScreenIndex: (index, {chart}) {
-                if (chart != null) selectedChart = chart;
+                if (chart != null) selectedChart = OtletChart.fromChart(chart);
                 setState(() {
                   _screensIndex = index;
                 });
@@ -163,7 +164,13 @@ class _TabManagerState extends State<TabManager> {
             if (_screensIndex == ScreenIndex.mainTabs) selectedChart = null;
           });
         },
-      )
+      ),
+      ViewChartScreen(selectedChart, updateScreenIndex: (index) {
+        setState(() {
+          _screensIndex = index;
+          if (_screensIndex == ScreenIndex.mainTabs) selectedChart = null;
+        });
+      })
     ];
     return ChangeNotifierProvider<OtletInstance>(
         create: (context) => instance, child: screens[_screensIndex]);

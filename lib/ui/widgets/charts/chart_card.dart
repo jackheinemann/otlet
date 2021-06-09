@@ -12,24 +12,7 @@ class ChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () async {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Scaffold(
-                      appBar: AppBar(
-                          centerTitle: true,
-                          title: Text(chart.name ?? 'No name')),
-                      body: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Container(
-                              height: 500,
-                              child: chart.generateChart(context, instance)),
-                        ),
-                      ),
-                    )));
-      },
+      onTap: () => updateScreenIndex(ScreenIndex.viewChart, chart: chart),
       title: Text(chart.name ?? 'no name', style: TextStyle(fontSize: 18)),
       leading: chart.chartIcon(),
       trailing: IconButton(

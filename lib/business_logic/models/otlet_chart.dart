@@ -32,6 +32,17 @@ class OtletChart {
     id = Uuid().v1();
   }
 
+  OtletChart.fromChart(OtletChart chart) {
+    id = chart.id;
+    name = chart.name;
+    type = chart.type;
+    scope = chart.scope;
+    xToolId = chart.xToolId;
+    yToolId = chart.yToolId;
+    selectedBookId = chart.selectedBookId;
+    filters = chart.filters.map((e) => ChartFilter.fromFilter(e)).toList();
+  }
+
   OtletChart.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];

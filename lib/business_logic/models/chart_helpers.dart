@@ -47,6 +47,13 @@ class ChartFilter {
     return null;
   }
 
+  ChartFilter.fromFilter(ChartFilter filter) {
+    id = filter.id;
+    filterComparator = filter.filterComparator;
+    pseudoTool = Tool.fromTool(filter.pseudoTool);
+    valueLimit = filter.valueLimit;
+  }
+
   ChartFilter.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     filterComparator = comparatorFromString(json['filterComparator']);

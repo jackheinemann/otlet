@@ -22,7 +22,7 @@ class OtletCard extends StatelessWidget {
         else
           book.isActive = false;
 
-        updateScreenIndex(ScreenIndex.viewBookScreen, Book.fromBook(book));
+        updateScreenIndex(ScreenIndex.viewBookScreen, book);
       },
       child: Card(
         elevation: 5,
