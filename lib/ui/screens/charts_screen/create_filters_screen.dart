@@ -11,7 +11,9 @@ import 'package:otlet/ui/widgets/charts/chart_filter_card.dart';
 class CreateFiltersScreen extends StatefulWidget {
   final OtletInstance instance;
   final OtletChart chart;
-  CreateFiltersScreen(this.instance, this.chart);
+  final Function(int) updateCreateChartIndex;
+  CreateFiltersScreen(this.instance, this.chart,
+      {@required this.updateCreateChartIndex});
   @override
   _CreateFiltersScreenState createState() => _CreateFiltersScreenState();
 }
@@ -40,32 +42,20 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
     pseudoToolController = TextEditingController();
     comparatorController = TextEditingController();
     valueLimitController = TextEditingController();
-    // focusNode = FocusNode();
-    // focusNode.addListener(() {
-    //   if (!focusNode.hasFocus) {
-    //           // means we just lost focus, keep checking
-    //           if (activeSessionTools[i].displayValue() !=
-    //               valueControllers[i].text.trim()) {
-    //             // means the value in the tool and its formfield are different
-    //             setState(() {
-    //               activeSessionTools[i]
-    //                   .assignValueFromString(valueControllers[i].text.trim());
-    //               instance.updateSessionTool(activeSessionTools[i]);
-    //             });
-    //           }
-    //         }
-    // })
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        Navigator.pop(context, chart);
-        return Future.value(true);
+        widget.updateCreateChartIndex(0);
+        return Future.value(false);
       },
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+              icon: backButton(),
+              onPressed: () => widget.updateCreateChartIndex(0)),
           centerTitle: true,
           title: Text('Manage Filters'),
         ),
@@ -199,7 +189,7 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
                                             FilterComparator.values,
                                             FilterComparator.values
                                                 .map((e) => editingFilter
-                                                    .comparatorString(
+                                                    .comparatorToString(
                                                         comparator: e))
                                                 .toList()));
                                 if (comparatorEntry == null) return;
@@ -208,7 +198,7 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
                                 setState(() {
                                   editingFilter.filterComparator = comparator;
                                   comparatorController.text =
-                                      editingFilter.comparatorString();
+                                      editingFilter.comparatorToString();
                                 });
                               },
                               decoration: InputDecoration(
@@ -266,7 +256,7 @@ class _CreateFiltersScreenState extends State<CreateFiltersScreen> {
                                 editingFilter = e;
                                 pseudoToolController.text = e.pseudoTool.name;
                                 comparatorController.text =
-                                    e.comparatorString();
+                                    e.comparatorToString();
                                 valueLimitController.text =
                                     e.pseudoTool.displayValue();
                               });

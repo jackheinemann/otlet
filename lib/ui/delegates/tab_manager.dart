@@ -31,6 +31,7 @@ class _TabManagerState extends State<TabManager> {
   List<Widget> screens = [];
   Book selectedBook; // for when otlet card is pressed
   Tool selectedTool; // for when a tool card is pressed
+  OtletChart selectedChart; // for when a chart card is pressed
 
   @override
   void initState() {
@@ -61,14 +62,8 @@ class _TabManagerState extends State<TabManager> {
                         _screensIndex = ScreenIndex.addEditTool;
                       });
                     } else {
-                      OtletChart temp = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  CreateChartScreen(instance)));
-                      if (temp == null) return;
                       setState(() {
-                        instance.addNewChart(temp);
+                        _screensIndex = ScreenIndex.addEditChart;
                       });
                     }
                   })
@@ -107,7 +102,14 @@ class _TabManagerState extends State<TabManager> {
                 });
               },
             ),
-            ViewChartsScreen()
+            ViewChartsScreen(
+              updateScreenIndex: (index, {chart}) {
+                if (chart != null) selectedChart = chart;
+                setState(() {
+                  _screensIndex = index;
+                });
+              },
+            )
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -151,7 +153,17 @@ class _TabManagerState extends State<TabManager> {
               _screensIndex = index;
               if (_screensIndex == ScreenIndex.mainTabs) selectedTool = null;
             });
-          })
+          }),
+      CreateChartScreen(
+        chart: selectedChart,
+        instance: instance,
+        updateScreenIndex: (index) {
+          setState(() {
+            _screensIndex = index;
+            if (_screensIndex == ScreenIndex.mainTabs) selectedChart = null;
+          });
+        },
+      )
     ];
     return ChangeNotifierProvider<OtletInstance>(
         create: (context) => instance, child: screens[_screensIndex]);

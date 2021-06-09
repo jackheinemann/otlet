@@ -388,10 +388,13 @@ class OtletInstance extends ChangeNotifier {
   void modifyChart(OtletChart chart) {
     int i = 0;
     for (; i < charts.length; i++) {
+      print(charts[i].name);
       if (charts[i].id == chart.id) break;
     }
     charts[i] = chart;
+    print(charts[i].name);
     saveInstance();
+    print('saved the chart');
     notifyListeners();
   }
 
@@ -488,7 +491,8 @@ class OtletInstance extends ChangeNotifier {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    print('instance on');
+    Map<String, dynamic> json = {
       'userFirstName': userFirstName,
       'userLastName': userLastName,
       if (books != null)
@@ -508,6 +512,8 @@ class OtletInstance extends ChangeNotifier {
         'charts': jsonEncode(charts.map((e) => e.toJson()).toList()),
       if (collections != null) 'collections': collections
     };
+    print('instance off');
+    return json;
   }
 
   void updateCollections(List<String> updated) {

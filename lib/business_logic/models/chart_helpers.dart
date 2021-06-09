@@ -26,7 +26,7 @@ class ChartFilter {
   Tool pseudoTool;
   dynamic valueLimit;
 
-  String comparatorString({FilterComparator comparator}) {
+  String comparatorToString({FilterComparator comparator}) {
     if (comparator == null) comparator = filterComparator;
     if (comparator == FilterComparator.equals) return '=';
     if (comparator == FilterComparator.doesNotEqual) return '!=';
@@ -37,9 +37,19 @@ class ChartFilter {
     return null;
   }
 
+  FilterComparator comparatorFromString(String string) {
+    if (string == '=') return FilterComparator.equals;
+    if (string == '!=') return FilterComparator.doesNotEqual;
+    if (string == '>') return FilterComparator.greaterThan;
+    if (string == '<') return FilterComparator.lessThan;
+    if (string == '>=') return FilterComparator.greaterThanEQ;
+    if (string == '<=') return FilterComparator.lessThanEQ;
+    return null;
+  }
+
   ChartFilter.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    filterComparator = json['filterComparator'];
+    filterComparator = comparatorFromString(json['filterComparator']);
     pseudoTool = json['pseudoTool'];
     if (pseudoTool.isDateTime()) {
       try {
@@ -66,7 +76,7 @@ class ChartFilter {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'filterComparator': filterComparator,
+      'filterComparator': comparatorToString(comparator: filterComparator),
       'pseudoTool': pseudoTool,
       'valueLimit': pseudoTool.isDateTime() ? valueLimit.toString() : valueLimit
     };
@@ -152,7 +162,7 @@ class ChartFilter {
   }
 
   String filterLabel() {
-    return '${pseudoTool?.name} ${comparatorString()} ${pseudoTool?.displayValue()}';
+    return '${pseudoTool?.name} ${comparatorToString()} ${pseudoTool?.displayValue()}';
   }
 
   bool filterSaveable() {

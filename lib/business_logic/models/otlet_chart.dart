@@ -52,7 +52,7 @@ class OtletChart {
   bool markedForDeletion() => name == null && type == null;
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> json = {
       'id': id,
       'name': name,
       'type': type,
@@ -62,6 +62,7 @@ class OtletChart {
       'selectedBookId': selectedBookId,
       'filters': filters.map((e) => e.toJson()).toList(),
     };
+    return json;
   }
 
   void addOrModifyFilter(ChartFilter filter) {
