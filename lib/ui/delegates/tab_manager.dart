@@ -75,19 +75,23 @@ class _TabManagerState extends State<TabManager> {
                       _screensIndex = ScreenIndex.settings;
                     });
                   },
-                  icon: Icon(Icons.settings))
+                  icon: Icon(Icons.settings)),
+            // if (_currentIndex == 1)
+            //   IconButton(icon: Icon(Icons.tune), onPressed: () async {})
           ],
         ),
         body: IndexedStack(
           index: _currentIndex,
           children: [
             HomeScreen(),
-            ViewBooksScreen(updateScreenIndex: (index, {book}) {
-              if (book != null) selectedBook = Book.fromBook(book);
-              setState(() {
-                _screensIndex = index;
-              });
-            }),
+            ViewBooksScreen(
+              updateScreenIndex: (index, {book}) {
+                if (book != null) selectedBook = Book.fromBook(book);
+                setState(() {
+                  _screensIndex = index;
+                });
+              },
+            ),
             ViewToolsScreen(
               updateScreenIndex: (index, {tool}) {
                 if (tool != null) selectedTool = Tool.fromTool(tool);

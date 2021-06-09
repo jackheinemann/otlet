@@ -34,8 +34,8 @@ class _CollectionsSelectorState extends State<CollectionsSelector> {
     controller.addListener(() {
       String value = controller.text;
       if (value.contains(',')) {
-        String payload =
-            capitalizeFirst(value.substring(0, value.length - 1).trim());
+        String payload = value;
+        // capitalizeFirst(value.substring(0, value.length - 1).trim());
         setState(() {
           options.putIfAbsent(payload, () => true);
           controller.clear();
@@ -144,6 +144,6 @@ class _CollectionsSelectorState extends State<CollectionsSelector> {
   }
 }
 
-String capitalizeFirst(String string) {
-  return '${string[0].toUpperCase()}${string.substring(1).toLowerCase()}';
-}
+// String capitalizeFirst(String string) {
+//   return '${string[0].toUpperCase()}${string.substring(1).toLowerCase()}';
+// }
