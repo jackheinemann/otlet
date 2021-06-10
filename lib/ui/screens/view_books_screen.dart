@@ -23,7 +23,6 @@ class ViewBooksScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
-          // backgroundColor: secondaryColor,
           title: SortBooksToolbar(),
         ),
         body: Padding(
@@ -31,7 +30,6 @@ class ViewBooksScreen extends StatelessWidget {
             child: books.length > 0
                 ? Column(
                     children: [
-                      // SortBooksToolbar(),
                       Expanded(
                         child: ListView.builder(
                           itemCount: books.length,

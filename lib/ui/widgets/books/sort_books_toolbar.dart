@@ -16,13 +16,14 @@ class SortBooksToolbar extends StatelessWidget {
               instance.selectedCollections);
           instance.updateSelectedCollection(selected);
         },
+        behavior: HitTestBehavior.opaque,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Text(
                   instance.selectedCollections.isEmpty
-                      ? 'Filter by collection'
+                      ? 'Showing all books'
                       : instance.selectedCollections.join(', '),
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
