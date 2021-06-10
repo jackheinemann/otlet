@@ -144,7 +144,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         onTap: () async {
                           DateTime dateTime = await showDatePicker(
                               context: context,
-                              initialDate: DateTime.now(),
+                              initialDate: goal?.goalDate == null
+                                  ? DateTime.now()
+                                  : goal.goalDate,
                               firstDate: DateTime(1950),
                               lastDate: DateTime(2150));
                           if (dateTime == null) return;
@@ -188,7 +190,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         onTap: () async {
                           DateTime dateTime = await showDatePicker(
                               context: context,
-                              initialDate: DateTime.now(),
+                              initialDate: goal?.goalStarted == null
+                                  ? DateTime.now()
+                                  : goal.goalStarted,
                               firstDate: DateTime(1950),
                               lastDate: DateTime(2150));
                           if (dateTime == null) return;

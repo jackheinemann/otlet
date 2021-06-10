@@ -210,7 +210,7 @@ class Tool {
               if (isOnlyDate()) {
                 DateTime dateTime = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
+                    initialDate: value == null ? DateTime.now() : value,
                     firstDate:
                         DateTime.now().subtract(Duration(days: 365) * 50),
                     lastDate: DateTime.now().add(Duration(days: 365) * 50));
