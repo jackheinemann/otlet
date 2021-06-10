@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/ui/widgets/alerts/input_dialog.dart';
 
 class SessionTrackerCard extends StatelessWidget {
@@ -30,9 +31,12 @@ class SessionTrackerCard extends StatelessWidget {
                           instance.updateSession(!session.isReading);
                         },
                         child: CircleAvatar(
-                          child: Icon(session.isReading
-                              ? Icons.pause
-                              : Icons.play_arrow),
+                          backgroundColor: primaryColor,
+                          child: Icon(
+                              session.isReading
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                              color: Colors.white),
                         ),
                       ),
                       SizedBox(
@@ -64,9 +68,12 @@ class SessionTrackerCard extends StatelessWidget {
                           instance.saveInstance();
                         },
                         child: CircleAvatar(
-                          child: Icon(session.timePassed.inSeconds >= 1
-                              ? Icons.save
-                              : Icons.close),
+                          backgroundColor: primaryColor,
+                          child: Icon(
+                              session.timePassed.inSeconds >= 1
+                                  ? Icons.save
+                                  : Icons.close,
+                              color: Colors.white),
                         ),
                       ),
                       SizedBox(

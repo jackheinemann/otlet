@@ -567,7 +567,7 @@ class OtletInstance extends ChangeNotifier {
     activeSession.isReading = false;
     activeSession.importSessionTools(activeBook());
 
-    if (activeSession.started == null) activeSession.started = DateTime.now();
+    // if (activeSession.started == null) activeSession.started = DateTime.now();
     _stream = sessionStream(counter: activeSession.timePassed?.inSeconds);
 
     notifyListeners();
