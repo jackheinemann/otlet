@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/ui/widgets/alerts/collection_selector.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../business_logic/models/book.dart';
 import '../../../../business_logic/utils/constants.dart';
@@ -19,6 +22,7 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
   final TextEditingController publishedController = TextEditingController();
   final TextEditingController pageCountController = TextEditingController();
   final TextEditingController currentPageController = TextEditingController();
+  TextEditingController collectionController = TextEditingController();
   final TextEditingController startedController = TextEditingController();
   final TextEditingController finishedController = TextEditingController();
 
@@ -43,6 +47,8 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
       pageCountController.text = book.pageCount.toString();
     if (book.currentPage != null)
       currentPageController.text = book.currentPage.toString();
+    if (book.collections != null)
+      collectionController.text = book.collections.join(', ');
   }
 
   @override
@@ -152,6 +158,31 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
                     },
                     decoration: InputDecoration(
                         labelText: 'Page Count', border: OutlineInputBorder()),
+                  ),
+                  SizedBox(height: 15),
+                  Consumer<OtletInstance>(
+                    builder: (context, instance, _) => TextFormField(
+                      controller: collectionController,
+                      textCapitalization: TextCapitalization.words,
+                      readOnly: true,
+                      onTap: () async {
+                        List<String> selected =
+                            await showCollectionSelectorDialog(
+                                context,
+                                'Display books from:',
+                                instance.collections,
+                                book.collections);
+                        if (selected == null) return;
+                        setState(() {
+                          book.collections = List<String>.from(selected);
+                          collectionController.text =
+                              book.collections.join(', ');
+                        });
+                      },
+                      decoration: InputDecoration(
+                          labelText: 'Collections',
+                          border: OutlineInputBorder()),
+                    ),
                   ),
                 ],
               ),
