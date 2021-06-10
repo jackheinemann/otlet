@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
 import 'package:otlet/ui/widgets/alerts/collection_selector.dart';
@@ -22,13 +26,16 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
   final TextEditingController publishedController = TextEditingController();
   final TextEditingController pageCountController = TextEditingController();
   final TextEditingController currentPageController = TextEditingController();
-  TextEditingController collectionController = TextEditingController();
+  final TextEditingController collectionController = TextEditingController();
   final TextEditingController startedController = TextEditingController();
   final TextEditingController finishedController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   Book book;
+
+  final picker = ImagePicker();
+  double bookImageWidth;
 
   @override
   initState() {
@@ -53,6 +60,7 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
 
   @override
   Widget build(BuildContext context) {
+    bookImageWidth = MediaQuery.of(context).size.width * .15;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -64,22 +72,62 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 10),
-                  TextFormField(
-                    textCapitalization: TextCapitalization.words,
-                    controller: titleController,
-                    decoration: InputDecoration(
-                        labelText: 'Title (required)',
-                        border: OutlineInputBorder()),
-                    validator: (value) {
-                      if (value.trim().isEmpty) return 'Title required';
-                      return null;
-                    },
-                    onEditingComplete: () {
-                      FocusScope.of(context).unfocus();
-                      setState(() {
-                        book.title = titleController.text.trim();
-                      });
-                    },
+                  Row(
+                    children: [
+                      GestureDetector(
+                          onTap: () async {
+                            final picked = await picker.getImage(
+                                source: ImageSource.gallery);
+
+                            if (picked == null) return;
+
+                            File cropped = await ImageCropper.cropImage(
+                                sourcePath: picked.path,
+                                aspectRatio:
+                                    CropAspectRatio(ratioX: 1, ratioY: 1.5));
+
+                            setState(() {
+                              book.coverUrl = cropped.path;
+                            });
+                          },
+                          child: book.coverUrl == null
+                              ? Container(
+                                  color: primaryColor,
+                                  width: bookImageWidth,
+                                  height: bookImageWidth * 1.5,
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.add_a_photo,
+                                    size: 20,
+                                    color: Colors.white,
+                                  )),
+                                )
+                              : book.coverImage(
+                                  bookImageWidth, bookImageWidth * 1.5)),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 8.0, bottom: 8, left: 8),
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.words,
+                            controller: titleController,
+                            decoration: InputDecoration(
+                                labelText: 'Title (required)',
+                                border: OutlineInputBorder()),
+                            validator: (value) {
+                              if (value.trim().isEmpty) return 'Title required';
+                              return null;
+                            },
+                            onEditingComplete: () {
+                              FocusScope.of(context).unfocus();
+                              setState(() {
+                                book.title = titleController.text.trim();
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 15),
                   TextFormField(

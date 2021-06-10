@@ -47,7 +47,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
   double bookImageWidth;
 
   final picker = ImagePicker();
-  final cropper = ImageCropper;
 
   @override
   void initState() {
