@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:provider/provider.dart';
 
 import '../../../business_logic/models/otlet_instance.dart';
 
 class EditSessionTools extends StatefulWidget {
+  final ReadingSession session;
+
+  EditSessionTools({this.session});
   @override
   _EditSessionToolsState createState() => _EditSessionToolsState();
 }
@@ -14,10 +18,21 @@ class _EditSessionToolsState extends State<EditSessionTools> {
   List<Tool> activeSessionTools = [];
   List<FocusNode> focusNodes = [];
 
+  ReadingSession session;
+  bool isEdit;
+
+  @override
+  void initState() {
+    super.initState();
+    session = widget.session;
+    isEdit = widget.session != null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<OtletInstance>(builder: (context, instance, _) {
-      activeSessionTools = instance.activeSession.tools;
+      if (session == null) session = instance.activeSession;
+      activeSessionTools = session.tools;
       if (valueControllers.isEmpty)
         valueControllers =
             activeSessionTools.map((e) => TextEditingController()).toList();
@@ -33,7 +48,8 @@ class _EditSessionToolsState extends State<EditSessionTools> {
                 setState(() {
                   activeSessionTools[i]
                       .assignValueFromString(valueControllers[i].text.trim());
-                  instance.updateSessionTool(activeSessionTools[i]);
+                  if (!isEdit)
+                    instance.updateSessionTool(activeSessionTools[i]);
                 });
               }
             }
@@ -70,7 +86,7 @@ class _EditSessionToolsState extends State<EditSessionTools> {
                               setState(() {
                                 tool.value = value;
                                 valueControllers[i].text = tool.displayValue();
-                                instance.updateSessionTool(tool);
+                                if (!isEdit) instance.updateSessionTool(tool);
                               });
                             }));
                           })),

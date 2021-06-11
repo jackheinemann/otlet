@@ -40,10 +40,11 @@ class ScreenIndex {
   static int mainTabs = 0;
   static int addBookScreen = 1;
   static int viewBookScreen = 2;
-  static int addEditTool = 3;
-  static int addEditChart = 4;
-  static int viewChart = 5;
-  static int settings = 6;
+  static int addEditSessionScreen = 3;
+  static int addEditTool = 4;
+  static int addEditChart = 5;
+  static int viewChart = 6;
+  static int settings = 7;
 }
 
 Icon backButton() {
@@ -90,6 +91,7 @@ List<String> chartColorCodes = [
 ].map((e) => '#$e').toList();
 
 DateFormat monthDayYearFormat = DateFormat('MMMM d, y');
+DateFormat monthDayYearTimeFormat = DateFormat('MMMM d, y - h:mm a');
 
 Map<Unit, String> unitDisplays = Map.fromIterables(Unit.values,
     Unit.values.map((e) => e.toString().replaceAll('Unit.', '')).toList());

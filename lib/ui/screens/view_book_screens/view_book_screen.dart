@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/ui/screens/view_book_screens/create_session_screen.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_info_tab.dart';
+import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_sessions_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_tools_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_info_static.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/book_sessions_tab.dart';
@@ -31,6 +33,8 @@ class _ViewBookScreenState extends State<ViewBookScreen>
   TabController tabController;
 
   bool isEditing = false;
+
+  int sessionBuilderIndex = 0;
 
   @override
   void initState() {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/book.dart';
 import 'package:otlet/business_logic/models/otlet_chart.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/business_logic/models/tool.dart';
 import 'package:otlet/business_logic/utils/constants.dart';
 import 'package:otlet/ui/screens/add_book_screen.dart';
@@ -9,7 +10,9 @@ import 'package:otlet/ui/screens/charts_screen/create_chart_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/view_chart_screen.dart';
 import 'package:otlet/ui/screens/charts_screen/view_charts_screen.dart';
 import 'package:otlet/ui/screens/home_screen/home_screen.dart';
+import 'package:otlet/ui/screens/sessions/view_sessions_screen.dart';
 import 'package:otlet/ui/screens/settings/settings_screen.dart';
+import 'package:otlet/ui/screens/view_book_screens/create_session_screen.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_screen.dart';
 import 'package:otlet/ui/screens/view_books_screen.dart';
 import 'package:otlet/ui/screens/view_tools_screens/create_custom_tool_screen.dart';
@@ -31,6 +34,7 @@ class _TabManagerState extends State<TabManager> {
 
   List<Widget> screens = [];
   Book selectedBook; // for when otlet card is pressed
+  ReadingSession selectedSession; // for when session card is pressed
   Tool selectedTool; // for when a tool card is pressed
   OtletChart selectedChart; // for when a chart card is pressed
 
@@ -59,6 +63,10 @@ class _TabManagerState extends State<TabManager> {
                       });
                       return;
                     } else if (_currentIndex == 2) {
+                      setState(() {
+                        _screensIndex = ScreenIndex.addEditSessionScreen;
+                      });
+                    } else if (_currentIndex == 3) {
                       setState(() {
                         _screensIndex = ScreenIndex.addEditTool;
                       });
@@ -92,6 +100,7 @@ class _TabManagerState extends State<TabManager> {
                 });
               },
             ),
+            ViewSessionsScreen(instance),
             ViewToolsScreen(
               updateScreenIndex: (index, {tool}) {
                 if (tool != null) selectedTool = Tool.fromTool(tool);
@@ -125,6 +134,8 @@ class _TabManagerState extends State<TabManager> {
               ),
               BottomNavigationBarItem(
                   icon: Icon(Icons.library_books), label: 'Books'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.history), label: 'Sessions'),
               BottomNavigationBarItem(icon: Icon(Icons.build), label: 'Tools'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.bar_chart), label: 'Charts'),
@@ -141,6 +152,13 @@ class _TabManagerState extends State<TabManager> {
       ViewBookScreen(selectedBook, updateScreenIndex: (index) {
         setState(() {
           _screensIndex = index;
+          if (_screensIndex == ScreenIndex.mainTabs) selectedBook = null;
+        });
+      }),
+      CreateSessionScreen(updateScreenIndex: (index) {
+        setState(() {
+          _screensIndex = index;
+          if (_screensIndex == ScreenIndex.mainTabs) selectedSession = null;
         });
       }),
       CreateCustomToolScreen(

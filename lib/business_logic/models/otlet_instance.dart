@@ -97,14 +97,14 @@ class OtletInstance extends ChangeNotifier {
     Tool(
         customId: 'sessionStartedTool',
         name: 'Session Started',
-        toolType: Tool.timeTool,
+        toolType: Tool.dateTimeTool,
         isBookTool: false,
         isActive: true,
         useFixedOptions: false),
     Tool(
         customId: 'sessionEndedTool',
         name: 'Session Ended',
-        toolType: Tool.timeTool,
+        toolType: Tool.dateTimeTool,
         isBookTool: false,
         isActive: true,
         useFixedOptions: false),
@@ -260,6 +260,22 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addNewSession(ReadingSession session, Book book) {
+    print('adding session');
+    sessionHistory.add(session);
+    sessionHistory.sort((b, a) => a.ended.compareTo(b.ended));
+    for (int i = 0; i < books.length; i++) {
+      if (books[i].compareToBook(book)) {
+        books[i].sessions.add(ReadingSession.fromSession(session));
+        books[i].sessions.sort((b, a) => a.ended.compareTo(b.ended));
+        break;
+      }
+    }
+    print('done adding session');
+    saveInstance();
+    notifyListeners();
+  }
+
   void addNewTool(Tool tool) {
     tools.add(tool);
     for (int i = 0; i < books.length; i++) {
@@ -406,6 +422,28 @@ class OtletInstance extends ChangeNotifier {
       if (goals[i].id == goal.id) break;
     }
     goals[i] = goal;
+    saveInstance();
+    notifyListeners();
+  }
+
+  void modifySession(ReadingSession session, Book book) {
+    for (int i = 0; i < sessionHistory.length; i++) {
+      if (sessionHistory[i].id == session.id) {
+        sessionHistory[i] = session;
+        sessionHistory.sort((b, a) => a.ended.compareTo(b.ended));
+        break;
+      }
+    }
+    for (int i = 0; i < books.length; i++) {
+      if (books[i].compareIds(book)) {
+        for (int j = 0; j < books[i].sessions.length; j++) {
+          if (books[i].sessions[j].id == session.id) {
+            books[i].sessions[j] = ReadingSession.fromSession(session);
+            books[i].sessions.sort((b, a) => a.ended.compareTo(b.ended));
+          }
+        }
+      }
+    }
     saveInstance();
     notifyListeners();
   }
@@ -633,15 +671,11 @@ class OtletInstance extends ChangeNotifier {
       activeSession.isReading = false;
       print(activeSession.otletTools
           .map((e) => '${e.name} : ${e.displayValue()}'));
-      activeSession.otletTools[1].value =
-          TimeOfDay.fromDateTime(activeSession.started);
-      activeSession.otletTools[2].value =
-          TimeOfDay.fromDateTime(activeSession.ended);
+      activeSession.otletTools[1].value = activeSession.started;
+      activeSession.otletTools[2].value = activeSession.ended;
       activeSession.otletTools[3].value = DateTime(activeSession.started.year,
           activeSession.started.month, activeSession.started.day);
       activeSession.otletTools[4].value = activeSession.pagesRead;
-      print(activeSession.otletTools
-          .map((e) => '${e.name} : ${e.displayValue()}'));
       sessionHistory.add(activeSession);
       sessionHistory.sort((b, a) => a.ended.compareTo(b.ended));
       books[activeBookIndex]

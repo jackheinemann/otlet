@@ -86,7 +86,7 @@ class ReadingSession {
   String displayTimePassed() {
     int hours = timePassed.inHours;
     int minutes = timePassed.inMinutes - (60 * hours);
-    int seconds = timePassed.inSeconds - (60 * minutes);
+    int seconds = timePassed.inSeconds - (60 * timePassed.inMinutes);
 
     if (hours >= 1) {
       return '$hours:${minutes >= 10 ? minutes : '0' + minutes.toString()}:${seconds >= 10 ? seconds : '0' + seconds.toString()}';
