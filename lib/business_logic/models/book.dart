@@ -32,7 +32,7 @@ class Book {
   bool hasBeenEdited = false; // just for local 'show save button' stuff
   bool isActive = false;
 
-  List<ReadingSession> sessions = [];
+  // List<ReadingSession> sessions = [];
   List<Tool> tools = [];
   List<Tool> otletTools = [];
 
@@ -50,7 +50,7 @@ class Book {
     this.published,
     this.pageCount,
     this.wordCount,
-    this.sessions,
+    // this.sessions,
   }) {
     id = Uuid().v1();
   }
@@ -74,7 +74,7 @@ class Book {
     wordCount = book.wordCount;
     currentPage = book.currentPage;
     trackProgress = book.trackProgress;
-    sessions = List<ReadingSession>.from(book.sessions ?? []);
+    // sessions = List<ReadingSession>.from(book.sessions ?? []);
     isActive = book.isActive;
     tools = book.tools.map((e) => Tool.fromTool(e)).toList();
     otletTools = book.otletTools.map((e) => Tool.fromTool(e)).toList();
@@ -96,11 +96,11 @@ class Book {
     pageCount = json['pageCount'];
     wordCount = json['wordCount'];
     currentPage = json['currentPage'];
-    if (json['sessions'] != null) {
-      List<Map<String, dynamic>> sessionJsons =
-          List<Map<String, dynamic>>.from(jsonDecode(json['sessions']));
-      sessions = sessionJsons.map((e) => ReadingSession.fromJson(e)).toList();
-    }
+    // if (json['sessions'] != null) {
+    //   List<Map<String, dynamic>> sessionJsons =
+    //       List<Map<String, dynamic>>.from(jsonDecode(json['sessions']));
+    //   sessions = sessionJsons.map((e) => ReadingSession.fromJson(e)).toList();
+    // }
     trackProgress = json['trackProgress'] ?? false;
     if (json['tools'] != null) {
       List<dynamic> toolsJson = List<dynamic>.from(jsonDecode(json['tools']));
@@ -229,15 +229,15 @@ class Book {
     if (book.started != started) return false;
     if (book.finished != finished) return false;
     if (book.isbn != isbn) return false;
-    if (book.sessions.length != sessions.length) return false;
-    for (int i = 0; i < book.sessions.length; i++) {
-      ReadingSession sourceSession = sessions[i];
-      ReadingSession foreignSession = book.sessions[i];
-      if ((sourceSession.id != foreignSession.id ||
-              sourceSession.timePassed != foreignSession.timePassed) ||
-          (sourceSession.started != foreignSession.started ||
-              sourceSession.ended != foreignSession.ended)) return false;
-    }
+    // if (book.sessions.length != sessions.length) return false;
+    // for (int i = 0; i < book.sessions.length; i++) {
+    //   ReadingSession sourceSession = sessions[i];
+    //   ReadingSession foreignSession = book.sessions[i];
+    //   if ((sourceSession.id != foreignSession.id ||
+    //           sourceSession.timePassed != foreignSession.timePassed) ||
+    //       (sourceSession.started != foreignSession.started ||
+    //           sourceSession.ended != foreignSession.ended)) return false;
+    // }
     for (int i = 0; i < book.tools.length; i++) {
       Tool sourceTool = tools[i];
       Tool foreignTool = book.tools[i];
@@ -347,8 +347,8 @@ class Book {
       'currentPage': currentPage,
       'trackProgress': trackProgress,
       'collection': collections,
-      if (sessions != null)
-        'sessions': jsonEncode(sessions.map((e) => e.toJson()).toList()),
+      // if (sessions != null)
+      //   'sessions': jsonEncode(sessions.map((e) => e.toJson()).toList()),
       if (tools != null)
         'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
       if (otletTools != null)

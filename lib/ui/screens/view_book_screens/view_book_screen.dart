@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:otlet/ui/screens/view_book_screens/create_session_screen.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_info_tab.dart';
 import 'package:otlet/ui/screens/view_book_screens/view_book_tabs/edit_book_sessions_tab.dart';
@@ -34,7 +35,8 @@ class _ViewBookScreenState extends State<ViewBookScreen>
 
   bool isEditing = false;
 
-  int sessionBuilderIndex = 0;
+  int _sessionBuilderIndex = 0;
+  ReadingSession selectedSession; // for selecting a session tab
 
   @override
   void initState() {
@@ -146,153 +148,176 @@ class _ViewBookScreenState extends State<ViewBookScreen>
         ]);
         // START SCAFFOLD
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Image.asset(
-              'assets/images/book_logo_small.png',
-              scale: 2.7,
-            ),
-            centerTitle: true,
-            leading: IconButton(
-                icon: backButton(),
-                onPressed: () async {
-                  if (isEditing) {
-                    setState(() {
-                      isEditing = false;
-                    });
-                    return;
-                  }
-                  if (book.hasBeenEdited) {
-                    bool shouldPop = await showConfirmDialog(
-                        'Discard changes to ${book.title}?', context);
-                    if (!shouldPop) return;
-                  }
-                  widget.updateScreenIndex(ScreenIndex.mainTabs);
-                }),
-            actions: [
-              if (isEditing)
-                IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () async {
-                      bool shouldDelete = await showConfirmDialog(
-                          'Are you sure you want to delete ${book.title}?',
-                          context);
-                      if (!shouldDelete) return;
-                      instance.deleteBook(book);
-                      widget.updateScreenIndex(ScreenIndex.mainTabs);
-                    })
-            ],
-          ),
-          body: Column(
-            children: [
-              if (!isEditing)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: bookviewHeader,
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Container(
-                  height: 30,
-                  child: TabBar(
-                    controller: tabController,
-                    tabs: ['Info', 'Tools', 'Sessions']
-                        .map((e) => Text(e,
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                        .toList(),
+        return _sessionBuilderIndex == 0
+            ? Scaffold(
+                appBar: AppBar(
+                  title: Image.asset(
+                    'assets/images/book_logo_small.png',
+                    scale: 2.7,
                   ),
+                  centerTitle: true,
+                  leading: IconButton(
+                      icon: backButton(),
+                      onPressed: () async {
+                        if (isEditing) {
+                          setState(() {
+                            isEditing = false;
+                          });
+                          return;
+                        }
+                        if (book.hasBeenEdited) {
+                          bool shouldPop = await showConfirmDialog(
+                              'Discard changes to ${book.title}?', context);
+                          if (!shouldPop) return;
+                        }
+                        widget.updateScreenIndex(ScreenIndex.mainTabs);
+                      }),
+                  actions: [
+                    if (isEditing)
+                      IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () async {
+                            bool shouldDelete = await showConfirmDialog(
+                                'Are you sure you want to delete ${book.title}?',
+                                context);
+                            if (!shouldDelete) return;
+                            instance.deleteBook(book);
+                            widget.updateScreenIndex(ScreenIndex.mainTabs);
+                          })
+                  ],
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: tabController,
+                body: Column(
                   children: [
-                    isEditing
-                        ? EditBookInfoTab(book, stopEditing: () {
+                    if (!isEditing)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: bookviewHeader,
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Container(
+                        height: 30,
+                        child: TabBar(
+                          controller: tabController,
+                          tabs: ['Info', 'Tools', 'Sessions']
+                              .map((e) => Text(e,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black)))
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: tabController,
+                        children: [
+                          isEditing
+                              ? EditBookInfoTab(book, stopEditing: () {
+                                  setState(() {
+                                    isEditing = false;
+                                    book.hasBeenEdited = true;
+                                  });
+                                })
+                              : BookInfoStatic(
+                                  book,
+                                  updateActive: (active) {
+                                    setState(() {
+                                      book.isActive = active;
+                                      book.hasBeenEdited = true;
+                                    });
+                                  },
+                                  updateTrackProgress: (trackProgress) {
+                                    setState(() {
+                                      book.trackProgress = trackProgress;
+                                      book.hasBeenEdited = true;
+                                    });
+                                  },
+                                ),
+                          isEditing
+                              ? EditBookToolsTab(
+                                  book,
+                                  stopEditing: () {
+                                    setState(() {
+                                      isEditing = false;
+                                      book.hasBeenEdited = true;
+                                    });
+                                  },
+                                  onValueChange: (editedBook) {
+                                    setState(() {
+                                      book.hasBeenEdited = true;
+                                      book = editedBook;
+                                    });
+                                  },
+                                )
+                              : BookToolsStaticTab(book, editTools: () {
+                                  setState(() {
+                                    isEditing = true;
+                                  });
+                                }),
+                          isEditing
+                              ? EditBookSessionsTab(
+                                  book,
+                                  updateSessionBuilderIndex: (index,
+                                      {session}) {
+                                    setState(() {
+                                      _sessionBuilderIndex = index;
+                                      selectedSession = session;
+                                    });
+                                  },
+                                )
+                              : BookSessionsTab(book)
+                        ]
+                            .map((e) => Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: e,
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                    if (isEditing)
+                      OutlinedButton(
+                          onPressed: () {
                             setState(() {
                               isEditing = false;
                               book.hasBeenEdited = true;
                             });
-                          })
-                        : BookInfoStatic(
-                            book,
-                            updateActive: (active) {
-                              setState(() {
-                                book.isActive = active;
-                                book.hasBeenEdited = true;
-                              });
-                            },
-                            updateTrackProgress: (trackProgress) {
-                              setState(() {
-                                book.trackProgress = trackProgress;
-                                book.hasBeenEdited = true;
-                              });
-                            },
-                          ),
-                    isEditing
-                        ? EditBookToolsTab(
-                            book,
-                            stopEditing: () {
-                              setState(() {
-                                isEditing = false;
-                                book.hasBeenEdited = true;
-                              });
-                            },
-                            onValueChange: (editedBook) {
-                              setState(() {
-                                book.hasBeenEdited = true;
-                                book = editedBook;
-                              });
-                            },
-                          )
-                        : BookToolsStaticTab(book, editTools: () {
-                            setState(() {
-                              isEditing = true;
-                            });
-                          }),
-                    BookSessionsTab(book)
-                  ]
-                      .map((e) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: e,
-                          ))
-                      .toList(),
+                          },
+                          child: Text('Stop Editing',
+                              style: TextStyle(
+                                  fontSize: 16, color: primaryColor))),
+                    if (book.hasBeenEdited && !isEditing)
+                      ElevatedButton(
+                          style:
+                              ElevatedButton.styleFrom(primary: primaryColor),
+                          onPressed: () {
+                            book.hasBeenEdited = false;
+                            instance.modifyBook(book);
+                            widget.updateScreenIndex(ScreenIndex.mainTabs);
+                          },
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * .65,
+                              child: Center(
+                                  child: Text('Save Book',
+                                      style: TextStyle(fontSize: 17))))),
+                    if (book.hasBeenEdited || isEditing)
+                      SizedBox(
+                        height: 20,
+                      )
+                  ],
                 ),
-              ),
-              if (isEditing)
-                OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        isEditing = false;
-                        book.hasBeenEdited = true;
-                      });
-                    },
-                    child: Text('Stop Editing',
-                        style: TextStyle(fontSize: 16, color: primaryColor))),
-              if (book.hasBeenEdited && !isEditing)
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: primaryColor),
-                    onPressed: () {
-                      book.hasBeenEdited = false;
-                      instance.modifyBook(book);
-                      widget.updateScreenIndex(ScreenIndex.mainTabs);
-                    },
-                    child: Container(
-                        width: MediaQuery.of(context).size.width * .65,
-                        child: Center(
-                            child: Text('Save Book',
-                                style: TextStyle(fontSize: 17))))),
-              if (book.hasBeenEdited || isEditing)
-                SizedBox(
-                  height: 20,
-                )
-            ],
-          ),
-        );
+              )
+            : CreateSessionScreen(
+                book: book,
+                session: selectedSession,
+                updateScreenIndex: (index) {
+                  setState(() {
+                    _sessionBuilderIndex = index;
+                    if (_sessionBuilderIndex == 0) selectedSession = null;
+                  });
+                });
       }),
     );
   }

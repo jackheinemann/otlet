@@ -357,30 +357,33 @@ class _CreateChartScreenState extends State<CreateChartScreen> {
                                   // var series;
                                   List<ReadingSession> sessionsToPull;
                                   if (chart.scope != ChartScope.books)
-                                    sessionsToPull = chart.scope ==
-                                            ChartScope.singleBook
-                                        ? instance.books
-                                            .firstWhere((book) =>
-                                                book.id == chart.selectedBookId)
-                                            .sessions
-                                        : instance.sessionHistory;
+                                    sessionsToPull =
+                                        chart.scope == ChartScope.singleBook
+                                            ? instance.sessionsForBook(
+                                                id: chart.selectedBookId)
+                                            : instance.sessionHistory;
+                                  print(sessionsToPull.map((e) => e.id));
                                   int loopIndex = -1;
                                   for (dynamic bookOrSession
                                       in chart.scope == ChartScope.books
                                           ? instance.books
                                           : sessionsToPull) {
                                     if (!bookOrSession
-                                        .doesPassChartFilters(chart)) continue;
+                                        .doesPassChartFilters(chart)) {
+                                      print('session didnt pass chart filters');
+                                      continue;
+                                    }
                                     loopIndex += 1;
-                                    print(chartColorCodes.length);
                                     if (loopIndex >= chartColorCodes.length)
                                       loopIndex = 0;
                                     // if we make it here, the book or tool passes all the filters
+                                    print('starting on x tool');
                                     Tool xTool = (bookOrSession.tools +
                                             bookOrSession.otletTools)
                                         .firstWhere(
                                             (t) => t.id == chart.xToolId);
-                                    // print('${xTool.value}: ${xTool.value.runtimeType}');
+                                    print(
+                                        '${xTool.value}: ${xTool.value.runtimeType}');
                                     Tool yTool;
                                     if (chart.requiresNumeric())
                                       yTool = (bookOrSession.tools +

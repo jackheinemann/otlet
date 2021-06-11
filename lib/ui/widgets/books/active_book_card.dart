@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:otlet/business_logic/models/book.dart';
+import 'package:otlet/business_logic/models/otlet_instance.dart';
+import 'package:otlet/business_logic/models/reading_session.dart';
+import 'package:provider/provider.dart';
 
 class ActiveBookCard extends StatelessWidget {
   final Book book;
@@ -79,11 +82,16 @@ class ActiveBookCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                        Text(
-                            '${book.sessions?.length ?? 0} session${(book.sessions?.length ?? 0) == 1 ? '' : 's'} logged',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w400)),
+                        Consumer<OtletInstance>(
+                            builder: (context, instance, _) {
+                          List<ReadingSession> sessions =
+                              instance.sessionsForBook(book: book);
+                          return Text(
+                              '${sessions?.length ?? 0} session${(sessions?.length ?? 0) == 1 ? '' : 's'} logged',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w400));
+                        }),
                       ],
                     ),
                   ),

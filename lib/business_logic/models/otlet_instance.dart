@@ -264,14 +264,7 @@ class OtletInstance extends ChangeNotifier {
     print('adding session');
     sessionHistory.add(session);
     sessionHistory.sort((b, a) => a.ended.compareTo(b.ended));
-    for (int i = 0; i < books.length; i++) {
-      if (books[i].compareToBook(book)) {
-        books[i].sessions.add(ReadingSession.fromSession(session));
-        books[i].sessions.sort((b, a) => a.ended.compareTo(b.ended));
-        break;
-      }
-    }
-    print('done adding session');
+
     saveInstance();
     notifyListeners();
   }
@@ -434,16 +427,7 @@ class OtletInstance extends ChangeNotifier {
         break;
       }
     }
-    for (int i = 0; i < books.length; i++) {
-      if (books[i].compareIds(book)) {
-        for (int j = 0; j < books[i].sessions.length; j++) {
-          if (books[i].sessions[j].id == session.id) {
-            books[i].sessions[j] = ReadingSession.fromSession(session);
-            books[i].sessions.sort((b, a) => a.ended.compareTo(b.ended));
-          }
-        }
-      }
-    }
+
     saveInstance();
     notifyListeners();
   }
@@ -487,6 +471,10 @@ class OtletInstance extends ChangeNotifier {
     selectedCollections.clear();
     notifyListeners();
   }
+
+  List<ReadingSession> sessionsForBook({Book book, String id}) => sessionHistory
+      .where((element) => element.book.id.compareTo(book?.id ?? id) == 0)
+      .toList();
 
   void setGlobalOtletToolActivity(Tool masterTool) {
     for (int i = 0; i < otletTools.length; i++) {
@@ -601,7 +589,7 @@ class OtletInstance extends ChangeNotifier {
   bool hasActiveSession() => activeSession != null;
 
   void startSession() {
-    activeSession = ReadingSession.basic();
+    activeSession = ReadingSession.basic(activeBook());
     activeSession.isReading = false;
     activeSession.importSessionTools(activeBook());
 
@@ -678,12 +666,6 @@ class OtletInstance extends ChangeNotifier {
       activeSession.otletTools[4].value = activeSession.pagesRead;
       sessionHistory.add(activeSession);
       sessionHistory.sort((b, a) => a.ended.compareTo(b.ended));
-      books[activeBookIndex]
-          .sessions
-          .add(ReadingSession.fromSession(activeSession));
-      books[activeBookIndex]
-          .sessions
-          .sort((b, a) => a.ended.compareTo(b.ended));
     }
     activeSession = null;
     notifyListeners();

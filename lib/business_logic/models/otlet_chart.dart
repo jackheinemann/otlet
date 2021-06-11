@@ -96,9 +96,7 @@ class OtletChart {
     List<ReadingSession> sessionsToPull;
     if (scope != ChartScope.books)
       sessionsToPull = scope == ChartScope.singleBook
-          ? instance.books
-              .firstWhere((book) => book.id == selectedBookId)
-              .sessions
+          ? instance.sessionsForBook(id: selectedBookId)
           : instance.sessionHistory;
     int loopIndex = -1;
     for (dynamic bookOrSession

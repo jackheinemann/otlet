@@ -32,9 +32,10 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
   @override
   void initState() {
     super.initState();
-    session = widget.session ?? ReadingSession.basic();
-    isEdit = widget.session != null;
     book = widget.book;
+    session = widget.session ?? ReadingSession.basic(book);
+    isEdit = widget.session != null;
+
     if (!isEdit && book != null) session.importSessionTools(book);
     if (session.pagesRead != null)
       pagesReadController.text = session.pagesRead.toString();

@@ -16,6 +16,7 @@ class ReadingSession {
   bool isReading = false;
   Duration timePassed;
   int pagesRead;
+  Book book;
 
   List<Tool> tools = [];
   List<Tool> otletTools = [];
@@ -38,11 +39,13 @@ class ReadingSession {
     pagesRead = session.pagesRead;
     tools = session.tools.map((e) => Tool.fromTool(e)).toList();
     otletTools = session.otletTools.map((e) => Tool.fromTool(e)).toList();
+    book = Book.fromBook(session.book);
   }
 
-  ReadingSession.basic() {
+  ReadingSession.basic([Book book]) {
     id = Uuid().v1();
     timePassed = Duration(seconds: 0);
+    if (book != null) this.book = Book.fromBook(book);
   }
 
   ReadingSession.fromJson(Map<String, dynamic> json) {
@@ -64,6 +67,9 @@ class ReadingSession {
       for (Map<String, dynamic> json in otletToolsJson) {
         otletTools.add(Tool.fromJson(json));
       }
+    }
+    if (json['book'] != null) {
+      book = Book.fromJson(json['book']);
     }
   }
 
@@ -118,7 +124,8 @@ class ReadingSession {
       if (tools != null)
         'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
       if (otletTools != null)
-        'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList())
+        'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList()),
+      if (book != null) 'book': book.toJson()
     };
   }
 }
