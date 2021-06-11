@@ -107,14 +107,6 @@ class ReadingSession {
     return true;
   }
 
-  // Stream<String> maintainSession() async* {
-  //   while (true) {
-  //     await Future.delayed(Duration(seconds: 1));
-  //     if (isReading) updateTimePassed();
-  //     yield displayTimePassed();
-  //   }
-  // }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,

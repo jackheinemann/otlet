@@ -36,6 +36,8 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
     isEdit = widget.session != null;
     book = widget.book;
     if (!isEdit && book != null) session.importSessionTools(book);
+    if (session.pagesRead != null)
+      pagesReadController.text = session.pagesRead.toString();
   }
 
   @override
@@ -46,6 +48,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
         startedController.text = monthDayYearTimeFormat.format(session.started);
       if (session.ended != null)
         endedController.text = monthDayYearTimeFormat.format(session.ended);
+
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(

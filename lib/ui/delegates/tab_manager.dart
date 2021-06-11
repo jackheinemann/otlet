@@ -100,7 +100,16 @@ class _TabManagerState extends State<TabManager> {
                 });
               },
             ),
-            ViewSessionsScreen(instance),
+            ViewSessionsScreen(
+              instance,
+              updateScreenIndex: (index, {session}) {
+                if (session != null)
+                  selectedSession = ReadingSession.fromSession(session);
+                setState(() {
+                  _screensIndex = index;
+                });
+              },
+            ),
             ViewToolsScreen(
               updateScreenIndex: (index, {tool}) {
                 if (tool != null) selectedTool = Tool.fromTool(tool);
@@ -155,12 +164,14 @@ class _TabManagerState extends State<TabManager> {
           if (_screensIndex == ScreenIndex.mainTabs) selectedBook = null;
         });
       }),
-      CreateSessionScreen(updateScreenIndex: (index) {
-        setState(() {
-          _screensIndex = index;
-          if (_screensIndex == ScreenIndex.mainTabs) selectedSession = null;
-        });
-      }),
+      CreateSessionScreen(
+          session: selectedSession,
+          updateScreenIndex: (index) {
+            setState(() {
+              _screensIndex = index;
+              if (_screensIndex == ScreenIndex.mainTabs) selectedSession = null;
+            });
+          }),
       CreateCustomToolScreen(
           tool: selectedTool,
           isEdit: selectedTool != null,
