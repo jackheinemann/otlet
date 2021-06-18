@@ -16,7 +16,9 @@ class ReadingSession {
   bool isReading = false;
   Duration timePassed;
   int pagesRead;
-  Book book;
+  // Book book;
+  String bookId;
+  String bookTitle;
 
   List<Tool> tools = [];
   List<Tool> otletTools = [];
@@ -39,13 +41,15 @@ class ReadingSession {
     pagesRead = session.pagesRead;
     tools = session.tools.map((e) => Tool.fromTool(e)).toList();
     otletTools = session.otletTools.map((e) => Tool.fromTool(e)).toList();
-    book = Book.fromBook(session.book);
+    bookId = session.bookId;
+    bookTitle = session.bookTitle;
   }
 
   ReadingSession.basic([Book book]) {
     id = Uuid().v1();
     timePassed = Duration(seconds: 0);
-    if (book != null) this.book = Book.fromBook(book);
+    bookId = book?.id;
+    bookTitle = book?.title;
   }
 
   ReadingSession.fromJson(Map<String, dynamic> json) {
@@ -68,8 +72,42 @@ class ReadingSession {
         otletTools.add(Tool.fromJson(json));
       }
     }
-    if (json['book'] != null) {
-      book = Book.fromJson(json['book']);
+    bookId = json['bookId'];
+    bookTitle = json['bookTitle'];
+  }
+
+  void importSessionToolSingular(Tool tool, bool isOtletTool) {
+    if (tool.isBookTool) return;
+    if (isOtletTool) {
+      for (int i = 0; i < otletTools.length; i++) {
+        if (otletTools[i].id == tool.id) {
+          if (otletTools[i].toolType == tool.toolType) {
+            dynamic value = otletTools[i].value;
+            tool.value = value;
+            otletTools[i] = tool;
+          } else {
+            otletTools[i] = tool;
+          }
+          return;
+        }
+      }
+      // if it wasn't found, add it to the otlettools
+      otletTools.add(tool);
+    } else {
+      for (int i = 0; i < tools.length; i++) {
+        if (tools[i].id == tool.id) {
+          if (tools[i].toolType == tool.toolType) {
+            dynamic value = tools[i].value;
+            tool.value = value;
+            tools[i] = tool;
+          } else {
+            tools[i] = tool;
+          }
+          return;
+        }
+      }
+      // if it wasn't found, add it as new
+      tools.add(tool); //TODO right here is the problem point
     }
   }
 
@@ -82,6 +120,7 @@ class ReadingSession {
         .where((element) => !element.isBookTool && element.isActive)
         .map((e) => Tool.fromTool(e))
         .toList();
+    print(tools);
   }
 
   void updateTimePassed() {
@@ -125,7 +164,8 @@ class ReadingSession {
         'tools': jsonEncode(tools.map((e) => e.toJson()).toList()),
       if (otletTools != null)
         'otletTools': jsonEncode(otletTools.map((e) => e.toJson()).toList()),
-      if (book != null) 'book': book.toJson()
+      'bookId': bookId,
+      'bookTitle': bookTitle
     };
   }
 }

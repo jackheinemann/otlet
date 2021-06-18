@@ -33,9 +33,17 @@ class _EditSessionToolsState extends State<EditSessionTools> {
     return Consumer<OtletInstance>(builder: (context, instance, _) {
       if (session == null) session = instance.activeSession;
       activeSessionTools = session.tools;
-      if (valueControllers.isEmpty)
-        valueControllers =
-            activeSessionTools.map((e) => TextEditingController()).toList();
+      if (valueControllers.isEmpty) {
+        valueControllers = activeSessionTools.map((e) {
+          TextEditingController controller = TextEditingController();
+          if (widget.session != null) {
+            // means we have to put the value in, as it is an existing session being edited
+            controller.text = e.displayValue();
+          }
+          return controller;
+        }).toList();
+      }
+
       if (focusNodes.isEmpty) {
         for (int i = 0; i < activeSessionTools.length; i++) {
           FocusNode focusNode = FocusNode();
@@ -78,6 +86,8 @@ class _EditSessionToolsState extends State<EditSessionTools> {
                           itemCount: activeSessionTools.length,
                           itemBuilder: (context, i) {
                             Tool tool = activeSessionTools[i];
+                            print(
+                                'building value input with tool ${tool.toJson()}');
                             return ListTile(
                                 title: tool.generateValueInput(
                                     context, valueControllers[i], focusNodes[i],

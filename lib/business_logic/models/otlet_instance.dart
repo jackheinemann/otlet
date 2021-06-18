@@ -260,8 +260,7 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addNewSession(ReadingSession session, Book book) {
-    print('adding session');
+  void addNewSession(ReadingSession session) {
     sessionHistory.add(session);
     sessionHistory.sort((b, a) => a.ended.compareTo(b.ended));
 
@@ -364,6 +363,13 @@ class OtletInstance extends ChangeNotifier {
     return options;
   }
 
+  Book getBookById(String id) {
+    for (Book book in books) {
+      if (book.id.compareTo(id) == 0) return Book.fromBook(book);
+    }
+    return null;
+  }
+
   void modifyBook(Book book) {
     for (int i = 0; i < books.length; i++) {
       if (book.compareIds(books[i])) {
@@ -419,7 +425,7 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
-  void modifySession(ReadingSession session, Book book) {
+  void modifySession(ReadingSession session) {
     for (int i = 0; i < sessionHistory.length; i++) {
       if (sessionHistory[i].id == session.id) {
         sessionHistory[i] = session;
@@ -427,7 +433,6 @@ class OtletInstance extends ChangeNotifier {
         break;
       }
     }
-
     saveInstance();
     notifyListeners();
   }
@@ -473,7 +478,7 @@ class OtletInstance extends ChangeNotifier {
   }
 
   List<ReadingSession> sessionsForBook({Book book, String id}) => sessionHistory
-      .where((element) => element.book.id.compareTo(book?.id ?? id) == 0)
+      .where((element) => element.bookId.compareTo(book?.id ?? id) == 0)
       .toList();
 
   void setGlobalOtletToolActivity(Tool masterTool) {

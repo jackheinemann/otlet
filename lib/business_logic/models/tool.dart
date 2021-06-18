@@ -178,8 +178,11 @@ class Tool {
       TextEditingController valueController, FocusNode focusNode,
       {@required Function(dynamic) onValueChange, String labelText}) {
     TextFormField textFormField;
-    if (value != null && isSpecialGrade())
+    if (value != null && isSpecialGrade()) {
       valueController.text = displayValue();
+      print('set up value controller value');
+    }
+
     if (labelText == null) labelText = 'Value';
 
     if (useFixedOptions) {
