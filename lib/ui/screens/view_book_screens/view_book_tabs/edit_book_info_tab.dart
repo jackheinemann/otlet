@@ -217,7 +217,7 @@ class _EditBookInfoTabState extends State<EditBookInfoTab> {
                         List<String> selected =
                             await showCollectionSelectorDialog(
                                 context,
-                                'Display books from:',
+                                'Assign ${book.title} to:',
                                 instance.collections,
                                 book.collections);
                         if (selected == null) return;

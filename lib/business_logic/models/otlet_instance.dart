@@ -306,6 +306,18 @@ class OtletInstance extends ChangeNotifier {
     if (activeBookIndex == index) activeBookIndex = -1;
     if (activeBookIndex > index) activeBookIndex -= 1;
     books.removeAt(index);
+    for (int i = 0; i < charts.length; i++) {
+      OtletChart chart = charts[i];
+      if (chart.selectedBookId == book.id) {
+        charts.removeAt(i);
+      }
+    }
+    for (int i = 0; i < sessionHistory.length; i++) {
+      ReadingSession session = sessionHistory[i];
+      if (session.bookId == book.id) {
+        sessionHistory.removeAt(i);
+      }
+    }
     saveInstance();
     notifyListeners();
   }
@@ -342,6 +354,12 @@ class OtletInstance extends ChangeNotifier {
     tools.removeAt(index);
     for (int i = 0; i < books.length; i++) {
       books[i].tools.removeWhere((element) => element.compareToolId(tool));
+    }
+    for (int i = 0; i < charts.length; i++) {
+      OtletChart chart = charts[i];
+      if (chart.xToolId == tool.id || chart.yToolId == tool.id) {
+        charts.removeAt(i);
+      }
     }
     saveInstance();
     notifyListeners();
@@ -569,17 +587,25 @@ class OtletInstance extends ChangeNotifier {
   }
 
   void updateCollections(List<String> updated) {
+    List<String> deletedCollections = [];
+    if (collections != updated) {
+      for (int i = 0; i < collections.length; i++) {
+        String oldCollection = collections[i];
+        if (!updated.contains(oldCollection)) {
+          // old collection has been deleted
+          deletedCollections.add(oldCollection);
+        }
+      }
+    }
     collections = List<String>.from(updated);
-    // Tool tool;
-    // int i = 0;
-    // for (; i < otletTools.length; i++) {
-    //   tool = otletTools[i];
-    //   if (tool.id == 'bookCollectionTool') {
-    //     tool.fixedOptions = List<String>.from(collections);
-    //     break;
-    //   }
-    // }
-    // otletTools[i] = tool;
+
+    for (int i = 0; i < deletedCollections.length; i++) {
+      String deleted = deletedCollections[i];
+      selectedCollections.remove(deleted);
+      for (int j = 0; j < books.length; j++) {
+        books[j].collections.remove(deleted);
+      }
+    }
     saveInstance();
     notifyListeners();
   }
