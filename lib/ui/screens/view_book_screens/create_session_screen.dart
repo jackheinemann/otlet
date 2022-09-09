@@ -77,16 +77,30 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
         },
         child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-                icon: backButton(),
-                onPressed: () async {
-                  bool shouldPop = await showConfirmDialog(
-                      'Discard changes to session?', context);
-                  if (shouldPop) widget.updateScreenIndex(0);
-                }),
-            centerTitle: true,
-            title: Text('${isEdit ? 'Edit' : 'Create'} Session'),
-          ),
+              leading: IconButton(
+                  icon: backButton(),
+                  onPressed: () async {
+                    bool shouldPop = await showConfirmDialog(
+                        'Discard changes to session?', context);
+                    if (shouldPop) widget.updateScreenIndex(0);
+                  }),
+              centerTitle: true,
+              title: Text('${isEdit ? 'Edit' : 'Create'} Session'),
+              actions: [
+                if (isEdit)
+                  IconButton(
+                    onPressed: () async {
+                      bool shouldDelete = await showConfirmDialog(
+                          'Delete this session forever?', context);
+
+                      if (shouldDelete) {
+                        instance.deleteSession(session);
+                        widget.updateScreenIndex(0);
+                      }
+                    },
+                    icon: Icon(Icons.delete),
+                  ),
+              ]),
           body: Form(
             key: _formKey,
             child: Column(
@@ -234,7 +248,7 @@ class _CreateSessionScreenState extends State<CreateSessionScreen> {
                           : instance.addNewSession(session);
                       widget.updateScreenIndex(0);
                     },
-                    child: Text('${isEdit ? 'Edit' : 'Create'} Session')),
+                    child: Text('${isEdit ? 'Save' : 'Create'} Session')),
                 SizedBox(
                   height: 30,
                 )

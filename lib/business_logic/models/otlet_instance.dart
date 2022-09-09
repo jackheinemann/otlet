@@ -455,6 +455,17 @@ class OtletInstance extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteSession(ReadingSession session) {
+    for (int i = 0; i < sessionHistory.length; i++) {
+      if (sessionHistory[i].id == session.id) {
+        sessionHistory.removeAt(i);
+        break;
+      }
+    }
+    saveInstance();
+    notifyListeners();
+  }
+
   void modifyTool(Tool tool) {
     for (int i = 0; i < tools.length; i++) {
       if (tool.compareToolId(tools[i])) {

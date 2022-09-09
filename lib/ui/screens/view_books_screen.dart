@@ -24,6 +24,7 @@ class ViewBooksScreen extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           title: SortBooksToolbar(),
+          backgroundColor: primaryColor,
         ),
         body: Padding(
             padding: const EdgeInsets.all(8.0),

@@ -87,6 +87,7 @@ class _TabManagerState extends State<TabManager> {
             // if (_currentIndex == 1)
             //   IconButton(icon: Icon(Icons.tune), onPressed: () async {})
           ],
+          backgroundColor: primaryColor,
         ),
         body: IndexedStack(
           index: _currentIndex,

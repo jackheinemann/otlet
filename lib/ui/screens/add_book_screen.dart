@@ -223,8 +223,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
                                           if (picked == null) return;
 
-                                          File cropped =
-                                              await ImageCropper.cropImage(
+                                          File cropped = await ImageCropper()
+                                              .cropImage(
                                                   sourcePath: picked.path,
                                                   aspectRatio: CropAspectRatio(
                                                       ratioX: 1, ratioY: 1.5));
