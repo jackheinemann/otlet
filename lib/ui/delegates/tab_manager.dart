@@ -92,7 +92,14 @@ class _TabManagerState extends State<TabManager> {
         body: IndexedStack(
           index: _currentIndex,
           children: [
-            HomeScreen(),
+            HomeScreen(
+              updateScreenIndex: (index, {book}) {
+                if (book != null) selectedBook = Book.fromBook(book);
+                setState(() {
+                  _screensIndex = index;
+                });
+              },
+            ),
             ViewBooksScreen(
               updateScreenIndex: (index, {book}) {
                 if (book != null) selectedBook = Book.fromBook(book);

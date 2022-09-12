@@ -9,56 +9,55 @@ import 'package:otlet/ui/widgets/goals/goal_card.dart';
 import 'package:otlet/ui/widgets/sessions/session_tracker_card.dart';
 import 'package:provider/provider.dart';
 
+import '../../../business_logic/models/book.dart';
+import '../../../business_logic/utils/constants.dart';
+
 class HomeScreen extends StatelessWidget {
+  final Function(int, {Book book}) updateScreenIndex;
+
+  HomeScreen({
+    @required this.updateScreenIndex,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Consumer<OtletInstance>(
-      builder: (context, instance, _) => Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              instance.hasActiveBook()
-                  ? ActiveBookCard(instance.activeBook())
-                  : Card(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.width * .25 * 1.6,
-                        child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Text(
-                                'No Active Book',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            )),
+      builder: (context, instance, _) {
+        print(instance.activeBook()?.title ?? "no active book");
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                instance.hasActiveBook()
+                    ? ActiveBookCard(
+                        instance.activeBook(),
+                        viewBook: () {
+                          updateScreenIndex(ScreenIndex.viewBookScreen,
+                              book: instance.activeBook());
+                        },
+                      )
+                    : Card(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.width * .25 * 1.6,
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                  'No Active Book',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              )),
+                        ),
                       ),
-                    ),
-              // if (!instance.hasActiveSession())
-              //   instance.goals.isNotEmpty
-              //       ? GestureDetector(
-              //           onTap: () async {
-              //             Goal temp = await Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                     builder: (context) => CreateGoalScreen(
-              //                         instance,
-              //                         goal: instance.goals[0])));
-              //             if (temp == null) return;
-              //             if (temp.isEmpty()) {
-              //               instance.deleteGoal(temp);
-              //             } else
-              //               instance.modifyGoal(temp);
-              //           },
-              //           child: GoalCard(instance.goals[0]))
-              //       : CreateGoalCard(instance,
-              //           addGoal: (goal) => instance.addNewGoal(goal)),
-              instance.hasActiveSession() ? EditSessionTools() : Spacer(),
-              if (instance.hasActiveBook()) SessionTrackerCard(instance)
-            ],
+                instance.hasActiveSession() ? EditSessionTools() : Spacer(),
+                if (instance.hasActiveBook()) SessionTrackerCard(instance)
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

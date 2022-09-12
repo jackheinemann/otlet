@@ -6,15 +6,16 @@ import 'package:otlet/business_logic/models/reading_session.dart';
 import 'package:provider/provider.dart';
 
 class ActiveBookCard extends StatelessWidget {
+  final VoidCallback viewBook;
   final Book book;
 
-  ActiveBookCard(this.book);
+  ActiveBookCard(this.book, {this.viewBook});
   @override
   Widget build(BuildContext context) {
     double bookImageWidth = MediaQuery.of(context).size.width * .3;
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () async {},
+      onTap: () => viewBook(),
       child: Card(
         child: Container(
           width: MediaQuery.of(context).size.width,

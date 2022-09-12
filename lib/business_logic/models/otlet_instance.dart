@@ -219,6 +219,10 @@ class OtletInstance extends ChangeNotifier {
 
   Book activeBook() {
     if (activeBookIndex < 0 || activeBookIndex >= books.length) return null;
+    for (int i = 0; i < books.length; i++) {
+      print(
+          "book at index $i is ${books[i].title} (active is $activeBookIndex)");
+    }
     return books[activeBookIndex];
   }
 
@@ -243,7 +247,11 @@ class OtletInstance extends ChangeNotifier {
       // if (book.collections != null) if (tool.id == 'bookCollectionTool') tool.value
       return tool;
     }).toList();
+    print(books.map((e) => e.title).toList());
     books.add(book);
+    print(books.map((e) => e.title).toList());
+    print("active book index: $activeBookIndex");
+    print(activeBook()?.title);
     saveInstance();
     notifyListeners();
   }
@@ -561,7 +569,7 @@ class OtletInstance extends ChangeNotifier {
       for (String collection in selectedCollections) {
         if (book.collections.contains(collection)) {
           // means at least one of the selected collections is present, so display the book
-          sorted.add(book);
+          sorted.add(Book.fromBook(book));
           break;
         }
       }

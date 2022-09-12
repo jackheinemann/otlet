@@ -18,7 +18,7 @@ class ViewBooksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<OtletInstance>(builder: (context, instance, _) {
-      List<Book> books = instance.sortedBooks();
+      List<Book> books = [...instance.sortedBooks()];
       books.sort((a, b) => a.title.compareTo(b.title));
       return Scaffold(
         appBar: AppBar(
